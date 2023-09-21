@@ -8,7 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +18,7 @@ import java.util.List;
 @Builder
 public class MemberDto implements UserDetails {
 
-    private String memberId;
+    private String username;
 
     private String password;
 
@@ -32,7 +34,7 @@ public class MemberDto implements UserDetails {
 
     private boolean locked;
 
-    private Role role;
+    private Set<Role> roleSet = new HashSet<>();
 
     private LocalDateTime createAt;
 
@@ -40,7 +42,8 @@ public class MemberDto implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return roleSet.stream().map(role -> new SimpleGrantedAuthority(role.name()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -50,7 +53,7 @@ public class MemberDto implements UserDetails {
 
     @Override
     public String getUsername() {
-        return memberId;
+        return username;
     }
 
     @Override
