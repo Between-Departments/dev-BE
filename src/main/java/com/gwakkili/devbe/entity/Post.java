@@ -7,7 +7,6 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class Post extends BaseEntity{
 
     @Id
@@ -34,6 +33,33 @@ public class Post extends BaseEntity{
 
     private int recommendCount;
 
+    @Builder
+    public Post(long postId, Member writer, Major.Category majorCategory, Category category, String title, String content) {
+        this.postId = postId;
+        this.writer = writer;
+        this.majorCategory = majorCategory;
+        this.category = category;
+        this.title = title;
+        this.content = content;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void addViewCount() {
+        this.viewCount++;
+    }
+
+    public void addRecommendCount() {
+        this.recommendCount++;
+    }
+
+
     @RequiredArgsConstructor
     enum Category{
         HOBBY("취미"),
@@ -45,4 +71,5 @@ public class Post extends BaseEntity{
 
         private final String description;
     }
+
 }
