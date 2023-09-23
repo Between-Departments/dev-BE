@@ -9,9 +9,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class Post extends BaseEntity{
-    enum Category{
-
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,11 +24,25 @@ public class Post extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String content;
 
     private int viewCount;
 
     private int recommendCount;
+
+    @RequiredArgsConstructor
+    enum Category{
+        HOBBY("취미"),
+        LOVE("언애"),
+        DAILY("일상"),
+        TOGETHER("같이해요"),
+        RESTAURANT("맛집"),
+        CHITCHAT("잡담");
+
+        private final String description;
+    }
 }
