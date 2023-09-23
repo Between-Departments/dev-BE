@@ -14,7 +14,7 @@ public class Post extends BaseEntity{
     private long postId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "nickname", nullable = false)
+    @JoinColumn(name="member_id",nullable = false)
     private Member writer;
 
     @Enumerated(EnumType.STRING)
@@ -41,6 +41,7 @@ public class Post extends BaseEntity{
         this.category = category;
         this.title = title;
         this.content = content;
+
     }
 
     public void setTitle(String title) {
@@ -62,6 +63,7 @@ public class Post extends BaseEntity{
 
     @RequiredArgsConstructor
     enum Category{
+        NEED_HELP("도움이 필요해요"),
         HOBBY("취미"),
         LOVE("언애"),
         DAILY("일상"),

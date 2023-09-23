@@ -9,16 +9,26 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class Major {
-    enum Category{
 
-    }
 
     @Id
     @Column(name = "major_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    String category;
+    @Enumerated(EnumType.STRING)
+    Category category;
 
     String name;
+
+    @RequiredArgsConstructor
+    enum Category{
+        SOCIAL("사회 계열"),
+        ENGINEERING("공학 계열"),
+        EDUCATION("교육 계열"),
+        PHYSICAL("예체능 계열"),
+        MEDICAL("의학 계열");
+
+        private final String description;
+    }
 }
