@@ -9,6 +9,9 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class Major {
+    enum Category{
+
+    }
 
     @Id
     @Column(name = "major_id")
