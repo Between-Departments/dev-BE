@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.config;
 import com.gwakkili.devbe.security.filter.RefreshTokenAuthenticationFilter;
 import com.gwakkili.devbe.security.service.JwtService;
-import com.gwakkili.devbe.security.filter.mailPasswordAuthenticationFilter;
+import com.gwakkili.devbe.security.filter.MailPasswordAuthenticationFilter;
 import com.gwakkili.devbe.security.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -78,8 +78,8 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder(){ return new BCryptPasswordEncoder(); }
 
-    public mailPasswordAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager){
-        return new mailPasswordAuthenticationFilter(authenticationManager,authenticationSuccessHandler, authenticationFailureHandler);
+    public MailPasswordAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager){
+        return new MailPasswordAuthenticationFilter(authenticationManager,authenticationSuccessHandler, authenticationFailureHandler);
     }
 
     public JwtAuthorizationFilter jwtAuthorizationFilter(AuthenticationManager authenticationManager){

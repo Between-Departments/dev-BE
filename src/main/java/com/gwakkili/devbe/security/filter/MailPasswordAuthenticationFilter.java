@@ -20,9 +20,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import java.io.IOException;
 
 @Slf4j
-public class mailPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class MailPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    public mailPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
+    public MailPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
                                             AuthenticationSuccessHandler successHandler,
                                             AuthenticationFailureHandler failureHandler) {
         setAuthenticationManager(authenticationManager);

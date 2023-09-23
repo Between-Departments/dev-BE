@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.security;
 
 import com.gwakkili.devbe.dto.MemberDto;
+import com.gwakkili.devbe.entity.RefreshToken;
 import com.gwakkili.devbe.entity.Role;
 import com.gwakkili.devbe.repository.RefreshTokenRepository;
 import com.gwakkili.devbe.security.service.JwtService;
@@ -39,15 +40,19 @@ public class JwtServiceTests {
         this.jwtService = new JwtService(key, accessTokenExpireTime, refreshTokenExpireTime, refreshTokenRepository);
     }
 
-    @Test
-    @DisplayName("access token 생성")
-    void generateAccessTokenTest(){
-        //given
-        MemberDto memberDto = MemberDto.builder()
+    private MemberDto getMemberDto(){
+        return MemberDto.builder()
                 .mail("test@awakkili.com")
                 .nickname("testUser")
                 .roles(Set.of(Role.ROLE_USER))
                 .build();
+    }
+
+    @Test
+    @DisplayName("access token 생성")
+    void generateAccessTokenTest(){
+        //given
+        MemberDto memberDto = getMemberDto();
         //when
         String accessToken = jwtService.generateAccessToken(memberDto);
         Claims claims = Jwts.parserBuilder()
@@ -61,11 +66,8 @@ public class JwtServiceTests {
     @DisplayName("refreshToken 생성")
     void generateRefreshTokenTest(){
         //given
-        MemberDto memberDto = MemberDto.builder()
-                .mail("test@awakkili.com")
-                .nickname("testUser")
-                .roles(Set.of(Role.ROLE_USER))
-                .build();
+        MemberDto memberDto = getMemberDto();
+
         String accessToken = jwtService.generateAccessToken(memberDto);
         //when
         String refreshToken = jwtService.generateRefreshToken(memberDto);
@@ -80,11 +82,8 @@ public class JwtServiceTests {
     void getAuthenticationTest(){
 
         //given
-        MemberDto memberDto = MemberDto.builder()
-                .mail("test@awakkili.com")
-                .nickname("testUser")
-                .roles(Set.of(Role.ROLE_USER))
-                .build();
+        MemberDto memberDto = getMemberDto();
+
         String accessToken = jwtService.generateAccessToken(memberDto);
 
         //when
@@ -94,5 +93,23 @@ public class JwtServiceTests {
         //then
         Assertions.assertThat(memberDto).usingRecursiveComparison().isEqualTo(expectedMemberDto);
     }
+
+    @Test
+    @DisplayName("refreshToken 조회")
+    void getRefreshToken(){
+
+        //given
+        MemberDto memberDto = getMemberDto();
+        String refreshToken = jwtService.generateRefreshToken(memberDto);
+
+        //when
+        RefreshToken findRefreshToken = jwtService.getRefreshToken(memberDto.getMail());
+
+        //then
+        Assertions.assertThat(findRefreshToken.getToken()).isEqualTo(refreshToken);
+        Assertions.assertThat(findRefreshToken.getMail()).isEqualTo(memberDto.getMail());
+
+    }
+
 
 }

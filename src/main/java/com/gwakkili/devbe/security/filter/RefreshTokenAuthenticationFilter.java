@@ -1,17 +1,13 @@
 package com.gwakkili.devbe.security.filter;
 
 import com.gwakkili.devbe.dto.MemberDto;
-import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.entity.RefreshToken;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.JwtException;
 import com.gwakkili.devbe.security.service.JwtService;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,7 +15,6 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.io.IOException;
 
@@ -38,10 +33,9 @@ public class RefreshTokenAuthenticationFilter extends AbstractAuthenticationProc
 
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-        if (!request.getMethod().equals("POST")) {
-            return null;
-        }
+    public Authentication attemptAuthentication(HttpServletRequest request,
+                                                HttpServletResponse response) throws AuthenticationException {
+
         // access token 과 refresh token 을 헤더에서 추출
         String accessToken = jwtService.resolveAccessToken(request);
         String refreshToken = jwtService.resolveRefreshToken(request);
@@ -57,6 +51,7 @@ public class RefreshTokenAuthenticationFilter extends AbstractAuthenticationProc
 
         String mail = jwtService.getClaims(refreshToken).getSubject();
         RefreshToken redisRefreshToken = jwtService.getRefreshToken(mail);
+        //redis에 저장되 있는 refresh 토큰과 사용자가 보낸 refresh 토큰 비교
         if(redisRefreshToken == null || !redisRefreshToken.getToken().equals(refreshToken))
             throw new JwtException(ExceptionCode.INVALID_TOKEN);
         MemberDto memberDto = MemberDto.builder().mail(redisRefreshToken.getMail()).roles(redisRefreshToken.getRoles()).build();

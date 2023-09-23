@@ -77,6 +77,8 @@ public class JwtService {
 
     // refresh token 생성
     public String generateRefreshToken(MemberDto memberDto){
+
+        log.info("rt 만료시간: {}",REFRESH_TOKEN_EXPIRE_TIME);
         // refresh 토큰 생성
         String token = Jwts.builder()
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))

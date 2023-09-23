@@ -6,6 +6,7 @@ import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.entity.Role;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.repository.MemberRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,18 +49,24 @@ public class MailPasswordAuthenticationTests {
 
         private String uri ="/login";
 
-        @Test
-        @DisplayName("로그인 성공")
-        public void loginSuccessTest() throws Exception {
-            //given
-            Member member = Member.builder()
+        private Member makeMember(boolean locked){
+            return   Member.builder()
                     .mail("member@test.com")
                     .nickname("member")
                     .roles(Set.of(Role.ROLE_USER))
                     .password(passwordEncoder.encode("1111"))
+                    .locked(locked)
                     .build();
 
-             memberRepository.save(member);
+        }
+
+        @Test
+        @DisplayName("로그인 성공")
+        public void loginSuccessTest() throws Exception {
+            //given
+            Member member = makeMember(false);
+
+            memberRepository.save(member);
 
             Map<String, String> map = Map.of("mail", member.getMail(), "password", "1111");
             String content = objectMapper.writeValueAsString(map);
@@ -76,12 +83,7 @@ public class MailPasswordAuthenticationTests {
         @DisplayName("로그인 실패 : 메일 및 비밀번호 불일치")
         public void loginFailTest() throws Exception {
             //given
-            Member member = Member.builder()
-                    .mail("member@test.com")
-                    .nickname("member")
-                    .roles(Set.of(Role.ROLE_USER))
-                    .password(passwordEncoder.encode("1111"))
-                    .build();
+            Member member =  makeMember(false);
 
             memberRepository.save(member);
             Map<String, String> map = Map.of("mail", member.getMail(), "password", "1234");
@@ -100,13 +102,7 @@ public class MailPasswordAuthenticationTests {
         @DisplayName("로그인 실패 : 정지된 계정")
         public void loginFailTest2() throws Exception {
             //given
-            Member member = Member.builder()
-                    .mail("member@test.com")
-                    .nickname("member")
-                    .roles(Set.of(Role.ROLE_USER))
-                    .password(passwordEncoder.encode("1111"))
-                    .locked(true)
-                    .build();
+            Member member =  makeMember(true);
 
             memberRepository.save(member);
             Map<String, String> map = Map.of("mail", member.getMail(), "password", "1111");
