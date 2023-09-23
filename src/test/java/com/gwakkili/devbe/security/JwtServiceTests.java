@@ -43,7 +43,6 @@ public class JwtServiceTests {
     private MemberDto getMemberDto(){
         return MemberDto.builder()
                 .mail("test@awakkili.com")
-                .nickname("testUser")
                 .roles(Set.of(Role.ROLE_USER))
                 .build();
     }

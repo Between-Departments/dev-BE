@@ -1,12 +1,10 @@
 package com.gwakkili.devbe.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwakkili.devbe.dto.MemberDto;
 import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.entity.Role;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.repository.MemberRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
