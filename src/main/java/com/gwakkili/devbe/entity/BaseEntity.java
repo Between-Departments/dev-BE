@@ -10,6 +10,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/*
+*  @EntityListeners: 자동으로 생성, 수정시간을 만들어주는 annotation
+*  생성시간, 수정시간을 가지는 entity는 BaseEntity를 상속받는다.
+* */
 @MappedSuperclass
 @EntityListeners(value = AuditingEntityListener.class)
 @Getter

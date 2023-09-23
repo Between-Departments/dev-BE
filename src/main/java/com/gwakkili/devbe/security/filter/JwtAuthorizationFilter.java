@@ -1,0 +1,53 @@
+package com.gwakkili.devbe.security.filter;
+
+import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.exception.customExcption.JwtException;
+import com.gwakkili.devbe.security.service.JwtService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import java.io.IOException;
+
+@Slf4j
+public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+
+    private final JwtService jwtService;
+
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager,
+                                  JwtService jwtService,
+                                  AuthenticationEntryPoint authenticationEntryPoint) {
+        super(authenticationManager, authenticationEntryPoint);
+        this.jwtService = jwtService;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        log.info("인증 요청");
+        String accessToken = jwtService.resolveAccessToken(request);
+
+        if(accessToken == null){
+            chain.doFilter(request, response);
+            return;
+        }
+        String validateAccessToken = jwtService.validateToken(accessToken);
+        AuthenticationEntryPoint authenticationEntryPoint = getAuthenticationEntryPoint();
+        // access token 이 없거나 유효하지 않으면
+        if(validateAccessToken.equals("INVALID")) {
+            authenticationEntryPoint.commence(request, response, new JwtException(ExceptionCode.INVALID_TOKEN));
+        // access token 이 만료되었다면
+        }else if(validateAccessToken.equals("EXPIRE")){
+            authenticationEntryPoint.commence(request, response, new JwtException(ExceptionCode.EXPIRED_TOKEN));
+        }
+        Authentication authentication = jwtService.getAuthentication(accessToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        chain.doFilter(request, response);
+    }
+}

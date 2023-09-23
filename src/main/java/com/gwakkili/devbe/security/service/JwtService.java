@@ -1,0 +1,138 @@
+package com.gwakkili.devbe.security.service;
+
+import com.gwakkili.devbe.dto.MemberDto;
+import com.gwakkili.devbe.entity.RefreshToken;
+import com.gwakkili.devbe.entity.Role;
+import com.gwakkili.devbe.repository.RefreshTokenRepository;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import java.security.Key;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+public class JwtService {
+
+    private final Key key;
+
+    private final long ACCESS_TOKEN_EXPIRE_TIME;
+
+    private final long REFRESH_TOKEN_EXPIRE_TIME;
+
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public JwtService(@Value("${jwt.secret}") String secretKey,
+                      @Value("${jwt.access_token_expire_time}") long accessTokenExpireTime,
+                      @Value("${jwt.refresh_token_expire_time}") long refreshTokenExpireTime,
+                      RefreshTokenRepository refreshTokenRepository){
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.ACCESS_TOKEN_EXPIRE_TIME = accessTokenExpireTime * 1000;
+        this.REFRESH_TOKEN_EXPIRE_TIME = refreshTokenExpireTime * 1000;
+    }
+
+    // access token을 request에서 추출
+    public String resolveAccessToken(HttpServletRequest request){
+        String jwtHeader= request.getHeader("Authorization");
+        if(jwtHeader == null || !jwtHeader.startsWith("Bearer")) return null;
+        return jwtHeader.replace("Bearer ", "");
+    }
+
+    // refresh token을 request에서 추출
+    public String resolveRefreshToken(HttpServletRequest request){
+        String jwtHeader= request.getHeader("RefreshToken");
+        if(jwtHeader == null || !jwtHeader.startsWith("Bearer")) return null;
+        return jwtHeader.replace("Bearer ", "");
+    }
+
+    // access token 생성
+    public String generateAccessToken(MemberDto memberDto){
+        String roles = memberDto.getRoles().stream()
+                .map(Role::name)
+                .collect(Collectors.joining(","));
+
+        return Jwts.builder()
+                .setSubject(memberDto.getUsername())
+                .claim("roles", roles)
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // refresh token 생성
+    public String generateRefreshToken(MemberDto memberDto){
+        // refresh 토큰 생성
+        String token = Jwts.builder()
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
+                .setSubject(memberDto.getUsername())
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+        // refresh 토큰 저장
+        RefreshToken refreshToken = RefreshToken.builder()
+                .token(token)
+                .mail(memberDto.getMail())
+                .roles(memberDto.getRoles())
+                .expiredTime(REFRESH_TOKEN_EXPIRE_TIME/1000)
+                .build();
+        refreshTokenRepository.save(refreshToken);
+        return token;
+    }
+
+    // // access 토큰에서 유저정보 추출
+    public Authentication getAuthentication(String token) throws JwtException{
+        //jwt token 복호화
+        Claims claims = getClaims(token);
+        String mail = claims.getSubject();
+        Set<Role> roles = Arrays.stream(claims.get("roles").toString().split(","))
+                .map(Role::valueOf).collect(Collectors.toSet());
+        UserDetails principal = MemberDto.builder().mail(mail).roles(roles).build();
+        return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
+    }
+
+    public Claims getClaims(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+
+    public RefreshToken getRefreshToken(String mail){
+        Optional<RefreshToken> result = refreshTokenRepository.findById(mail);
+        if(result.isEmpty()) return null;
+        return result.get();
+    }
+
+    // 토큰 유효성 검사
+    public String validateToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return "VALID";
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
+            return "EXPIRE";
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
+        }
+        return "INVALID";
+    }
+
+}

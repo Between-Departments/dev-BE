@@ -1,8 +1,6 @@
 package com.gwakkili.devbe.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -14,6 +12,7 @@ public class School {
 
     @Id
     @Column(name = "school_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
     String name;

@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.dto;
 
+import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.entity.Role;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,15 +19,13 @@ import java.util.stream.Collectors;
 @Builder
 public class MemberDto implements UserDetails {
 
-    private String username;
+    private long memberId;
+
+    private String mail;
 
     private String password;
 
     private String nickname;
-
-    private String mail;
-
-    private String name;
 
     private String school;
 
@@ -34,15 +33,30 @@ public class MemberDto implements UserDetails {
 
     private boolean locked;
 
-    private Set<Role> roleSet = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
     private LocalDateTime createAt;
 
     private LocalDateTime updateAt;
 
+    public static MemberDto of(Member member){
+        return MemberDto.builder()
+                .memberId(member.getMemberId())
+                .password(member.getPassword())
+                .nickname(member.getNickname())
+                .mail(member.getMail())
+                //.school(member.getSchool().getName())
+                //.major(member.getMajor().getName())
+                .locked(member.isLocked())
+                .createAt(member.getCreateAt())
+                .updateAt(member.getUpdateAt())
+                .roles(member.getRoles())
+                .build();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roleSet.stream().map(role -> new SimpleGrantedAuthority(role.name()))
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }
 
@@ -53,7 +67,7 @@ public class MemberDto implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return mail;
     }
 
     @Override
