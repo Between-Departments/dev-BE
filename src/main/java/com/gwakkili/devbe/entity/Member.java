@@ -42,7 +42,7 @@ public class Member extends BaseEntity {
     @CollectionTable(name="member_role", joinColumns = @JoinColumn(name= "member_id"))
     private Set<Role> roles = new HashSet<>();
 
-    private String imageURL;
+    private String imageUrl;
 
     private boolean locked;
 
