@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.entity.Member;
+package com.gwakkili.devbe.entity;
 
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.entity.Major;
@@ -39,6 +39,7 @@ public class Member extends BaseEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
+    @CollectionTable(name="member_role", joinColumns = @JoinColumn(name= "member_id"))
     private Set<Role> roles = new HashSet<>();
 
     private String imageURL;
@@ -46,4 +47,12 @@ public class Member extends BaseEntity {
     private boolean locked;
 
     private LocalDateTime deleteAt;
+
+    @RequiredArgsConstructor
+    @Getter
+    public enum Role {
+        ROLE_USER("회원"),
+        ROLE_MANAGER("관리자");
+        private final String description;;
+    }
 }
