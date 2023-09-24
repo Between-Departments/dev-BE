@@ -1,5 +1,8 @@
-package com.gwakkili.devbe.entity;
+package com.gwakkili.devbe.entity.Member;
 
+import com.gwakkili.devbe.entity.BaseEntity;
+import com.gwakkili.devbe.entity.Major;
+import com.gwakkili.devbe.entity.School;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class Member extends BaseEntity{
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
