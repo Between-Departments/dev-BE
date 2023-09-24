@@ -12,9 +12,8 @@ public class Major {
 
 
     @Id
-    @Column(name = "major_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    long majorId;
 
     @Enumerated(EnumType.STRING)
     Category category;

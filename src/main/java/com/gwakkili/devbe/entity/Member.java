@@ -38,7 +38,7 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
-    private String imageUrl;
+    private String imageURL;
 
     private boolean locked;
 
