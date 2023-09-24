@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class memberPost {
+public class MemberPost {
 
     @Id
     private long memberPostId;
@@ -27,7 +27,7 @@ public class memberPost {
     private boolean bookmark;
 
     @Builder
-    public memberPost(long memberPostId, Member member, Post post) {
+    public MemberPost(long memberPostId, Member member, Post post) {
         this.memberPostId = memberPostId;
         this.member = member;
         this.post = post;
