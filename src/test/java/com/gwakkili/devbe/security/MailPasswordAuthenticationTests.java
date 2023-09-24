@@ -1,8 +1,8 @@
 package com.gwakkili.devbe.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwakkili.devbe.entity.Member;
-import com.gwakkili.devbe.entity.Role;
+import com.gwakkili.devbe.entity.Member.Member;
+import com.gwakkili.devbe.entity.Member.Role;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 

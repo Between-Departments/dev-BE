@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.service;
 
 import com.gwakkili.devbe.dto.MemberDto;
-import com.gwakkili.devbe.entity.Member;
+import com.gwakkili.devbe.entity.Member.Member;
 import com.gwakkili.devbe.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.entity;
 
+import com.gwakkili.devbe.entity.Member.Role;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;

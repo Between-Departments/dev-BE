@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.dto;
 
-import com.gwakkili.devbe.entity.Member;
-import com.gwakkili.devbe.entity.Role;
+import com.gwakkili.devbe.entity.Member.Member;
+import com.gwakkili.devbe.entity.Member.Role;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,8 +45,8 @@ public class MemberDto implements UserDetails {
                 .password(member.getPassword())
                 .nickname(member.getNickname())
                 .mail(member.getMail())
-                //.school(member.getSchool().getName())
-                //.major(member.getMajor().getName())
+                .school(member.getSchool().getName())
+                .major(member.getMajor().getName())
                 .locked(member.isLocked())
                 .createAt(member.getCreateAt())
                 .updateAt(member.getUpdateAt())

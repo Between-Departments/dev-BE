@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.entity;
 
+import com.gwakkili.devbe.entity.Member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

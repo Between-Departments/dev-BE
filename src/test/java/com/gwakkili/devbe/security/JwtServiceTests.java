@@ -2,7 +2,7 @@ package com.gwakkili.devbe.security;
 
 import com.gwakkili.devbe.dto.MemberDto;
 import com.gwakkili.devbe.entity.RefreshToken;
-import com.gwakkili.devbe.entity.Role;
+import com.gwakkili.devbe.entity.Member.Role;
 import com.gwakkili.devbe.repository.RefreshTokenRepository;
 import com.gwakkili.devbe.security.service.JwtService;
 import io.jsonwebtoken.Claims;
