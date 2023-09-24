@@ -17,5 +17,4 @@ public class School {
     String name;
 
     String mail;
-
 }

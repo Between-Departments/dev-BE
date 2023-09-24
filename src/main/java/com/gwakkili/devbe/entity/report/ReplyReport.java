@@ -13,23 +13,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ReplyReport extends BaseEntity {
+public class ReplyReport extends Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long replyReportId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member reporter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rely_id", nullable = false)
     private Reply reply;
 
-    @Enumerated(value = EnumType.STRING)
-    private ReportType reportType;
-
-    private String content;
 
 }
