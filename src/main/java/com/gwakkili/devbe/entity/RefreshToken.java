@@ -1,6 +1,5 @@
 package com.gwakkili.devbe.entity;
 
-import com.gwakkili.devbe.entity.Member.Role;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -17,7 +16,7 @@ public class RefreshToken {
     @Id
     private String mail;
 
-    private Set<Role> roles;
+    private Set<Member.Role> roles;
 
     private String token;
 

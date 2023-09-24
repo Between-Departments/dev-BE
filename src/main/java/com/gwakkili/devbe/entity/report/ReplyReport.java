@@ -1,7 +1,5 @@
 package com.gwakkili.devbe.entity.report;
 
-import com.gwakkili.devbe.entity.BaseEntity;
-import com.gwakkili.devbe.entity.Member.Member;
 import com.gwakkili.devbe.entity.Reply;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

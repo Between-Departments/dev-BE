@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.security;
 
 import com.gwakkili.devbe.dto.MemberDto;
-import com.gwakkili.devbe.entity.Member.Role;
+import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.repository.RefreshTokenRepository;
 import com.gwakkili.devbe.security.service.JwtService;
 import org.junit.jupiter.api.DisplayName;
@@ -47,7 +47,7 @@ public class RefreshTokenAuthenticationTests {
         return MemberDto.builder()
                 .mail("test@awakkili.com")
                 .nickname("testUser")
-                .roles(Set.of(Role.ROLE_USER))
+                .roles(Set.of(Member.Role.ROLE_USER))
                 .build();
     }
 

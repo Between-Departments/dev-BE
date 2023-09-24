@@ -1,8 +1,8 @@
 package com.gwakkili.devbe.security.service;
 
 import com.gwakkili.devbe.dto.MemberDto;
+import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.entity.RefreshToken;
-import com.gwakkili.devbe.entity.Member.Role;
 import com.gwakkili.devbe.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -62,7 +62,7 @@ public class JwtService {
     // access token 생성
     public String generateAccessToken(MemberDto memberDto){
         String roles = memberDto.getRoles().stream()
-                .map(Role::name)
+                .map(Member.Role::name)
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
@@ -99,8 +99,8 @@ public class JwtService {
         //jwt token 복호화
         Claims claims = getClaims(token);
         String mail = claims.getSubject();
-        Set<Role> roles = Arrays.stream(claims.get("roles").toString().split(","))
-                .map(Role::valueOf).collect(Collectors.toSet());
+        Set<Member.Role> roles = Arrays.stream(claims.get("roles").toString().split(","))
+                .map(Member.Role::valueOf).collect(Collectors.toSet());
         UserDetails principal = MemberDto.builder().mail(mail).roles(roles).build();
         return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }

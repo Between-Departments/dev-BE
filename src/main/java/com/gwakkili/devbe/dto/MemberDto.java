@@ -1,7 +1,6 @@
 package com.gwakkili.devbe.dto;
 
-import com.gwakkili.devbe.entity.Member.Member;
-import com.gwakkili.devbe.entity.Member.Role;
+import com.gwakkili.devbe.entity.Member;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,7 +32,7 @@ public class MemberDto implements UserDetails {
 
     private boolean locked;
 
-    private Set<Role> roles = new HashSet<>();
+    private Set<Member.Role> roles = new HashSet<>();
 
     private LocalDateTime createAt;
 

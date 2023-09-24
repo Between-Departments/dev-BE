@@ -1,8 +1,7 @@
 package com.gwakkili.devbe.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwakkili.devbe.entity.Member.Member;
-import com.gwakkili.devbe.entity.Member.Role;
+import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +49,7 @@ public class MailPasswordAuthenticationTests {
             return   Member.builder()
                     .mail("member@test.com")
                     .nickname("member")
-                    .roles(Set.of(Role.ROLE_USER))
+                    .roles(Set.of(Member.Role.ROLE_USER))
                     .password(passwordEncoder.encode("1111"))
                     .locked(locked)
                     .build();

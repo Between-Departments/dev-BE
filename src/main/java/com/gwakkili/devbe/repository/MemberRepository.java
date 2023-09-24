@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.repository;
 
-import com.gwakkili.devbe.entity.Member.Member;
+import com.gwakkili.devbe.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
