@@ -7,6 +7,6 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ImageService {
-    List<String> upload(MultipartFile[] images) throws IOException;
+    List<String> upload(List<MultipartFile> images) throws IOException;
     void delete(String ImgName);
 }

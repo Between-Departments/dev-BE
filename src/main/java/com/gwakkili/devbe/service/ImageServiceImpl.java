@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.service;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -27,10 +28,10 @@ public class ImageServiceImpl implements ImageService{
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    private final AmazonS3Client amazonS3Client;
+    private final AmazonS3 amazonS3;
 
     @Override
-    public List<String> upload(MultipartFile[] multipartFiles) throws IOException {
+    public List<String> upload(List<MultipartFile> multipartFiles) throws IOException {
 
 
         List<String> imageUrls = new ArrayList<>();
@@ -42,6 +43,8 @@ public class ImageServiceImpl implements ImageService{
             String originalName = multipartFile.getOriginalFilename();
             String imageUri = getUploadPath(originalName);
 
+            System.out.println(originalName);
+
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(multipartFile.getSize());
             objectMetadata.setContentType(multipartFile.getContentType());
@@ -51,12 +54,12 @@ public class ImageServiceImpl implements ImageService{
                 System.out.println(imageUri);
 
                 // S3에 폴더 및 파일 업로드
-                amazonS3Client.putObject(
+                amazonS3.putObject(
                         new PutObjectRequest(bucket, imageUri, inputStream, objectMetadata));
 
 
                 // S3에 업로드한 image URL
-                imageUrls.add(amazonS3Client.getUrl(bucket, imageUri).toString());
+                imageUrls.add(amazonS3.getUrl(bucket, imageUri).toString());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -79,6 +82,6 @@ public class ImageServiceImpl implements ImageService{
     public void delete(String imgUrl){
         String splitStr = ".com/";
         String fileName = imgUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
-        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 }

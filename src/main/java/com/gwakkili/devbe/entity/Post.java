@@ -3,6 +3,9 @@ package com.gwakkili.devbe.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,6 +17,7 @@ public class Post extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id",nullable = false)
+
     private Member writer;
 
     @Enumerated(EnumType.STRING)

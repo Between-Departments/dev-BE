@@ -20,7 +20,8 @@ public class ImageController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public List<String> upload(MultipartFile[] multipartFiles) throws IOException {
+    public List<String> upload(@RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles) throws IOException {
+        log.info("이미지 업로드 요청");
         return imageService.upload(multipartFiles);
     }
 
