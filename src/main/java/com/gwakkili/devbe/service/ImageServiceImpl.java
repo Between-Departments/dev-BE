@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.exception.customExcption.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,21 +37,18 @@ public class ImageServiceImpl implements ImageService{
         List<String> imageUrls = new ArrayList<>();
         for(MultipartFile multipartFile: multipartFiles){
             if(!multipartFile.getContentType().startsWith("image")){
-                throw new IllegalArgumentException("이미지 파일이 아닙니다.");
+                throw new CustomException(ExceptionCode.NOT_IMAGE);
             }
 
             String originalName = multipartFile.getOriginalFilename();
             String imageUri = getUploadPath(originalName);
 
-            System.out.println(originalName);
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(multipartFile.getSize());
             objectMetadata.setContentType(multipartFile.getContentType());
 
             try (InputStream inputStream = multipartFile.getInputStream()) {
-
-                System.out.println(imageUri);
 
                 // S3에 폴더 및 파일 업로드
                 amazonS3.putObject(
@@ -60,8 +59,7 @@ public class ImageServiceImpl implements ImageService{
                 imageUrls.add(amazonS3.getUrl(bucket, imageUri).toString());
 
             } catch (IOException e) {
-                e.printStackTrace();
-                log.error("Filed upload failed", e);
+                throw new CustomException(ExceptionCode.FAIL_UPLOAD);
             }
 
         }

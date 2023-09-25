@@ -67,5 +67,4 @@ public class ImageControllerTest {
                 .andExpect(status().isCreated())
                 .andDo(print());
     }
-
 }
