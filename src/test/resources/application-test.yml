@@ -15,7 +15,7 @@ spring:
     password:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -28,10 +28,20 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: debug
+    org.hibernate.SQL: info
     org.hibernate.type: trace
 
 jwt:
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   access_token_expire_time: 1800
   refresh_token_expire_time: 604800
+
+cloud:
+  aws:
+    s3:
+      bucket: test-bucket
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
