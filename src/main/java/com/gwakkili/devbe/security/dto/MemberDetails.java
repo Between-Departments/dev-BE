@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.dto;
+package com.gwakkili.devbe.security.dto;
 
 import com.gwakkili.devbe.entity.Member;
 import lombok.*;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class MemberDto implements UserDetails {
+public class MemberDetails implements UserDetails {
 
     private long memberId;
 
@@ -38,8 +38,8 @@ public class MemberDto implements UserDetails {
 
     private LocalDateTime updateAt;
 
-    public static MemberDto of(Member member){
-        return MemberDto.builder()
+    public static MemberDetails of(Member member){
+        return MemberDetails.builder()
                 .memberId(member.getMemberId())
                 .password(member.getPassword())
                 .nickname(member.getNickname())
