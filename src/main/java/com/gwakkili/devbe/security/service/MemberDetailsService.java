@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.service;
+package com.gwakkili.devbe.security.service;
 
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.entity.Member;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class MemberService implements UserDetailsService {
+public class MemberDetailsService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
