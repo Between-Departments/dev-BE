@@ -3,7 +3,7 @@ package com.gwakkili.devbe.service;
 import com.gwakkili.devbe.entity.MailAuthKey;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.AuthKeyExpireException;
-import com.gwakkili.devbe.exception.customExcption.UnupportedMailException;
+import com.gwakkili.devbe.exception.customExcption.UnsupportedMailException;
 import com.gwakkili.devbe.repository.MailAuthKeyRepository;
 import com.gwakkili.devbe.repository.SchoolRepository;
 import jakarta.mail.MessagingException;
@@ -42,7 +42,7 @@ public class MailServiceImpl implements MailService{
      */
     @Override
     public void send(String mail) throws MessagingException, UnsupportedEncodingException {
-        if(!schoolRepository.existsByMail(mail)) throw new UnupportedMailException(ExceptionCode.UNSUPPORTED_MAIL);
+        if(!schoolRepository.existsByMail(mail)) throw new UnsupportedMailException(ExceptionCode.UNSUPPORTED_MAIL);
 
         String authKey = UUID.randomUUID().toString();
 
@@ -71,7 +71,7 @@ public class MailServiceImpl implements MailService{
     @Override
     public boolean checkAuthKey(String mail, String authKey) {
         Optional<MailAuthKey> result = mailAuthKeyRepository.findById(mail);
-        MailAuthKey mailAuthKey = result.orElseThrow(() -> new AuthKeyExpireException(ExceptionCode.AUTHENTICATION_FAILURE));
+        MailAuthKey mailAuthKey = result.orElseThrow(() -> new AuthKeyExpireException(ExceptionCode.MAIL_AUTH_LINK_EXPIRE));
         if(mailAuthKey.getAuthKey().equals(authKey)){
             mailAuthKey.setAuth(true);
             mailAuthKeyRepository.save(mailAuthKey);
@@ -88,7 +88,7 @@ public class MailServiceImpl implements MailService{
     @Override
     public boolean checkAuthComplete(String mail) {
         Optional<MailAuthKey> result = mailAuthKeyRepository.findById(mail);
-        MailAuthKey mailAuthKey = result.orElseThrow(() -> new AuthKeyExpireException(ExceptionCode.AUTHENTICATION_FAILURE));
+        MailAuthKey mailAuthKey = result.orElseThrow(() -> new AuthKeyExpireException(ExceptionCode.MAIL_AUTH_LINK_EXPIRE));
         return mailAuthKey.isAuth();
     }
 }

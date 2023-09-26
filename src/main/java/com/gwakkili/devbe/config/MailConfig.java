@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.config;
 
+import com.gwakkili.devbe.util.YamlPropertySourceFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:mail.yml")
+@PropertySource(value = "classpath:mail.yml", factory = YamlPropertySourceFactory.class)
 public class MailConfig {
 
     @Value("${mail.smtp.port}")
@@ -22,7 +23,7 @@ public class MailConfig {
     @Value("${mail.smtp.starttls.enable}")
     private boolean starttls;
     @Value("${mail.smtp.starttls.required}")
-    private boolean startlls_required;
+    private boolean starttls_required;
     @Value("${mail.smtp.socketFactory.fallback}")
     private boolean fallback;
     @Value("${AdminMail.id}")
@@ -47,7 +48,7 @@ public class MailConfig {
         pt.put("mail.smtp.socketFactory.port", socketPort);
         pt.put("mail.smtp.auth", auth);
         pt.put("mail.smtp.starttls.enable", starttls);
-        pt.put("mail.smtp.starttls.required", startlls_required);
+        pt.put("mail.smtp.starttls.required", starttls_required);
         pt.put("mail.smtp.socketFactory.fallback",fallback);
         pt.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         return pt;

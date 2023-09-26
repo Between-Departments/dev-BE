@@ -2,7 +2,7 @@ package com.gwakkili.devbe.service;
 
 import com.gwakkili.devbe.entity.MailAuthKey;
 import com.gwakkili.devbe.exception.customExcption.AuthKeyExpireException;
-import com.gwakkili.devbe.exception.customExcption.UnupportedMailException;
+import com.gwakkili.devbe.exception.customExcption.UnsupportedMailException;
 import com.gwakkili.devbe.repository.MailAuthKeyRepository;
 import com.gwakkili.devbe.repository.SchoolRepository;
 import jakarta.mail.MessagingException;
@@ -62,7 +62,7 @@ public class MailServiceTests {
             given(schoolRepository.existsByMail(mail)).willReturn(false);
 
             //when, then
-            Assertions.assertThatThrownBy(() -> mailService.send(mail)).isInstanceOf(UnupportedMailException.class);
+            Assertions.assertThatThrownBy(() -> mailService.send(mail)).isInstanceOf(UnsupportedMailException.class);
         }
     }
 
