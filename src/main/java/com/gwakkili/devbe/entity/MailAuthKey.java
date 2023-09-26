@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.entity;
 
-import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
@@ -17,8 +17,12 @@ public class MailAuthKey {
 
     String authKey;
 
-    boolean isAuth;
+    boolean Auth;
 
     @TimeToLive
     private long expiredTime;
+
+    public void setAuth(boolean auth) {
+        Auth = auth;
+    }
 }
