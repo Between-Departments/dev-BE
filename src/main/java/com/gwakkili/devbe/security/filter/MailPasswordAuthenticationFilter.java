@@ -1,9 +1,7 @@
 package com.gwakkili.devbe.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwakkili.devbe.dto.MemberDto;
-import com.gwakkili.devbe.exception.ExceptionCode;
-import com.gwakkili.devbe.exception.customExcption.IllegalAuthenticationFormatException;
+import com.gwakkili.devbe.security.dto.MemberDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +13,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.IOException;
 
@@ -35,8 +32,8 @@ public class MailPasswordAuthenticationFilter extends UsernamePasswordAuthentica
         //로그인 요청 Method가 Post가 아니면
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            MemberDto memberDto = objectMapper.readValue(request.getInputStream(), MemberDto.class);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberDto.getUsername(), memberDto.getPassword());
+            MemberDetails memberDetails = objectMapper.readValue(request.getInputStream(), MemberDetails.class);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberDetails.getUsername(), memberDetails.getPassword());
             return super.getAuthenticationManager().authenticate(authenticationToken);
         } catch (IOException e) {
             throw new AuthenticationServiceException("잘못된 로그인 요청 형식입니다.");

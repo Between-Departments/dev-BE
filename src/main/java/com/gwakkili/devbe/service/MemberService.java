@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.service;
 
-import com.gwakkili.devbe.dto.MemberDto;
+import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +41,6 @@ public class MemberService implements UserDetailsService {
         Optional<Member> result = memberRepository.findByMail(username);
         if(result.isEmpty()) throw new UsernameNotFoundException("아이디를 찾울 수 없습니다.");
         Member member = result.get();
-        return MemberDto.of(member);
+        return MemberDetails.of(member);
     }
 }

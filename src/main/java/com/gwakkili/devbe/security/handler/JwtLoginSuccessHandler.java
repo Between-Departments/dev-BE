@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.security.handler;
 
-import com.gwakkili.devbe.dto.MemberDto;
+import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.security.service.JwtService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,9 +31,9 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        MemberDto memberDto = (MemberDto) authentication.getPrincipal();
-        String accessToken = jwtService.generateAccessToken(memberDto);
-        String refreshToken = jwtService.generateRefreshToken(memberDto);
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        String accessToken = jwtService.generateAccessToken(memberDetails);
+        String refreshToken = jwtService.generateRefreshToken(memberDetails);
         response.addHeader("Authorization", "Bearer " + accessToken);
         response.addHeader("RefreshToken", "Bearer "+ refreshToken);
     }

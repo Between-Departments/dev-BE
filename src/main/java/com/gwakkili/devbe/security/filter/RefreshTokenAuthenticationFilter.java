@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.security.filter;
 
-import com.gwakkili.devbe.dto.MemberDto;
+import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.entity.RefreshToken;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.JwtException;
@@ -15,8 +15,6 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import java.io.IOException;
 
 @Slf4j
 public class RefreshTokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -54,7 +52,7 @@ public class RefreshTokenAuthenticationFilter extends AbstractAuthenticationProc
         //redis에 저장되 있는 refresh 토큰과 사용자가 보낸 refresh 토큰 비교
         if(redisRefreshToken == null || !redisRefreshToken.getToken().equals(refreshToken))
             throw new JwtException(ExceptionCode.INVALID_TOKEN);
-        MemberDto memberDto = MemberDto.builder().mail(redisRefreshToken.getMail()).roles(redisRefreshToken.getRoles()).build();
-        return new UsernamePasswordAuthenticationToken(memberDto, "", memberDto.getAuthorities());
+        MemberDetails memberDetails = MemberDetails.builder().mail(redisRefreshToken.getMail()).roles(redisRefreshToken.getRoles()).build();
+        return new UsernamePasswordAuthenticationToken(memberDetails, "", memberDetails.getAuthorities());
     }
 }

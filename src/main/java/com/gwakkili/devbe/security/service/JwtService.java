@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.security.service;
 
-import com.gwakkili.devbe.dto.MemberDto;
+import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.entity.RefreshToken;
 import com.gwakkili.devbe.repository.RefreshTokenRepository;
@@ -60,13 +60,13 @@ public class JwtService {
     }
 
     // access token 생성
-    public String generateAccessToken(MemberDto memberDto){
-        String roles = memberDto.getRoles().stream()
+    public String generateAccessToken(MemberDetails memberDetails){
+        String roles = memberDetails.getRoles().stream()
                 .map(Member.Role::name)
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject(memberDto.getUsername())
+                .setSubject(memberDetails.getUsername())
                 .claim("roles", roles)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -74,20 +74,20 @@ public class JwtService {
     }
 
     // refresh token 생성
-    public String generateRefreshToken(MemberDto memberDto){
+    public String generateRefreshToken(MemberDetails memberDetails){
 
         log.info("rt 만료시간: {}",REFRESH_TOKEN_EXPIRE_TIME);
         // refresh 토큰 생성
         String token = Jwts.builder()
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
-                .setSubject(memberDto.getUsername())
+                .setSubject(memberDetails.getUsername())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         // refresh 토큰 저장
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(token)
-                .mail(memberDto.getMail())
-                .roles(memberDto.getRoles())
+                .mail(memberDetails.getMail())
+                .roles(memberDetails.getRoles())
                 .expiredTime(REFRESH_TOKEN_EXPIRE_TIME/1000)
                 .build();
         refreshTokenRepository.save(refreshToken);
@@ -101,7 +101,7 @@ public class JwtService {
         String mail = claims.getSubject();
         Set<Member.Role> roles = Arrays.stream(claims.get("roles").toString().split(","))
                 .map(Member.Role::valueOf).collect(Collectors.toSet());
-        UserDetails principal = MemberDto.builder().mail(mail).roles(roles).build();
+        UserDetails principal = MemberDetails.builder().mail(mail).roles(roles).build();
         return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }
 

@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.security;
 
-import com.gwakkili.devbe.dto.MemberDto;
+import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.repository.RefreshTokenRepository;
 import com.gwakkili.devbe.security.service.JwtService;
@@ -43,8 +43,8 @@ public class RefreshTokenAuthenticationTests {
         this.jwtService = new JwtService(key,accessTokenExpireTime, refreshExpireTime, refreshTokenRepository);
     }
 
-    private MemberDto getMemberDto(){
-        return MemberDto.builder()
+    private MemberDetails getMemberDto(){
+        return MemberDetails.builder()
                 .mail("test@awakkili.com")
                 .nickname("testUser")
                 .roles(Set.of(Member.Role.ROLE_USER))
@@ -56,9 +56,9 @@ public class RefreshTokenAuthenticationTests {
     public void successAuthenticationTest() throws Exception {
         //given
         setExpireTime(10, 600);
-        MemberDto memberDto = getMemberDto();
-        String refreshToken = jwtService.generateRefreshToken(memberDto);
-        String accessToken = jwtService.generateAccessToken(memberDto);
+        MemberDetails memberDetails = getMemberDto();
+        String refreshToken = jwtService.generateRefreshToken(memberDetails);
+        String accessToken = jwtService.generateAccessToken(memberDetails);
 
         //when, then
         mockMvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON)
@@ -77,9 +77,9 @@ public class RefreshTokenAuthenticationTests {
     public void failAuthenticationByInvalidToken() throws Exception {
         //given
         setExpireTime(10, 600);
-        MemberDto memberDto = getMemberDto();
-        String refreshToken = jwtService.generateRefreshToken(memberDto);
-        String accessToken = jwtService.generateAccessToken(memberDto);
+        MemberDetails memberDetails = getMemberDto();
+        String refreshToken = jwtService.generateRefreshToken(memberDetails);
+        String accessToken = jwtService.generateAccessToken(memberDetails);
 
         //when,then
         mockMvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON)
@@ -95,9 +95,9 @@ public class RefreshTokenAuthenticationTests {
     public void failAuthenticationByExpireToken() throws Exception {
         //given
         setExpireTime(1, 1);
-        MemberDto memberDto = getMemberDto();
-        String refreshToken = jwtService.generateRefreshToken(memberDto);
-        String accessToken = jwtService.generateAccessToken(memberDto);
+        MemberDetails memberDetails = getMemberDto();
+        String refreshToken = jwtService.generateRefreshToken(memberDetails);
+        String accessToken = jwtService.generateAccessToken(memberDetails);
         Thread.sleep(1000);
         //when, then
         mockMvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON)

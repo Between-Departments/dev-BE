@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.security;
 
-import com.gwakkili.devbe.dto.MemberDto;
+import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.entity.Member;
 import com.gwakkili.devbe.entity.RefreshToken;
 import com.gwakkili.devbe.repository.RefreshTokenRepository;
@@ -40,8 +40,8 @@ public class JwtServiceTests {
         this.jwtService = new JwtService(key, accessTokenExpireTime, refreshTokenExpireTime, refreshTokenRepository);
     }
 
-    private MemberDto getMemberDto(){
-        return MemberDto.builder()
+    private MemberDetails getMemberDto(){
+        return MemberDetails.builder()
                 .mail("test@awakkili.com")
                 .roles(Set.of(Member.Role.ROLE_USER))
                 .build();
@@ -51,25 +51,25 @@ public class JwtServiceTests {
     @DisplayName("access token 생성")
     void generateAccessTokenTest(){
         //given
-        MemberDto memberDto = getMemberDto();
+        MemberDetails memberDetails = getMemberDto();
         //when
-        String accessToken = jwtService.generateAccessToken(memberDto);
+        String accessToken = jwtService.generateAccessToken(memberDetails);
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
 
         //then
-        Assertions.assertThat(claims.getSubject()).isEqualTo(memberDto.getUsername());
+        Assertions.assertThat(claims.getSubject()).isEqualTo(memberDetails.getUsername());
     }
 
     @Test
     @DisplayName("refreshToken 생성")
     void generateRefreshTokenTest(){
         //given
-        MemberDto memberDto = getMemberDto();
+        MemberDetails memberDetails = getMemberDto();
 
-        String accessToken = jwtService.generateAccessToken(memberDto);
+        String accessToken = jwtService.generateAccessToken(memberDetails);
         //when
-        String refreshToken = jwtService.generateRefreshToken(memberDto);
+        String refreshToken = jwtService.generateRefreshToken(memberDetails);
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key).build().parseClaimsJws(refreshToken).getBody();
         //then
@@ -81,16 +81,16 @@ public class JwtServiceTests {
     void getAuthenticationTest(){
 
         //given
-        MemberDto memberDto = getMemberDto();
+        MemberDetails memberDetails = getMemberDto();
 
-        String accessToken = jwtService.generateAccessToken(memberDto);
+        String accessToken = jwtService.generateAccessToken(memberDetails);
 
         //when
         Authentication authentication = jwtService.getAuthentication(accessToken);
-        MemberDto expectedMemberDto = (MemberDto)authentication.getPrincipal();
+        MemberDetails expectedMemberDetails = (MemberDetails)authentication.getPrincipal();
 
         //then
-        Assertions.assertThat(memberDto).usingRecursiveComparison().isEqualTo(expectedMemberDto);
+        Assertions.assertThat(memberDetails).usingRecursiveComparison().isEqualTo(expectedMemberDetails);
     }
 
     @Test
@@ -98,15 +98,15 @@ public class JwtServiceTests {
     void getRefreshToken(){
 
         //given
-        MemberDto memberDto = getMemberDto();
-        String refreshToken = jwtService.generateRefreshToken(memberDto);
+        MemberDetails memberDetails = getMemberDto();
+        String refreshToken = jwtService.generateRefreshToken(memberDetails);
 
         //when
-        RefreshToken findRefreshToken = jwtService.getRefreshToken(memberDto.getMail());
+        RefreshToken findRefreshToken = jwtService.getRefreshToken(memberDetails.getMail());
 
         //then
         Assertions.assertThat(findRefreshToken.getToken()).isEqualTo(refreshToken);
-        Assertions.assertThat(findRefreshToken.getMail()).isEqualTo(memberDto.getMail());
+        Assertions.assertThat(findRefreshToken.getMail()).isEqualTo(memberDetails.getMail());
 
     }
 
