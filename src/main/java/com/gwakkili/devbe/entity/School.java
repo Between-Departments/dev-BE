@@ -14,6 +14,7 @@ public class School {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long schoolId;
 
+    @Column(unique = true)
     String name;
 
     String mail;
