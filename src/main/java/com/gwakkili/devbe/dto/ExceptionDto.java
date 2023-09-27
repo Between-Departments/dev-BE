@@ -37,9 +37,10 @@ public class ExceptionDto {
         this.code = code.getCode();
         this.message = code.getMessage();
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        this.fieldErrors  = fieldErrors.stream().collect(Collectors.toMap(
+        this.fieldErrors  = fieldErrors.stream().distinct().collect(Collectors.toMap(
                 FieldError::getField,
-                DefaultMessageSourceResolvable::getDefaultMessage
+                FieldError::getDefaultMessage,
+                (f1, f2) -> f1
         ));
     }
 }
