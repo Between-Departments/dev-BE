@@ -29,15 +29,12 @@ public class Member extends BaseEntity {
 
     private String password;
 
-    @OneToOne
-    @JoinColumn(name = "school_id")
-    private School school;
+    private String school;
 
-    @OneToOne
-    @JoinColumn(name = "major_id")
-    private Major major;
+    private String major;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name="member_role", joinColumns = @JoinColumn(name= "member_id"))
     private Set<Role> roles = new HashSet<>();
@@ -47,6 +44,10 @@ public class Member extends BaseEntity {
     private boolean locked;
 
     private LocalDateTime deleteAt;
+
+    public void addRole(Role role){
+        this.roles.add(role);
+    }
 
     @RequiredArgsConstructor
     @Getter
