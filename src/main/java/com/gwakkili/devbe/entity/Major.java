@@ -10,7 +10,6 @@ import lombok.*;
 @Builder
 public class Major {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long majorId;
@@ -18,10 +17,11 @@ public class Major {
     @Enumerated(EnumType.STRING)
     Category category;
 
+    @Column(unique = true)
     String name;
 
     @RequiredArgsConstructor
-    enum Category{
+    public enum Category{
         SOCIAL("사회 계열"),
         ENGINEERING("공학 계열"),
         EDUCATION("교육 계열"),
