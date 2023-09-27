@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Slf4j
+// RefreshToken 을 이용하여 인증을 진행하는 filter
 public class RefreshTokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     private final JwtService jwtService;
 
@@ -47,11 +48,15 @@ public class RefreshTokenAuthenticationFilter extends AbstractAuthenticationProc
             throw new JwtException(ExceptionCode.EXPIRED_TOKEN);
         }
 
+        // 사용자에게 받은 refreshToken에서 mail을 추출
         String mail = jwtService.getClaims(refreshToken).getSubject();
-        RefreshToken redisRefreshToken = jwtService.getRefreshToken(mail);
+
         //redis에 저장되 있는 refresh 토큰과 사용자가 보낸 refresh 토큰 비교
+        RefreshToken redisRefreshToken = jwtService.getRefreshToken(mail);
         if(redisRefreshToken == null || !redisRefreshToken.getToken().equals(refreshToken))
             throw new JwtException(ExceptionCode.INVALID_TOKEN);
+
+        //redis에 저장되어 있는 값으로 AuthenticationToken 생성
         MemberDetails memberDetails = MemberDetails.builder().mail(redisRefreshToken.getMail()).roles(redisRefreshToken.getRoles()).build();
         return new UsernamePasswordAuthenticationToken(memberDetails, "", memberDetails.getAuthorities());
     }

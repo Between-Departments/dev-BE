@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import java.io.IOException;
 
 @Slf4j
+// access token을 이용하여
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final JwtService jwtService;
@@ -37,15 +38,17 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
             return;
         }
+        //access token 유효성 검증
         String validateAccessToken = jwtService.validateToken(accessToken);
         AuthenticationEntryPoint authenticationEntryPoint = getAuthenticationEntryPoint();
-        // access token 이 없거나 유효하지 않으면
+        // access token 이 없거나 유효하지 않으면 예외 발생
         if(validateAccessToken.equals("INVALID")) {
             authenticationEntryPoint.commence(request, response, new JwtException(ExceptionCode.INVALID_TOKEN));
-        // access token 이 만료되었다면
+        // access token 이 만료되었다면 예외 발생
         }else if(validateAccessToken.equals("EXPIRE")){
             authenticationEntryPoint.commence(request, response, new JwtException(ExceptionCode.EXPIRED_TOKEN));
         }
+        // 유효한 사용자라면 authentication을 만들고 SecurityContext 등록
         Authentication authentication = jwtService.getAuthentication(accessToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);

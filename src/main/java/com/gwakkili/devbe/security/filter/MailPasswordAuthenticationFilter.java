@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 
 @Slf4j
+// 메일과 비밀번호를 이용하여 인증을 진행하는 filter
 public class MailPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     public MailPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
