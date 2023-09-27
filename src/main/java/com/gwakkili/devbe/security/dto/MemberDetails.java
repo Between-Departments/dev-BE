@@ -24,12 +24,6 @@ public class MemberDetails implements UserDetails {
 
     private String password;
 
-    private String nickname;
-
-    private String school;
-
-    private String major;
-
     private boolean locked;
 
     private Set<Member.Role> roles = new HashSet<>();
@@ -38,17 +32,17 @@ public class MemberDetails implements UserDetails {
 
     private LocalDateTime updateAt;
 
+    private LocalDateTime deleteAt;
+
     public static MemberDetails of(Member member){
         return MemberDetails.builder()
                 .memberId(member.getMemberId())
                 .password(member.getPassword())
-                .nickname(member.getNickname())
                 .mail(member.getMail())
-                .school(member.getSchool().getName())
-                .major(member.getMajor().getName())
                 .locked(member.isLocked())
                 .createAt(member.getCreateAt())
                 .updateAt(member.getUpdateAt())
+                .deleteAt(member.getDeleteAt())
                 .roles(member.getRoles())
                 .build();
     }
@@ -86,6 +80,6 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return deleteAt == null;
     }
 }
