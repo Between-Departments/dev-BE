@@ -1,39 +1,25 @@
 package com.gwakkili.devbe.member;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwakkili.devbe.config.DummyDataProvider;
+import com.gwakkili.devbe.DevBeApplicationTests;
+import com.gwakkili.devbe.config.S3Config;
 import com.gwakkili.devbe.mail.entity.MailAuthKey;
 import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
 import com.gwakkili.devbe.member.dto.MemberSaveDto;
+import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@AutoConfigureMockMvc
-@SpringBootTest
-@Import(DummyDataProvider.class)
-@Transactional
-public class MemberControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
+public class MemberControllerTest extends DevBeApplicationTests {
 
     @Autowired
     MailAuthKeyRepository mailAuthKeyRepository;
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     @DisplayName("회원가입 테스트")
     @Nested
@@ -82,5 +68,17 @@ public class MemberControllerTest {
                     .andExpect(status().isBadRequest())
                     .andDo(print());
         }
+    }
+
+    @Test
+    @DisplayName("나의 유저정보 조회")
+    @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!")
+    public void findMyTest() throws Exception{
+        //given
+        String url = "/members/my";
+        mockMvc.perform(get(url))
+                    .andExpect(jsonPath("mail").value("test@test1.ac.kr"))
+                    .andDo(print());
+
     }
 }
