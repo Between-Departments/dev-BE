@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.security.dto;
 
-import com.gwakkili.devbe.entity.Member;
+import com.gwakkili.devbe.member.entity.Member;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

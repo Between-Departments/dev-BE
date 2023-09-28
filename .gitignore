@@ -41,3 +41,4 @@ src/main/resources/application.yml
 src/main/resources/application-local.yml
 src/test/resources/application.yml
 src/main/resources/mail.yml
+/src/main/java/com/gwakkili/devbe/util/DummyDataProvider.java

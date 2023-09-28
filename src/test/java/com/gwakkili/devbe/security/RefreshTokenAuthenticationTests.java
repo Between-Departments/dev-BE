@@ -1,8 +1,8 @@
 package com.gwakkili.devbe.security;
 
 import com.gwakkili.devbe.security.dto.MemberDetails;
-import com.gwakkili.devbe.entity.Member;
-import com.gwakkili.devbe.repository.RefreshTokenRepository;
+import com.gwakkili.devbe.member.entity.Member;
+import com.gwakkili.devbe.security.repository.RefreshTokenRepository;
 import com.gwakkili.devbe.security.service.JwtService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +46,6 @@ public class RefreshTokenAuthenticationTests {
     private MemberDetails getMemberDto(){
         return MemberDetails.builder()
                 .mail("test@awakkili.com")
-                .nickname("testUser")
                 .roles(Set.of(Member.Role.ROLE_USER))
                 .build();
     }

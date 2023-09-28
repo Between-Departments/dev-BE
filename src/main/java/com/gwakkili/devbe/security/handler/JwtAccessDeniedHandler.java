@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwakkili.devbe.dto.ExceptionDto;
+import com.gwakkili.devbe.exception.dto.ExceptionDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

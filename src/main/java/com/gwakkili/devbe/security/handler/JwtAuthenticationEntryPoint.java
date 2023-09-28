@@ -1,10 +1,9 @@
 package com.gwakkili.devbe.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwakkili.devbe.dto.ExceptionDto;
+import com.gwakkili.devbe.exception.dto.ExceptionDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.JwtException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
