@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.image;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.config.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterAll;
@@ -22,15 +23,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@AutoConfigureMockMvc
-@SpringBootTest
-@Import(S3MockConfig.class)
-@ActiveProfiles("test")
-public class ImageControllerTest {
+public class ImageControllerTest  extends DevBeApplicationTests {
 
 
-    @Autowired
-    MockMvc mockMvc;
 
     private static final String BUCKET_NAME = "test-bucket";
 
