@@ -1,5 +1,7 @@
 package com.gwakkili.devbe.member.service;
 
+import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.dto.MemberDto;
 import com.gwakkili.devbe.member.dto.MemberSaveDto;
 import com.gwakkili.devbe.member.entity.Member;
@@ -40,8 +42,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDto find(String mail) {
-        return null;
+        Member member = memberRepository.findByMail(mail)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        return MemberDto.of(member);
     }
-
 
 }

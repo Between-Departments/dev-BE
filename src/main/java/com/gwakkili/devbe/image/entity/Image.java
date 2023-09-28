@@ -12,6 +12,7 @@ import lombok.*;
 public class Image {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long imageId;
 
     @ManyToOne

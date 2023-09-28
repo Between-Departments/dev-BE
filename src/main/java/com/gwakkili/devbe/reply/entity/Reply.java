@@ -12,6 +12,7 @@ import lombok.*;
 public class Reply extends BaseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long replyId;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -33,4 +33,17 @@ public class MemberDto {
     private LocalDateTime createAt;
 
     private LocalDateTime updateAt;
+
+    public static MemberDto of(Member member){
+        return MemberDto.builder()
+                .memberId(member.getMemberId())
+                .mail(member.getMail())
+                .nickname(member.getNickname())
+                .major(member.getMajor())
+                .school(member.getSchool())
+                .imageUrl(member.getImageUrl())
+                .createAt(member.getCreateAt())
+                .updateAt(member.getUpdateAt())
+                .build();
+    }
 }

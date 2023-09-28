@@ -29,6 +29,7 @@ public enum ExceptionCode {
     // 메일 예외 코드
     UNSUPPORTED_MAIL(HttpStatus.NOT_FOUND, "MAIL_001", "지원하지 않는 학교 메일입니다."),
     MAIL_AUTH_LINK_EXPIRE(HttpStatus.NOT_FOUND, "MAIL_002", "메일 인증 링크가 만료되었습니다."),
+    NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "MEMBER_001", "해당 계정을 찾을 수 없습니다."),
 
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "USER-001", "인증되지 않은 사용자입니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "USER-003", "접근이 거부되었습니다.");

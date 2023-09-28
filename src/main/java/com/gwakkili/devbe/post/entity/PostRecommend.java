@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class PostRecommend {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long memberPostId;
 
     @ManyToOne(fetch = FetchType.LAZY)
