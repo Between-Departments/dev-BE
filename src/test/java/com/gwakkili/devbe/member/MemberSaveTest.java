@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@DisplayName("회원가입 테스트")
 public class MemberSaveTest extends DevBeApplicationTests {
 
     @Autowired
