@@ -45,7 +45,7 @@ public class MemberController {
         try {
             memberService.updatePassword(memberDetails.getMail(), updatePasswordDto);
         }catch (BadCredentialsException e){
-            bindingResult.rejectValue("password", "", e.getMessage());
+            bindingResult.rejectValue("oldPassword", "", e.getMessage());
             throw new BindException(bindingResult);
         }
     }
