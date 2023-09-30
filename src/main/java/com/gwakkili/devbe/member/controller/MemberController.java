@@ -2,6 +2,7 @@ package com.gwakkili.devbe.member.controller;
 
 import com.gwakkili.devbe.member.dto.MemberDto;
 import com.gwakkili.devbe.member.dto.MemberSaveDto;
+import com.gwakkili.devbe.member.dto.NicknameAndImageDto;
 import com.gwakkili.devbe.member.dto.UpdatePasswordDto;
 import com.gwakkili.devbe.member.service.MemberService;
 import com.gwakkili.devbe.security.dto.MemberDetails;
@@ -43,12 +44,26 @@ public class MemberController {
                                @RequestBody @Validated UpdatePasswordDto updatePasswordDto,
                                BindingResult bindingResult) throws BindException {
         try {
-            memberService.updatePassword(memberDetails.getMail(), updatePasswordDto);
+            updatePasswordDto.setMail(memberDetails.getMail());
+            memberService.updatePassword(updatePasswordDto);
         }catch (BadCredentialsException e){
             bindingResult.rejectValue("oldPassword", "", e.getMessage());
             throw new BindException(bindingResult);
         }
     }
+    // 이미지, 닉네임 변경
+    @PatchMapping("/my/image")
+    @PreAuthorize("isAuthenticated()")
+    public NicknameAndImageDto updateNicknameAndImage(@AuthenticationPrincipal MemberDetails memberDetails,
+                                                      @RequestBody @Validated NicknameAndImageDto nicknameAndImageDto){
+        nicknameAndImageDto.setMail(memberDetails.getMail());
+        memberService.updateNicknameAndImage(nicknameAndImageDto);
+        return nicknameAndImageDto;
+    }
 
-
+    //회원 정지
+    @PatchMapping("/{id}/lock")
+    public void lockMember(@PathVariable Long id){
+        memberService.lock(id);
+    }
 }
