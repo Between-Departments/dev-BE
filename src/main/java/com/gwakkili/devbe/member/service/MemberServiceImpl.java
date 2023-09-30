@@ -58,7 +58,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         if(!passwordEncoder.matches(updatePasswordDto.getOldPassword(), member.getPassword()))
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+            throw new BadCredentialsException("현재 비밀번호와 일치하지 않습니다.");
 
         member.setPassword(passwordEncoder.encode(updatePasswordDto.getNewPassword()));
     }
