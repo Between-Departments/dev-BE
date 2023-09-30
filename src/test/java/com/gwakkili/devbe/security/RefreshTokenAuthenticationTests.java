@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.security;
 
+import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.security.repository.RefreshTokenRepository;
@@ -21,13 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
-public class RefreshTokenAuthenticationTests {
+@DisplayName("refresh token 인증 테스트")
+public class RefreshTokenAuthenticationTests extends DevBeApplicationTests {
 
-    @Autowired
-    MockMvc mockMvc;
 
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
