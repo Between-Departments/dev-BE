@@ -22,7 +22,7 @@ public class Major {
 
     @RequiredArgsConstructor
     public enum Category{
-        SOCIAL("사회 계열"),
+        SOCIAL("인문/사회 계열"),
         ENGINEERING("공학 계열"),
         EDUCATION("교육 계열"),
         PHYSICAL("예체능 계열"),
