@@ -59,6 +59,14 @@ public class Member extends BaseEntity {
         this.password = password;
     }
 
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Role {
