@@ -11,7 +11,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
 
 @Configuration
-@PropertySource(value = "/secret/mail.yml", factory = YamlPropertySourceFactory.class)
+@PropertySource(value = "file:/secret/mail.yml", factory = YamlPropertySourceFactory.class)
 public class MailConfig {
 
     @Value("${mail.smtp.port}")
