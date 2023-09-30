@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 @Data
 @AllArgsConstructor
@@ -43,6 +44,8 @@ public class MemberSaveDto {
     @NotBlank
     private String major;
 
+    @NotBlank
+    @URL
     private String imageUrl;
 
 }
