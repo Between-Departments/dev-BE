@@ -47,6 +47,18 @@ public class Member extends BaseEntity {
         this.roles.add(role);
     }
 
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Role {
