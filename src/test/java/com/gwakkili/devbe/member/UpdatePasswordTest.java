@@ -1,0 +1,51 @@
+package com.gwakkili.devbe.member;
+
+import com.gwakkili.devbe.DevBeApplicationTests;
+import com.gwakkili.devbe.member.dto.UpdatePasswordDto;
+import com.gwakkili.devbe.util.WithMockMember;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+public class UpdatePasswordTest extends DevBeApplicationTests {
+
+    @Test
+    @DisplayName("비밀번호 변경 성공")
+    @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!")
+    public void updatePasswordSuccessTest() throws Exception {
+        //given
+        String url = "/members/my/password";
+        UpdatePasswordDto updatePasswordDto = UpdatePasswordDto.builder()
+                .newPassword("b45674567!")
+                .newPasswordConfirm("b45674567!")
+                .oldPassword("a12341234!")
+                .build();
+        String content = objectMapper.writeValueAsString(updatePasswordDto);
+        //when, then
+        mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 실패: 유효성 검사 실패")
+    @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!")
+    public void updatePasswordFailTest() throws Exception {
+        //given
+        String url = "/members/my/password";
+        UpdatePasswordDto updatePasswordDto = UpdatePasswordDto.builder()
+                .newPassword("1")
+                .newPasswordConfirm("b45674568!")
+                .oldPassword("a123451234!")
+                .build();
+        String content = objectMapper.writeValueAsString(updatePasswordDto);
+        //when, then
+        mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+}
