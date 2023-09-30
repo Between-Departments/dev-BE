@@ -6,7 +6,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
-import com.gwakkili.devbe.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
