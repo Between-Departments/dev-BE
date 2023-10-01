@@ -80,8 +80,22 @@ public class DummyDataProvider implements ApplicationRunner {
                 .major("테스트학과1")
                 .school("테스트대학1")
                 .build();
-        member.addRole(Member.Role.ROLE_USER);
+        member.addRole(Member.Role.ROLE_MANAGER);
         memberRepository.save(member);
+
+        List<Member> members = new ArrayList<>();
+        IntStream.rangeClosed(1, 100).forEach(i->{
+            Member member2 = Member.builder()
+                    .mail("test"+i+"@test" + new Random().nextInt(1, 10) + ".ac.kr")
+                    .nickname("테스트멤버" + i)
+                    .password(passwordEncoder.encode("a12341234!"))
+                    .major("테스트학과" + new Random().nextInt(1, 10))
+                    .school("테스트대학" + new Random().nextInt(1, 10))
+                    .build();
+            member2.addRole(Member.Role.ROLE_USER);
+            members.add(member2);
+        });
+        memberRepository.saveAll(members);
     }
 
     @Transactional
