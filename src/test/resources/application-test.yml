@@ -18,7 +18,7 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        #dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
     open-in-view: false
   data:
@@ -28,8 +28,23 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: info
+    org.hibernate.SQL: debug
     org.hibernate.type: trace
+mail:
+  smtp:
+    port: 465
+    auth: true
+    starttls:
+      required: true
+      enable: true
+    socketFactory:
+      class: javax.net.ssl.SSLSocketFactory
+      fallback: false
+      port: 465
+
+AdminMail:
+  id: t3231@naver.com
+  password: 12341234
 
 jwt:
   secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa

@@ -32,6 +32,7 @@ public class MemberSaveTest extends DevBeApplicationTests {
                 .school("테스트대학1")
                 .passwordConfirm("tjr1619132!")
                 .major("테스트학과1")
+                .imageUrl("http://test.com/image.png")
                 .build();
         MailAuthKey mailAuthKey = MailAuthKey.builder()
                 .mail(saveDto.getMail())

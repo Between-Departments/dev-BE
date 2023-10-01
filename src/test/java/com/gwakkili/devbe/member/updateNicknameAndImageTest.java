@@ -25,7 +25,7 @@ public class updateNicknameAndImageTest extends DevBeApplicationTests {
     public void success() throws Exception {
         NicknameAndImageDto nicknameAndImageDto = NicknameAndImageDto.builder()
                 .nickname("newNickname")
-                .imageUrl("/newImageUrl")
+                .imageUrl("http://test.com/newImage.png")
                 .build();
         String content = objectMapper.writeValueAsString(nicknameAndImageDto);
         mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
@@ -41,7 +41,7 @@ public class updateNicknameAndImageTest extends DevBeApplicationTests {
     public void fail() throws Exception{
         NicknameAndImageDto nicknameAndImageDto = NicknameAndImageDto.builder()
                 .nickname("newNickname")
-                .imageUrl("/newImageUrl")
+                .imageUrl("http://test.com/newImage.png")
                 .build();
         String content = objectMapper.writeValueAsString(nicknameAndImageDto);
         mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
