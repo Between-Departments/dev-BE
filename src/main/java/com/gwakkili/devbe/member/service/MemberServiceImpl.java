@@ -1,19 +1,23 @@
 package com.gwakkili.devbe.member.service;
 
+import com.gwakkili.devbe.dto.SliceRequestDto;
+import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
-import com.gwakkili.devbe.member.dto.MemberDto;
-import com.gwakkili.devbe.member.dto.MemberSaveDto;
-import com.gwakkili.devbe.member.dto.NicknameAndImageDto;
-import com.gwakkili.devbe.member.dto.UpdatePasswordDto;
+import com.gwakkili.devbe.member.dto.*;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -75,5 +79,21 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.setLocked(true);
+    }
+
+    @Override
+    public SliceResponseDto<MemberDto, Member> getList(SliceRequestDto sliceRequestDto) {
+
+        String keyword = sliceRequestDto.getKeyword();
+        Pageable pageable = sliceRequestDto.getPageable();
+        Slice<Member> slice;
+
+        System.out.println(pageable);
+        if(StringUtils.hasText(sliceRequestDto.getKeyword())) {
+            slice = memberRepository.findAllByMailContaining(keyword, pageable);
+        } else slice =memberRepository.findAll(pageable);
+
+        Function<Member, MemberDto> fn = (MemberDto::of);
+        return new SliceResponseDto<>(slice, fn);
     }
 }

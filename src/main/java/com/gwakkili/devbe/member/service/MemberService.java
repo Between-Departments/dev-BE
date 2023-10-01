@@ -1,10 +1,9 @@
 package com.gwakkili.devbe.member.service;
 
 
-import com.gwakkili.devbe.member.dto.MemberDto;
-import com.gwakkili.devbe.member.dto.MemberSaveDto;
-import com.gwakkili.devbe.member.dto.NicknameAndImageDto;
-import com.gwakkili.devbe.member.dto.UpdatePasswordDto;
+import com.gwakkili.devbe.dto.SliceRequestDto;
+import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.member.dto.*;
 
 public interface MemberService {
 
@@ -17,5 +16,7 @@ public interface MemberService {
     void updateNicknameAndImage(NicknameAndImageDto nicknameAndImageDto);
 
     void lock(Long id);
+
+    SliceResponseDto  getList(SliceRequestDto sliceRequestDto);
 
 }

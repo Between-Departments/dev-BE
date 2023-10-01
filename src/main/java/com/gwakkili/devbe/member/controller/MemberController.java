@@ -1,9 +1,9 @@
 package com.gwakkili.devbe.member.controller;
 
-import com.gwakkili.devbe.member.dto.MemberDto;
-import com.gwakkili.devbe.member.dto.MemberSaveDto;
-import com.gwakkili.devbe.member.dto.NicknameAndImageDto;
-import com.gwakkili.devbe.member.dto.UpdatePasswordDto;
+import com.gwakkili.devbe.dto.SliceRequestDto;
+import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.member.dto.*;
+import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.service.MemberService;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,15 @@ public class MemberController {
 
     //회원 정지
     @PatchMapping("/{id}/lock")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     public void lockMember(@PathVariable Long id){
         memberService.lock(id);
+    }
+
+    //회원 목록 조회
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    public SliceResponseDto<MemberDto, Member> getList(SliceRequestDto sliceRequestDto){
+        return memberService.getList(sliceRequestDto);
     }
 }
