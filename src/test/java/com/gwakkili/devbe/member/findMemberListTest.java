@@ -11,6 +11,7 @@ import org.springframework.util.MultiValueMap;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("유저 목록조회 테스트")
 public class findMemberListTest extends DevBeApplicationTests {
@@ -24,6 +25,8 @@ public class findMemberListTest extends DevBeApplicationTests {
 
         //when,then
         mockMvc.perform(get(url))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("size").value(10))
                 .andDo(print());
     }
 
@@ -39,6 +42,7 @@ public class findMemberListTest extends DevBeApplicationTests {
 
         //when,then
         mockMvc.perform(get(url).params(params))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
