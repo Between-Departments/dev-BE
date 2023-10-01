@@ -1,5 +1,8 @@
 package com.gwakkili.devbe.security;
 
+import com.gwakkili.devbe.DevBeApplicationTests;
+import com.gwakkili.devbe.config.DummyDataProvider;
+import com.gwakkili.devbe.config.S3MockConfig;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.security.entity.RefreshToken;
@@ -15,13 +18,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.security.Key;
 import java.util.Set;
 
 @SpringBootTest
-public class JwtServiceTests {
+@DisplayName("JWT 서비스 테스트")
+
+public class JwtServiceTests extends DevBeApplicationTests {
 
     private JwtService jwtService;
 

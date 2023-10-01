@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.member.repository.MemberRepository;
@@ -22,13 +23,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Transactional
-public class MailPasswordAuthenticationTests {
+@DisplayName("mail & password 인증 테스트")
+public class MailPasswordAuthenticationTests extends DevBeApplicationTests {
 
-    @Autowired
-    MockMvc mockMvc;
 
     @Autowired
     MemberRepository memberRepository;
@@ -36,8 +33,6 @@ public class MailPasswordAuthenticationTests {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Autowired
-    ObjectMapper objectMapper;
 
     @Nested
     @DisplayName("로그인 테스트")

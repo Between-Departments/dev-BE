@@ -41,3 +41,4 @@ out/
 /src/main/resources/application-local.yml
 /src/test/resources/application.yml
 /src/main/java/com/gwakkili/devbe/util/DummyDataProvider.java
+/src/main/resources/data.sql
