@@ -82,6 +82,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SliceResponseDto<MemberDto, Member> getList(SliceRequestDto sliceRequestDto) {
 
         String keyword = sliceRequestDto.getKeyword();
