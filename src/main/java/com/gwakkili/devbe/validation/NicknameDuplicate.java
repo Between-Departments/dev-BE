@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = MajorValidator.class)
+@Constraint(validatedBy = NicknameDuplicateValidator.class)
 public @interface NicknameDuplicate {
 
     String message() default "이미 가입된 이메일 입니다.";

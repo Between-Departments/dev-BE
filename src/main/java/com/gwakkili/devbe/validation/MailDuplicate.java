@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = MajorValidator.class)
+@Constraint(validatedBy = MailDuplicateValidator.class)
 public @interface MailDuplicate {
 
     String message() default "이미 가입된 메일입니다.";
