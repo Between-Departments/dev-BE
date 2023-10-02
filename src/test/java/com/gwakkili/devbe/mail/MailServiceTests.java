@@ -50,7 +50,7 @@ public class MailServiceTests {
             String mail = "test@test.com";
             MimeMessage mimeMessage = new MimeMessage((Session)null);
             given(javaMailSender.createMimeMessage()).willReturn(mimeMessage);
-            given(schoolRepository.existsByMail(mail)).willReturn(true);
+            given(schoolRepository.existsByMail(anyString())).willReturn(true);
 
             //when, then
             mailService.send(mail);
@@ -60,7 +60,7 @@ public class MailServiceTests {
         public void sendFailUnsupportMailTest() {
             //given
             String mail = "test@test.com";
-            given(schoolRepository.existsByMail(mail)).willReturn(false);
+            given(schoolRepository.existsByMail(anyString())).willReturn(false);
 
             //when, then
             Assertions.assertThatThrownBy(() -> mailService.send(mail)).isInstanceOf(UnsupportedException.class);
