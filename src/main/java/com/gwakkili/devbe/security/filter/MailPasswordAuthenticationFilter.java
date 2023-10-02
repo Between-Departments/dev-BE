@@ -23,7 +23,9 @@ public class MailPasswordAuthenticationFilter extends UsernamePasswordAuthentica
     public MailPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
                                             AuthenticationSuccessHandler successHandler,
                                             AuthenticationFailureHandler failureHandler) {
-        setAuthenticationManager(authenticationManager);
+
+        super(authenticationManager);
+        setFilterProcessesUrl("/api/login");
         setAuthenticationSuccessHandler(successHandler);
         setAuthenticationFailureHandler(failureHandler);
     }

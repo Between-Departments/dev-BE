@@ -24,7 +24,7 @@ public class RefreshTokenAuthenticationFilter extends AbstractAuthenticationProc
     public RefreshTokenAuthenticationFilter(JwtService jwtService,
                                             AuthenticationSuccessHandler successHandler,
                                             AuthenticationFailureHandler failureHandler) {
-        super(new AntPathRequestMatcher("/refresh", "POST"));
+        super(new AntPathRequestMatcher("/api/refresh", "POST"));
         setAuthenticationSuccessHandler(successHandler);
         setAuthenticationFailureHandler(failureHandler);
         this.jwtService = jwtService;
