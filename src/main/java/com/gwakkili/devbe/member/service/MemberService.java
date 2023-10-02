@@ -17,6 +17,10 @@ public interface MemberService {
 
     void lock(Long id);
 
-    SliceResponseDto  getList(SliceRequestDto sliceRequestDto);
+    SliceResponseDto getList(SliceRequestDto sliceRequestDto);
+
+    boolean mailDuplicateCheck(String mail);
+
+    boolean nicknameDuplicateCheck(String nickname);
 
 }

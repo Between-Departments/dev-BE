@@ -90,11 +90,21 @@ public class MemberServiceImpl implements MemberService {
         Slice<Member> slice;
 
         System.out.println(pageable);
-        if(StringUtils.hasText(sliceRequestDto.getKeyword())) {
+        if (StringUtils.hasText(sliceRequestDto.getKeyword())) {
             slice = memberRepository.findAllByMailContaining(keyword, pageable);
-        } else slice =memberRepository.findAll(pageable);
+        } else slice = memberRepository.findAll(pageable);
 
         Function<Member, MemberDto> fn = (MemberDto::of);
         return new SliceResponseDto<>(slice, fn);
+    }
+
+    @Override
+    public boolean mailDuplicateCheck(String mail) {
+        return memberRepository.existsByMail(mail);
+    }
+
+    @Override
+    public boolean nicknameDuplicateCheck(String nickname) {
+        return memberRepository.existsByNickname(nickname);
     }
 }

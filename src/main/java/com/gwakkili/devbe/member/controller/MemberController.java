@@ -46,16 +46,27 @@ public class MemberController {
         try {
             updatePasswordDto.setMail(memberDetails.getMail());
             memberService.updatePassword(updatePasswordDto);
-        }catch (BadCredentialsException e){
+        } catch (BadCredentialsException e) {
             bindingResult.rejectValue("oldPassword", "", e.getMessage());
             throw new BindException(bindingResult);
         }
     }
+
+    @GetMapping("/mail/duplicate")
+    public boolean mailDuplicateCheck(String mail) {
+        return memberService.mailDuplicateCheck(mail);
+    }
+
+    @GetMapping("/nickname/duplicate")
+    public boolean nicknameDuplicateCheck(String nickname) {
+        return memberService.nicknameDuplicateCheck(nickname);
+    }
+
     // 이미지, 닉네임 변경
     @PatchMapping("/my/image")
     @PreAuthorize("isAuthenticated()")
     public NicknameAndImageDto updateNicknameAndImage(@AuthenticationPrincipal MemberDetails memberDetails,
-                                                      @RequestBody @Validated NicknameAndImageDto nicknameAndImageDto){
+                                                      @RequestBody @Validated NicknameAndImageDto nicknameAndImageDto) {
         nicknameAndImageDto.setMail(memberDetails.getMail());
         memberService.updateNicknameAndImage(nicknameAndImageDto);
         return nicknameAndImageDto;

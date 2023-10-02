@@ -11,5 +11,10 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByMail(String mail);
+
     Slice<Member> findAllByMailContaining(String mail, Pageable pageable);
+
+    boolean existsByMail(String mail);
+
+    boolean existsByNickname(String nickname);
 }
