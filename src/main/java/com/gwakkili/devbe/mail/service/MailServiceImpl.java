@@ -5,7 +5,7 @@ import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
 import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
-import com.gwakkili.devbe.major.repository.SchoolRepository;
+import com.gwakkili.devbe.shcool.repository.SchoolRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class MailServiceImpl implements MailService {
         MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, mail);
         message.setSubject("과끼리 인증 링크");
-        message.setText("http://localhost:8080/members/mail/confirm?mail=" + mail + "&authKey=" + authKey, "utf-8", "plain");
+        message.setText("http://43.201.168.231/api/members/mail/confirm?mail=" + mail + "&authKey=" + authKey, "utf-8", "plain");
         message.setFrom(sender);
         mailSender.send(message);
 

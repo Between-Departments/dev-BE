@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.major.repository;
+package com.gwakkili.devbe.shcool.repository;
 
 import com.gwakkili.devbe.shcool.entity.School;
 import org.springframework.data.jpa.repository.JpaRepository;

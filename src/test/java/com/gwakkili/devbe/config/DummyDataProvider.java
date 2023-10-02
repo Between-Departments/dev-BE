@@ -4,9 +4,9 @@ import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.shcool.entity.School;
 import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
-import com.gwakkili.devbe.shcool.repository.MajorRepository;
+import com.gwakkili.devbe.major.repository.MajorRepository;
 import com.gwakkili.devbe.member.repository.MemberRepository;
-import com.gwakkili.devbe.major.repository.SchoolRepository;
+import com.gwakkili.devbe.shcool.repository.SchoolRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;

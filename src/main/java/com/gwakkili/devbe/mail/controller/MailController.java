@@ -22,11 +22,13 @@ public class MailController {
 
     @PostMapping("/send")
     public void send(@Email @RequestParam(value = "mail") String mail) throws MessagingException, UnsupportedEncodingException {
+        log.info("이메일 전송 요청");
         mailService.send(mail);
     }
 
     @GetMapping("/confirm")
     public boolean confirmAuthKey(@RequestParam @Email String mail, String authKey) {
+        log.info("이메일 인증 요청");
         return mailService.checkAuthKey(mail, authKey);
     }
 }
