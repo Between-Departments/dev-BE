@@ -19,7 +19,7 @@ public class MemberSaveTest extends DevBeApplicationTests {
 
     @Autowired
     private MailAuthKeyRepository mailAuthKeyRepository;
-    private  final String url = "/members";
+    private final String url = "/api/members";
 
     @Test
     @DisplayName("성공")
