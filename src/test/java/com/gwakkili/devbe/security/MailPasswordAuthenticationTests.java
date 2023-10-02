@@ -38,7 +38,7 @@ public class MailPasswordAuthenticationTests extends DevBeApplicationTests {
     @DisplayName("로그인 테스트")
     class loginTest{
 
-        private String uri ="/login";
+        private String uri = "/api/login";
 
         private Member makeMember(boolean locked){
             return   Member.builder()

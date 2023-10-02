@@ -34,7 +34,7 @@ public class RefreshTokenAuthenticationTests extends DevBeApplicationTests {
     @Value("${jwt.secret}")
     String key;
 
-    String uri = "/refresh";
+    String uri = "/api/refresh";
 
     private void setExpireTime(long accessTokenExpireTime, long refreshExpireTime){
         this.jwtService = new JwtService(key,accessTokenExpireTime, refreshExpireTime, refreshTokenRepository);

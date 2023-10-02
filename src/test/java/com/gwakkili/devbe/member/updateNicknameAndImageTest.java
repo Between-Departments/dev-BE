@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("닉네임 & 이미지 변경 테스트")
 public class updateNicknameAndImageTest extends DevBeApplicationTests {
 
-    String url = "/members/my/image";
+    String url = "/api/members/my/image";
 
     @Test
     @DisplayName("닉네임 & 이미지 변경 성공")

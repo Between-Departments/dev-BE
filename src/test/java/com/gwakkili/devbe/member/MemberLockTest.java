@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("회원 정지 테스트")
 public class MemberLockTest extends DevBeApplicationTests {
 
-    String url = "/members/2/lock";
+    String url = "/api/members/2/lock";
 
     @Test
     @DisplayName("회원 정지 성공")

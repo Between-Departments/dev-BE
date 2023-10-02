@@ -13,12 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("유저정보 조회 테스트")
 public class findMyMemberTest extends DevBeApplicationTests {
 
+    String url = "/api/members/my";
+
     @Test
     @DisplayName("나의 유저정보 조회")
     @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!")
-    public void findMyTest() throws Exception{
-        //given
-        String url = "/members/my";
+    public void findMyTest() throws Exception {
+
         //when,then
         mockMvc.perform(get(url))
                 .andExpect(jsonPath("mail").value("test@test1.ac.kr"))
@@ -28,8 +29,7 @@ public class findMyMemberTest extends DevBeApplicationTests {
     @Test
     @DisplayName("나의 유저정보 조회 실패: 인증되지 않은 사용자")
     public void findMyMemberFailTest() throws Exception{
-        //given
-        String url = "/members/my";
+
         //when,then
         mockMvc.perform(get(url))
                 .andExpect(status().isUnauthorized())

@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("비밀번호 변경 테스트")
 public class UpdatePasswordTest extends DevBeApplicationTests {
 
-    String url = "/members/my/password";
+    String url = "/api/members/my/password";
 
     @Test
     @DisplayName("비밀번호 변경 성공")

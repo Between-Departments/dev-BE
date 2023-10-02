@@ -53,7 +53,7 @@ public class ImageControllerTest  extends DevBeApplicationTests {
     public void imageUploadTest() throws Exception {
 
         //given
-        String url = "/images";
+        String url = "/api/images";
         MockMultipartFile image1 = getMultipartFile("images", "test1.jpg");
         MockMultipartFile image2 = getMultipartFile("images", "test2.jpg");
 
