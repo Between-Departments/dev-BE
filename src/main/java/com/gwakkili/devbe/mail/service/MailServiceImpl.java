@@ -36,13 +36,15 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 인증 링크 메일을 보내는 메서드
+     *
      * @param mail: 인증 링크를 보낼 메일
      * @throws MessagingException
      * @throws UnsupportedEncodingException
      */
     @Override
-    public void send(String mail) throws MessagingException, UnsupportedEncodingException {
-        if(!schoolRepository.existsByMail(mail)) throw new UnsupportedException(ExceptionCode.UNSUPPORTED_MAIL);
+    public void send(String mail) throws MessagingException {
+        if (!schoolRepository.existsByMail(mail.split("@")[1]))
+            throw new UnsupportedException(ExceptionCode.UNSUPPORTED_MAIL);
 
         String authKey = UUID.randomUUID().toString();
 
@@ -50,7 +52,7 @@ public class MailServiceImpl implements MailService {
         MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, mail);
         message.setSubject("과끼리 인증 링크");
-        message.setText("http://localhost:8080/members/mail/confirm?mail="+mail+"&authKey=" + authKey, "utf-8", "plain");
+        message.setText("http://localhost:8080/members/mail/confirm?mail=" + mail + "&authKey=" + authKey, "utf-8", "plain");
         message.setFrom(sender);
         mailSender.send(message);
 
