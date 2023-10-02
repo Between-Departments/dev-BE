@@ -1,10 +1,7 @@
 package com.gwakkili.devbe.member.dto;
 
 
-import com.gwakkili.devbe.validation.MailAuth;
-import com.gwakkili.devbe.validation.Major;
-import com.gwakkili.devbe.validation.PasswordConfirm;
-import com.gwakkili.devbe.validation.School;
+import com.gwakkili.devbe.validation.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -19,7 +16,7 @@ import org.hibernate.validator.constraints.URL;
 public class MemberSaveDto {
 
     @Email
-    @NotBlank
+    @MailDuplicate
     @MailAuth
     private String mail;
 
@@ -34,6 +31,7 @@ public class MemberSaveDto {
     private String passwordConfirm;
 
     @NotBlank
+    @NicknameDuplicate
     private String nickname;
 
     @School

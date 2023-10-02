@@ -52,7 +52,7 @@ public class MemberSaveTest extends DevBeApplicationTests {
     @DisplayName("유효성 검증 실패")
     public void signUpFailTest() throws Exception {
         MemberSaveDto saveDto = MemberSaveDto.builder()
-                .mail("test123@sun.ac.kr")
+                .mail("test@test1.ac.kr")
                 .password("12341234")
                 .nickname("안녕하세요")
                 .school("없는대학교")
