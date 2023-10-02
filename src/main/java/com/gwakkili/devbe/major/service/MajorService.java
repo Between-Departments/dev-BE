@@ -6,5 +6,4 @@ public interface MajorService {
 
     List<String> getNameList(String keyword);
 
-
 }
