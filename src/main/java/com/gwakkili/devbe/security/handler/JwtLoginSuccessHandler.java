@@ -3,6 +3,7 @@ package com.gwakkili.devbe.security.handler;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.security.service.JwtService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +23,17 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
 
-    /**
-     * Called when a user has been successfully authenticated.
-     *
-     * @param request        the request which caused the successful authentication
-     * @param response       the response
-     * @param authentication the <tt>Authentication</tt> object which was created during
-     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         String accessToken = jwtService.generateAccessToken(memberDetails);
         String refreshToken = jwtService.generateRefreshToken(memberDetails);
+
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+
         response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addHeader("RefreshToken", "Bearer "+ refreshToken);
+        response.addCookie(cookie);
     }
 }
