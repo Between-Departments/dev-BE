@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.mail;
 
+import com.gwakkili.devbe.mail.dto.MailAuthCodeDto;
 import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
@@ -72,36 +73,39 @@ public class MailServiceTests {
     class AuthKeyConfirmTest{
         @Test
         @DisplayName("인증키 확인 성공")
-        public void SuccessAuthKeyConfirm(){
+        public void SuccessAuthKeyConfirm() {
             //given
             String mail = "test@test.com";
-            String authKey = "1234";
-            given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(authKey).build()));
+            String code = "123456";
+            MailAuthCodeDto mailAuthCodeDto = MailAuthCodeDto.builder().mail(mail).code(code).build();
+            given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(code).build()));
             //when, then
-            Assertions.assertThat(mailService.checkAuthCode(mail, authKey)).isTrue();
+            Assertions.assertThat(mailService.checkAuthCode(mailAuthCodeDto)).isTrue();
         }
 
         @Test
         @DisplayName("인증키 확인 실패 : 인증키 불일치")
-        public void failAuthKeyConfirmByDiffAuthKey(){
+        public void failAuthKeyConfirmByDiffAuthKey() {
             //given
             String mail = "test@test.com";
-            String authKey = "1234";
-            String diffAuthKey = "5678";
+            String code = "123456";
+            MailAuthCodeDto mailAuthCodeDto = MailAuthCodeDto.builder().mail(mail).code(code).build();
+            String diffAuthKey = "567891";
             given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(diffAuthKey).build()));
             //when then
-            Assertions.assertThat(mailService.checkAuthCode(mail, authKey)).isFalse();
+            Assertions.assertThat(mailService.checkAuthCode(mailAuthCodeDto)).isFalse();
         }
 
         @Test
         @DisplayName("인증키 확인 실패 : 인증키 만료")
-        public void failAuthKeyConfirmByAuthKeyExpire(){
+        public void failAuthKeyConfirmByAuthKeyExpire() {
             //given
             String mail = "test@test.com";
-            String authKey = "1234";
+            String code = "123456";
+            MailAuthCodeDto mailAuthCodeDto = MailAuthCodeDto.builder().mail(mail).code(code).build();
             given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.empty());
             //when then
-            Assertions.assertThatThrownBy(() -> mailService.checkAuthCode(mail, authKey)).isInstanceOf(NotFoundException.class);
+            Assertions.assertThatThrownBy(() -> mailService.checkAuthCode(mailAuthCodeDto)).isInstanceOf(NotFoundException.class);
         }
     }
 }

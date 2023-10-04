@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.mail.controller;
 
 import com.gwakkili.devbe.exception.dto.ExceptionDto;
+import com.gwakkili.devbe.mail.dto.MailAuthCodeDto;
 import com.gwakkili.devbe.mail.service.MailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -40,11 +41,10 @@ public class MailController {
         mailService.send(mail);
     }
 
-    @GetMapping("/confirm")
+    @PostMapping("/confirm")
     @Operation(summary = "메일 인증")
-    public boolean confirmAuthCode(@Parameter(name = "mail", description = "메일") @Email String mail,
-                                   @Parameter(name = "authCode", description = "인증 코드") String authCode) {
+    public boolean confirmAuthCode(@RequestBody MailAuthCodeDto mailAuthCodeDto) {
         log.info("이메일 인증 요청");
-        return mailService.checkAuthCode(mail, authCode);
+        return mailService.checkAuthCode(mailAuthCodeDto);
     }
 }

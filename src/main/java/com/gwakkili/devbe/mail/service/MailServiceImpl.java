@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.mail.service;
 
+import com.gwakkili.devbe.mail.dto.MailAuthCodeDto;
 import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
@@ -68,18 +69,12 @@ public class MailServiceImpl implements MailService {
         return Integer.toString(code);
     }
 
-    /**
-     * 메일과 인증키를 이용해 인증을 확인하는 메서드
-     *
-     * @param mail     : 인증 확인을 할 메일
-     * @param authCode : 인증 키
-     * @return : 인증키 동일 여부
-     */
+
     @Override
-    public boolean checkAuthCode(String mail, String authCode) {
-        Optional<MailAuthCode> result = mailAuthKeyRepository.findById(mail);
+    public boolean checkAuthCode(MailAuthCodeDto mailAuthCodeDto) {
+        Optional<MailAuthCode> result = mailAuthKeyRepository.findById(mailAuthCodeDto.getMail());
         MailAuthCode mailAuthCode = result.orElseThrow(() -> new NotFoundException(ExceptionCode.MAIL_AUTH_CODE_EXPIRE));
-        if (mailAuthCode.getAuthCode().equals(authCode)) {
+        if (mailAuthCode.getAuthCode().equals(mailAuthCodeDto.getCode())) {
             mailAuthCode.setAuth(true);
             mailAuthKeyRepository.save(mailAuthCode);
             return true;
