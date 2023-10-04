@@ -6,7 +6,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
-import com.gwakkili.devbe.image.dto.ImageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
@@ -34,10 +33,10 @@ public class ImageServiceImpl implements ImageService {
     private final AmazonS3 amazonS3;
 
     @Override
-    public List<ImageDto> upload(List<MultipartFile> multipartFiles) throws IOException {
+    public List<String> upload(List<MultipartFile> multipartFiles) throws IOException {
 
 
-        List<ImageDto> imageDtoList = new ArrayList<>();
+        List<String> imageUrlList = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             // 이미지와 썸네일 이미지 업로드 경로 생성
             String originalName = multipartFile.getOriginalFilename();
@@ -48,12 +47,11 @@ public class ImageServiceImpl implements ImageService {
 
             //이미지와 섬네일 업로드
             String imageUrl = uploadImage(multipartFile, imageUploadPath);
-            String thumbnailUrl = uploadThumbnailImage(multipartFile, thumbnailUploadPath);
+            uploadThumbnailImage(multipartFile, imageUploadPath);
 
-            ImageDto imageDto = ImageDto.builder().imageUrl(imageUrl).thumbnailUrl(thumbnailUrl).build();
-            imageDtoList.add(imageDto);
+            imageUrlList.add(imageUrl);
         }
-        return imageDtoList;
+        return imageUrlList;
     }
 
     private String uploadImage(MultipartFile multipartFile, String uploadPath) {
@@ -72,7 +70,7 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-    private String uploadThumbnailImage(MultipartFile multipartFile, String uploadPath) throws IOException {
+    private void uploadThumbnailImage(MultipartFile multipartFile, String uploadPath) throws IOException {
 
         //썸네일 이미지 생성
         BufferedImage image = ImageIO.read(multipartFile.getInputStream());
@@ -90,7 +88,6 @@ public class ImageServiceImpl implements ImageService {
         // s3에 이미지 저장
         try (InputStream thumbnailInput = new ByteArrayInputStream(bytes);) {
             amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, thumbnailInput, thumbnailMetadata));
-            return amazonS3.getUrl(bucket, uploadPath).toString();
         } catch (IOException e) {
             throw new CustomException(ExceptionCode.FAIL_UPLOAD);
         }

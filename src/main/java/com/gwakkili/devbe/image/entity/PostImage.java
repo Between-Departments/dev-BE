@@ -19,8 +19,10 @@ public class PostImage {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    private String imageUrl;
+    private String url;
 
-    private String thumbnailUrl;
+    public String getThumbnailUrl() {
+        return url.replace("/images/", "/thumbnails/");
+    }
 
 }

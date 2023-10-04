@@ -1,6 +1,5 @@
 package com.gwakkili.devbe.member.dto;
 
-import com.gwakkili.devbe.image.dto.ImageDto;
 import com.gwakkili.devbe.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -35,7 +34,7 @@ public class MemberDto {
     private Set<Member.Role> roles = new HashSet<>();
 
     @Schema(description = "프로필 이미지 url", example = "http://example.com/images/image.jpa")
-    private ImageDto image;
+    private String imageUrl;
 
     @Schema(description = "가입일")
     private LocalDateTime createAt;
@@ -50,6 +49,7 @@ public class MemberDto {
                 .nickname(member.getNickname())
                 .major(member.getMajor())
                 .school(member.getSchool())
+                .imageUrl(member.getImage().getUrl())
                 .createAt(member.getCreateAt())
                 .updateAt(member.getUpdateAt())
                 .build();

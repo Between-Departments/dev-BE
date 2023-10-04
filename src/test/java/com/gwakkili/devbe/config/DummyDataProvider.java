@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.config;
 
+import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.shcool.entity.School;
@@ -81,6 +82,7 @@ public class DummyDataProvider implements ApplicationRunner {
                 .school("테스트대학1")
                 .build();
         member.addRole(Member.Role.ROLE_MANAGER);
+        member.setImage(MemberImage.builder().url("http://test.com/images/image.jpg").build());
         memberRepository.save(member);
 
         List<Member> members = new ArrayList<>();
@@ -93,6 +95,7 @@ public class DummyDataProvider implements ApplicationRunner {
                     .school("테스트대학" + new Random().nextInt(1, 10))
                     .build();
             member2.addRole(Member.Role.ROLE_USER);
+            member2.setImage(MemberImage.builder().url("http://test.com/images/image" + i + ".jpg").build());
             members.add(member2);
         });
         memberRepository.saveAll(members);

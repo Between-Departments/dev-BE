@@ -1,6 +1,5 @@
 package com.gwakkili.devbe.image.controller;
 
-import com.gwakkili.devbe.image.dto.ImageDto;
 import com.gwakkili.devbe.image.service.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,7 +28,7 @@ public class ImageController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "이미지 업로드")
     @ApiResponse(responseCode = "201", description = "이미지 url 리스트", useReturnTypeSchema = true)
-    public List<ImageDto> upload(@RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles) throws IOException {
+    public List<String> upload(@RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles) throws IOException {
         log.info("이미지 업로드 요청");
         return imageService.upload(multipartFiles);
     }

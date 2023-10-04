@@ -19,9 +19,11 @@ public class MemberImage {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    private String imageUrl;
+    private String url;
 
-    private String thumbnailUrl;
+    public String getThumbnailUrl() {
+        return url.replace("/images/", "/thumbnails/");
+    }
 
     public void setMember(Member member) {
         this.member = member;

@@ -4,6 +4,7 @@ import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
+import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.member.dto.*;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
@@ -59,7 +60,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByMail(nicknameAndImageDto.getMail())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.setNickname(nicknameAndImageDto.getNickname());
-        member.setImage(nicknameAndImageDto.getImage().dtoToMemberImage());
+        member.setImage(MemberImage.builder().url(nicknameAndImageDto.getImageUrl()).build());
     }
 
     @Override
