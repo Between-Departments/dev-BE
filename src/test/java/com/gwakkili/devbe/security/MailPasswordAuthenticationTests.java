@@ -66,7 +66,7 @@ public class MailPasswordAuthenticationTests extends DevBeApplicationTests {
             mockMvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON).content(content))
                     .andExpect(status().isOk())
                     .andExpect(header().exists("Authorization"))
-                    .andExpect(header().exists("RefreshToken"))
+                    .andExpect(cookie().exists("RefreshToken"))
                     .andDo(print());
         }
 

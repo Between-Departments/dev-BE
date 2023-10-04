@@ -2,15 +2,10 @@ package com.gwakkili.devbe.exception.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gwakkili.devbe.exception.ExceptionCode;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 
 /**
  * Exception response 형식
@@ -20,27 +15,27 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Schema
 public class ExceptionDto {
+
+    @Schema(description = "예외 코드", example = "COMMON-003")
     private String code;
 
+    @Schema(description = "예외 메세지", example = "입력값이 유효하지 않습니다.")
     private String message;
 
+    @Schema(description = "필드 유효성 검사 예외")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, String> fieldErrors;
 
-    public ExceptionDto(ExceptionCode code){
+    public ExceptionDto(ExceptionCode code) {
         this.code = code.getCode();
         this.message = code.getMessage();
     }
 
-    public ExceptionDto(ExceptionCode code, BindingResult bindingResult){
+    public ExceptionDto(ExceptionCode code, Map<String, String> fieldErrors) {
         this.code = code.getCode();
         this.message = code.getMessage();
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        this.fieldErrors  = fieldErrors.stream().distinct().collect(Collectors.toMap(
-                FieldError::getField,
-                FieldError::getDefaultMessage,
-                (f1, f2) -> f1
-        ));
+        this.fieldErrors = fieldErrors;
     }
 }

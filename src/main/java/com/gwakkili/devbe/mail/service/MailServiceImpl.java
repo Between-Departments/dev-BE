@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.mail.service;
 
-import com.gwakkili.devbe.mail.entity.MailAuthKey;
+import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @RequiredArgsConstructor
 @Service
@@ -46,37 +46,42 @@ public class MailServiceImpl implements MailService {
         if (!schoolRepository.existsByMail(mail.split("@")[1]))
             throw new UnsupportedException(ExceptionCode.UNSUPPORTED_MAIL);
 
-        String authKey = UUID.randomUUID().toString();
+        String authCode = createCode();
 
-        // 메일 전송(html로 변경해야함)
         MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, mail);
-        message.setSubject("과끼리 인증 링크");
-        message.setText("http://43.201.168.231/api/members/mail/confirm?mail=" + mail + "&authKey=" + authKey, "utf-8", "plain");
+        message.setSubject("과끼리 인증 번호");
+        message.setText(authCode);
         message.setFrom(sender);
         mailSender.send(message);
 
         // AuthKey 저장
-        MailAuthKey mailAuthKey  = MailAuthKey.builder()
+        MailAuthCode mailAuthCode = MailAuthCode.builder()
                 .mail(mail)
-                .authKey(authKey)
+                .authCode(authCode)
                 .expiredTime(60 * 60 * 24).build();
-        mailAuthKeyRepository.save(mailAuthKey);
+        mailAuthKeyRepository.save(mailAuthCode);
+    }
+
+    private String createCode() {
+        int code = ThreadLocalRandom.current().nextInt(100000, 1000000);
+        return Integer.toString(code);
     }
 
     /**
      * 메일과 인증키를 이용해 인증을 확인하는 메서드
-     * @param mail : 인증 확인을 할 메일
-     * @param authKey : 인증 키
+     *
+     * @param mail     : 인증 확인을 할 메일
+     * @param authCode : 인증 키
      * @return : 인증키 동일 여부
      */
     @Override
-    public boolean checkAuthKey(String mail, String authKey) {
-        Optional<MailAuthKey> result = mailAuthKeyRepository.findById(mail);
-        MailAuthKey mailAuthKey = result.orElseThrow(() -> new NotFoundException(ExceptionCode.MAIL_AUTH_LINK_EXPIRE));
-        if(mailAuthKey.getAuthKey().equals(authKey)){
-            mailAuthKey.setAuth(true);
-            mailAuthKeyRepository.save(mailAuthKey);
+    public boolean checkAuthCode(String mail, String authCode) {
+        Optional<MailAuthCode> result = mailAuthKeyRepository.findById(mail);
+        MailAuthCode mailAuthCode = result.orElseThrow(() -> new NotFoundException(ExceptionCode.MAIL_AUTH_CODE_EXPIRE));
+        if (mailAuthCode.getAuthCode().equals(authCode)) {
+            mailAuthCode.setAuth(true);
+            mailAuthKeyRepository.save(mailAuthCode);
             return true;
         }
         return false;
@@ -89,8 +94,9 @@ public class MailServiceImpl implements MailService {
      */
     @Override
     public boolean checkAuthComplete(String mail) {
-        Optional<MailAuthKey> result = mailAuthKeyRepository.findById(mail);
-        MailAuthKey mailAuthKey = result.orElseThrow(() -> new NotFoundException(ExceptionCode.MAIL_AUTH_LINK_EXPIRE));
-        return mailAuthKey.isAuth();
+        Optional<MailAuthCode> result = mailAuthKeyRepository.findById(mail);
+        if (result.isEmpty()) return false;
+        MailAuthCode mailAuthCode = result.get();
+        return mailAuthCode.isAuth();
     }
 }

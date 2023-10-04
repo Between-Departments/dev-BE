@@ -7,6 +7,7 @@ import com.gwakkili.devbe.security.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,10 +54,14 @@ public class JwtService {
     }
 
     // refresh token을 request에서 추출
-    public String resolveRefreshToken(HttpServletRequest request){
-        String jwtHeader= request.getHeader("RefreshToken");
-        if(jwtHeader == null || !jwtHeader.startsWith("Bearer")) return null;
-        return jwtHeader.replace("Bearer ", "");
+    public String resolveRefreshToken(HttpServletRequest request) {
+
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("RefreshToken"))
+                return cookie.getValue().replace("Bearer ", "");
+        }
+        return null;
     }
 
     // access token 생성
@@ -135,4 +140,7 @@ public class JwtService {
         return "INVALID";
     }
 
+    public long getRefreshTokenExpireTime() {
+        return REFRESH_TOKEN_EXPIRE_TIME;
+    }
 }

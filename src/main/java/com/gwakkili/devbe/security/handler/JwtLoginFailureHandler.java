@@ -21,13 +21,7 @@ import java.io.IOException;
  */
 @Component
 public class JwtLoginFailureHandler implements AuthenticationFailureHandler {
-    /**
-     * Called when an authentication attempt fails.
-     *
-     * @param request   the request during which the authentication attempt occurred.
-     * @param response  the response.
-     * @param exception the exception which was thrown to reject the authentication
-     */
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         ExceptionCode exceptionCode;

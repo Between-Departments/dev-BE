@@ -10,12 +10,12 @@ import org.springframework.data.redis.core.TimeToLive;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @RedisHash(value = "mailAuthToken")
-public class MailAuthKey {
+public class MailAuthCode {
 
     @Id
     String mail;
 
-    String authKey;
+    String authCode;
 
     boolean Auth;
 

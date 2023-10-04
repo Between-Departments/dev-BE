@@ -31,7 +31,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("인증 요청");
+
         String accessToken = jwtService.resolveAccessToken(request);
 
         if(accessToken == null){
@@ -41,7 +41,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         //access token 유효성 검증
         String validateAccessToken = jwtService.validateToken(accessToken);
         AuthenticationEntryPoint authenticationEntryPoint = getAuthenticationEntryPoint();
-        // access token 이 없거나 유효하지 않으면 예외 발생
+        // access token 이 유효하지 않으면 예외 발생
         if(validateAccessToken.equals("INVALID")) {
             authenticationEntryPoint.commence(request, response, new JwtException(ExceptionCode.INVALID_TOKEN));
         // access token 이 만료되었다면 예외 발생

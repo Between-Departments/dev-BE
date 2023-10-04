@@ -1,11 +1,11 @@
 package com.gwakkili.devbe.member;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
-import com.gwakkili.devbe.mail.entity.MailAuthKey;
+import com.gwakkili.devbe.image.dto.ImageDto;
+import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
 import com.gwakkili.devbe.member.dto.MemberSaveDto;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -32,16 +32,17 @@ public class MemberSaveTest extends DevBeApplicationTests {
                 .school("테스트대학1")
                 .passwordConfirm("tjr1619132!")
                 .major("테스트학과1")
-                .imageUrl("http://test.com/image.png")
+                .image(ImageDto.builder().imageUrl("http://images/image1.jpg").thumbnailUrl("http://images/image2.jpg").build())
                 .build();
-        MailAuthKey mailAuthKey = MailAuthKey.builder()
+        MailAuthCode mailAuthCode = MailAuthCode.builder()
                 .mail(saveDto.getMail())
                 .Auth(true)
                 .expiredTime(60)
-                .authKey("1111")
+                .authCode("1111")
                 .build();
-        mailAuthKeyRepository.save(mailAuthKey);
+        mailAuthKeyRepository.save(mailAuthCode);
         String content = objectMapper.writeValueAsString(saveDto);
+        System.out.println(content);
 
         //when, then
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(content))
@@ -58,6 +59,7 @@ public class MemberSaveTest extends DevBeApplicationTests {
                 .school("없는대학교")
                 .passwordConfirm("12341234!")
                 .major("없는학과")
+                .image(ImageDto.builder().imageUrl("asdfsa").thumbnailUrl("ddssaa").build())
                 .build();
         String content = objectMapper.writeValueAsString(saveDto);
         //when, then

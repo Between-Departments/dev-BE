@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,12 +13,16 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @Builder
+@Schema
 public class SliceResponseDto<DTO, EN> {
 
+    @Schema(description = "데이터 리스트")
     private List<DTO> dataList;
 
+    @Schema(description = "데이터 크기")
     private int size;
 
+    @Schema(description = "다음 페이지 존재여부")
     private boolean hasNext;
 
     public SliceResponseDto(Slice<EN> result, Function<EN, DTO> fn){

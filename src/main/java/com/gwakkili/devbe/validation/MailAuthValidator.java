@@ -1,7 +1,6 @@
 package com.gwakkili.devbe.validation;
 
-import com.gwakkili.devbe.mail.entity.MailAuthKey;
-import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
+import com.gwakkili.devbe.mail.service.MailService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +12,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MailAuthValidator implements ConstraintValidator<MailAuth, String> {
 
-    private final MailAuthKeyRepository mailAuthKeyRepository;
+    private final MailService mailService;
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        Optional<MailAuthKey> optionalMailAuthKey = mailAuthKeyRepository.findById(value);
-        return optionalMailAuthKey.isPresent() && optionalMailAuthKey.get().isAuth();
+        return mailService.checkAuthComplete(value);
     }
 }

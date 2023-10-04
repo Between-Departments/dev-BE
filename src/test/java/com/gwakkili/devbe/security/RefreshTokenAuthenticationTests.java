@@ -5,6 +5,7 @@ import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.security.repository.RefreshTokenRepository;
 import com.gwakkili.devbe.security.service.JwtService;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,7 @@ import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("refresh token 인증 테스트")
 public class RefreshTokenAuthenticationTests extends DevBeApplicationTests {
@@ -55,15 +55,19 @@ public class RefreshTokenAuthenticationTests extends DevBeApplicationTests {
         MemberDetails memberDetails = getMemberDto();
         String refreshToken = jwtService.generateRefreshToken(memberDetails);
         String accessToken = jwtService.generateAccessToken(memberDetails);
+        Cookie cookie = new Cookie("RefreshToken", refreshToken);
+        cookie.setPath("/api/refresh");
+        cookie.setMaxAge(600);
+        cookie.setHttpOnly(true);
 
         //when, then
         mockMvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + accessToken)
-                    .header("RefreshToken", "Bearer " + refreshToken)
-                 )
+                .header("Authorization", "Bearer " + accessToken)
+                .cookie(cookie)
+        )
                 .andExpect(status().isOk())
                 .andExpect(header().exists("Authorization"))
-                .andExpect(header().exists("RefreshToken"))
+                .andExpect(cookie().exists("RefreshToken"))
                 .andDo(print());
 
     }
@@ -77,11 +81,16 @@ public class RefreshTokenAuthenticationTests extends DevBeApplicationTests {
         String refreshToken = jwtService.generateRefreshToken(memberDetails);
         String accessToken = jwtService.generateAccessToken(memberDetails);
 
+        Cookie cookie = new Cookie("RefreshToken", refreshToken);
+        cookie.setPath("/api/refresh");
+        cookie.setMaxAge(600);
+        cookie.setHttpOnly(true);
+
         //when,then
         mockMvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken + "aa")
-                .header("RefreshToken", "Bearer " + refreshToken)
-                )
+                .cookie(cookie)
+        )
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
@@ -94,11 +103,17 @@ public class RefreshTokenAuthenticationTests extends DevBeApplicationTests {
         MemberDetails memberDetails = getMemberDto();
         String refreshToken = jwtService.generateRefreshToken(memberDetails);
         String accessToken = jwtService.generateAccessToken(memberDetails);
+
+        Cookie cookie = new Cookie("RefreshToken", refreshToken);
+        cookie.setPath("/api/refresh");
+        cookie.setMaxAge(600);
+        cookie.setHttpOnly(true);
+
         Thread.sleep(1000);
         //when, then
         mockMvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken)
-                .header("RefreshToken", "Bearer " + refreshToken)
+                .cookie(cookie)
         )
                 .andExpect(status().isUnauthorized())
                 .andDo(print());

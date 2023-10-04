@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class Image {
+public class PostImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +19,8 @@ public class Image {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    private String url;
+    private String imageUrl;
+
+    private String thumbnailUrl;
 
 }

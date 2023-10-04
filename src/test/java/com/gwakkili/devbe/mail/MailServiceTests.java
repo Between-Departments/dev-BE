@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.mail;
 
-import com.gwakkili.devbe.mail.entity.MailAuthKey;
+import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
 import com.gwakkili.devbe.mail.service.MailServiceImpl;
@@ -19,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.*;
@@ -45,16 +44,17 @@ public class MailServiceTests {
     class sendTest{
         @Test
         @DisplayName("메일 전송 성공")
-        public void sendSuccessTest() throws MessagingException, UnsupportedEncodingException {
+        public void sendSuccessTest() throws MessagingException {
             //given
             String mail = "test@test.com";
-            MimeMessage mimeMessage = new MimeMessage((Session)null);
+            MimeMessage mimeMessage = new MimeMessage((Session) null);
             given(javaMailSender.createMimeMessage()).willReturn(mimeMessage);
             given(schoolRepository.existsByMail(anyString())).willReturn(true);
 
             //when, then
             mailService.send(mail);
         }
+
         @Test
         @DisplayName("메일 전송 실패 : 지원하지 않는 메일")
         public void sendFailUnsupportMailTest() {
@@ -76,9 +76,9 @@ public class MailServiceTests {
             //given
             String mail = "test@test.com";
             String authKey = "1234";
-            given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.of(MailAuthKey.builder().authKey(authKey).build()));
+            given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(authKey).build()));
             //when, then
-            Assertions.assertThat(mailService.checkAuthKey(mail, authKey)).isTrue();
+            Assertions.assertThat(mailService.checkAuthCode(mail, authKey)).isTrue();
         }
 
         @Test
@@ -88,9 +88,9 @@ public class MailServiceTests {
             String mail = "test@test.com";
             String authKey = "1234";
             String diffAuthKey = "5678";
-            given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.of(MailAuthKey.builder().authKey(diffAuthKey).build()));
+            given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(diffAuthKey).build()));
             //when then
-            Assertions.assertThat(mailService.checkAuthKey(mail, authKey)).isFalse();
+            Assertions.assertThat(mailService.checkAuthCode(mail, authKey)).isFalse();
         }
 
         @Test
@@ -101,7 +101,7 @@ public class MailServiceTests {
             String authKey = "1234";
             given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.empty());
             //when then
-            Assertions.assertThatThrownBy(()->mailService.checkAuthKey(mail, authKey)).isInstanceOf(NotFoundException.class);
+            Assertions.assertThatThrownBy(() -> mailService.checkAuthCode(mail, authKey)).isInstanceOf(NotFoundException.class);
         }
     }
 }

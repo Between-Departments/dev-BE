@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.member;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
+import com.gwakkili.devbe.image.dto.ImageDto;
 import com.gwakkili.devbe.member.dto.NicknameAndImageDto;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
@@ -24,14 +25,13 @@ public class updateNicknameAndImageTest extends DevBeApplicationTests {
     @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!")
     public void success() throws Exception {
         NicknameAndImageDto nicknameAndImageDto = NicknameAndImageDto.builder()
-                .nickname("newNickname")
-                .imageUrl("http://test.com/newImage.png")
+                .nickname("name2")
+                .image(ImageDto.builder().imageUrl("http://images/image1.jpg").thumbnailUrl("http://images/image2.jpg").build())
                 .build();
         String content = objectMapper.writeValueAsString(nicknameAndImageDto);
         mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("nickname").value(nicknameAndImageDto.getNickname()))
-                .andExpect(jsonPath("imageUrl").value(nicknameAndImageDto.getImageUrl()))
                 .andDo(print());
     }
 
@@ -40,8 +40,8 @@ public class updateNicknameAndImageTest extends DevBeApplicationTests {
     @WithAnonymousUser
     public void fail() throws Exception{
         NicknameAndImageDto nicknameAndImageDto = NicknameAndImageDto.builder()
-                .nickname("newNickname")
-                .imageUrl("http://test.com/newImage.png")
+                .nickname("name2")
+                .image(ImageDto.builder().imageUrl("http://images/image1.jpg").thumbnailUrl("http://images/image2.jpg").build())
                 .build();
         String content = objectMapper.writeValueAsString(nicknameAndImageDto);
         mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))

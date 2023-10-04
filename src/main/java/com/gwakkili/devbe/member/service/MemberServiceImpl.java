@@ -32,19 +32,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void save(MemberSaveDto memberSaveDto) {
-
-        Member member = Member.builder()
-                .mail(memberSaveDto.getMail())
-                .nickname(memberSaveDto.getNickname())
-                .password(passwordEncoder.encode(memberSaveDto.getPassword()))
-                .school(memberSaveDto.getSchool())
-                .major(memberSaveDto.getMajor())
-                .imageUrl(memberSaveDto.getImageUrl())
-                .build();
-        member.addRole(Member.Role.ROLE_USER);
-
-        memberRepository.save(member);
-
+        memberRepository.save(memberSaveDto.toEntity(passwordEncoder));
     }
 
     @Override
@@ -71,7 +59,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByMail(nicknameAndImageDto.getMail())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.setNickname(nicknameAndImageDto.getNickname());
-        member.setImageUrl(nicknameAndImageDto.getImageUrl());
+        member.setImage(nicknameAndImageDto.getImage().dtoToMemberImage());
     }
 
     @Override
@@ -89,7 +77,6 @@ public class MemberServiceImpl implements MemberService {
         Pageable pageable = sliceRequestDto.getPageable();
         Slice<Member> slice;
 
-        System.out.println(pageable);
         if (StringUtils.hasText(sliceRequestDto.getKeyword())) {
             slice = memberRepository.findAllByMailContaining(keyword, pageable);
         } else slice = memberRepository.findAll(pageable);

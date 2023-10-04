@@ -25,7 +25,9 @@ public class findMemberListTest extends DevBeApplicationTests {
         //when,then
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("dataList").isArray())
                 .andExpect(jsonPath("size").value(10))
+                .andExpect(jsonPath("hasNext").value(true))
                 .andDo(print());
     }
 
@@ -36,7 +38,7 @@ public class findMemberListTest extends DevBeApplicationTests {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("page", "1");
-        params.add("size", "20");
+        params.add("size", "10");
         params.add("keyword", "test1.ac.kr");
 
         //when,then

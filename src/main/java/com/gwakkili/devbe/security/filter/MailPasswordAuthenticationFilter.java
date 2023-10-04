@@ -32,6 +32,7 @@ public class MailPasswordAuthenticationFilter extends UsernamePasswordAuthentica
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+
         //로그인 요청 Method가 Post가 아니면
         try {
             ObjectMapper objectMapper = new ObjectMapper();

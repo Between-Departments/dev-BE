@@ -7,7 +7,18 @@ server:
       enabled: true
       force: true
 
+
+
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 30MB
+      max-file-size: 10MB
+
+  messages:
+    basename: messages,errors
+
   profiles:
     active: local
     include:
@@ -47,3 +58,17 @@ mail:
       class: javax.net.ssl.SSLSocketFactory
       fallback: false
       port: 465
+
+springdoc:
+  default-produces-media-type: application/json;charset=UTF-8
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
+  default-consumes-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger
+  cache:
+    disabled: true

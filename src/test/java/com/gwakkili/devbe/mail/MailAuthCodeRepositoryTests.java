@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.mail;
 
-import com.gwakkili.devbe.mail.entity.MailAuthKey;
+import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @DataRedisTest
 @DisplayName("인증키 저장소 테스트")
 @MockBean(JpaMetamodelMappingContext.class)
-public class MailAuthKeyRepositoryTests {
+public class MailAuthCodeRepositoryTests {
 
     @Autowired
     private MailAuthKeyRepository mailAuthKeyRepository;
@@ -24,34 +24,34 @@ public class MailAuthKeyRepositoryTests {
 
     @DisplayName("인증키 저장")
     @Test
-    public void save(){
+    public void save() {
         //given
-        MailAuthKey mailAuthKey = MailAuthKey.builder()
+        MailAuthCode mailAuthCode = MailAuthCode.builder()
                 .mail("test@test.com")
-                .authKey(UUID.randomUUID().toString())
+                .authCode("111111")
                 .expiredTime(60)
                 .build();
         //when
-        MailAuthKey save = mailAuthKeyRepository.save(mailAuthKey);
+        MailAuthCode save = mailAuthKeyRepository.save(mailAuthCode);
         //then
-        Assertions.assertThat(save).isSameAs(mailAuthKey);
+        Assertions.assertThat(save).isSameAs(mailAuthCode);
     }
 
     @DisplayName("인증여부 변경")
     @Test
     public void update(){
         //given
-        MailAuthKey mailAuthKey = MailAuthKey.builder()
+        MailAuthCode mailAuthCode = MailAuthCode.builder()
                 .mail("test@test.com")
-                .authKey(UUID.randomUUID().toString())
+                .authCode("111111")
                 .expiredTime(60)
                 .build();
-        MailAuthKey save = mailAuthKeyRepository.save(mailAuthKey);
+        MailAuthCode save = mailAuthKeyRepository.save(mailAuthCode);
         //when
         save.setAuth(true);
         mailAuthKeyRepository.save(save);
         //then
-        Optional<MailAuthKey> find = mailAuthKeyRepository.findById(save.getMail());
+        Optional<MailAuthCode> find = mailAuthKeyRepository.findById(save.getMail());
         Assertions.assertThat(find.get().isAuth()).isTrue();
     }
 
@@ -59,12 +59,12 @@ public class MailAuthKeyRepositoryTests {
     @Test
     public void expire() throws InterruptedException {
         //given
-        MailAuthKey mailAuthKey = MailAuthKey.builder()
+        MailAuthCode mailAuthCode = MailAuthCode.builder()
                 .mail("test@test.com")
-                .authKey(UUID.randomUUID().toString())
+                .authCode("111111")
                 .expiredTime(1)
                 .build();
-        MailAuthKey save = mailAuthKeyRepository.save(mailAuthKey);
+        MailAuthCode save = mailAuthKeyRepository.save(mailAuthCode);
         //when
         Thread.sleep(1000);
         boolean exist = mailAuthKeyRepository.existsById(save.getMail());

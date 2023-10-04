@@ -6,7 +6,12 @@ import com.gwakkili.devbe.member.dto.*;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.service.MemberService;
 import com.gwakkili.devbe.security.dto.MemberDetails;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,27 +24,28 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
+@Tag(name = "Member", description = "회원 API")
 public class MemberController {
 
     private final MemberService memberService;
 
-    // 회원가입
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "회원 가입")
     public void save(@RequestBody @Validated MemberSaveDto memberSaveDto) throws BindException {
         memberService.save(memberSaveDto);
     }
 
-    // 나의 회원정보 조회
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "나의 회원정보 조회")
     public MemberDto find(@AuthenticationPrincipal MemberDetails memberDetails){
         return memberService.find(memberDetails.getMail());
     }
 
-    // 비밀번호 변경
     @PatchMapping("/my/password")
     @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "비밀번호 변경")
     public void updatePassword(@AuthenticationPrincipal MemberDetails memberDetails,
                                @RequestBody @Validated UpdatePasswordDto updatePasswordDto,
                                BindingResult bindingResult) throws BindException {
@@ -53,18 +59,20 @@ public class MemberController {
     }
 
     @GetMapping("/mail/duplicate")
-    public boolean mailDuplicateCheck(String mail) {
+    @Operation(summary = "메일 중복 획안")
+    public boolean mailDuplicateCheck(@Parameter(name = "mail", description = "메일") String mail) {
         return memberService.mailDuplicateCheck(mail);
     }
 
     @GetMapping("/nickname/duplicate")
-    public boolean nicknameDuplicateCheck(String nickname) {
+    @Operation(summary = "닉네임 중복 확인")
+    public boolean nicknameDuplicateCheck(@Parameter(name = "nickname", description = "닉네임") String nickname) {
         return memberService.nicknameDuplicateCheck(nickname);
     }
 
-    // 이미지, 닉네임 변경
     @PatchMapping("/my/image")
     @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "이미지, 닉네임 변경")
     public NicknameAndImageDto updateNicknameAndImage(@AuthenticationPrincipal MemberDetails memberDetails,
                                                       @RequestBody @Validated NicknameAndImageDto nicknameAndImageDto) {
         nicknameAndImageDto.setMail(memberDetails.getMail());
@@ -72,17 +80,17 @@ public class MemberController {
         return nicknameAndImageDto;
     }
 
-    //회원 정지
     @PatchMapping("/{id}/lock")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public void lockMember(@PathVariable Long id){
+    @Operation(summary = "회원 정지")
+    public void lockMember(@Parameter(name = "id", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long id) {
         memberService.lock(id);
     }
 
-    //회원 목록 조회
     @GetMapping
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public SliceResponseDto<MemberDto, Member> getList(SliceRequestDto sliceRequestDto){
+    @Operation(summary = "회원 목록 조회")
+    public SliceResponseDto<MemberDto, Member> getList(@ParameterObject SliceRequestDto sliceRequestDto) {
         return memberService.getList(sliceRequestDto);
     }
 }

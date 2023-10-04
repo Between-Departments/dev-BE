@@ -30,6 +30,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    // 섬네일 설정
+    implementation "net.coobird:thumbnailator:0.4.20"
+
+    //swagger 설정
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
     //jjwt 설정
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'

@@ -28,7 +28,7 @@ public enum ExceptionCode {
     FAIL_UPLOAD(HttpStatus.BAD_REQUEST, "IMAGE_002", "이미지 업로드에 실패하였습니다."),
     // 메일 예외 코드
     UNSUPPORTED_MAIL(HttpStatus.NOT_FOUND, "MAIL_001", "지원하지 않는 학교 메일입니다."),
-    MAIL_AUTH_LINK_EXPIRE(HttpStatus.NOT_FOUND, "MAIL_002", "메일 인증 링크가 만료되었습니다."),
+    MAIL_AUTH_CODE_EXPIRE(HttpStatus.NOT_FOUND, "MAIL_002", "메일 인증 버호가 만료되었습니다."),
     FAIL_SEND_MAIL(HttpStatus.BAD_REQUEST, "MAIL_003", " 메일 전송에 실패하였습니다."),
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "MEMBER_001", "해당 계정을 찾을 수 없습니다."),
 

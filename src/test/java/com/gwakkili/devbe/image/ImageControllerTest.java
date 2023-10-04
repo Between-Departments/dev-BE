@@ -51,7 +51,6 @@ public class ImageControllerTest  extends DevBeApplicationTests {
     @Test
     @DisplayName("이미지 업로드 테스트")
     public void imageUploadTest() throws Exception {
-
         //given
         String url = "/api/images";
         MockMultipartFile image1 = getMultipartFile("images", "test1.jpg");
