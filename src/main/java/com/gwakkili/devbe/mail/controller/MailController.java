@@ -5,6 +5,7 @@ import com.gwakkili.devbe.mail.dto.MailAuthCodeDto;
 import com.gwakkili.devbe.mail.service.MailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -36,7 +38,7 @@ public class MailController {
             @ApiResponse(responseCode = "200", description = "메일 전송 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "메일 전송 실패", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ExceptionDto.class)))
     })
-    public void send(@Parameter(name = "mail", description = "메일") @Email String mail) throws MessagingException, UnsupportedEncodingException {
+    public void send(@Parameter(name = "mail", description = "메일", in = ParameterIn.QUERY) @Email @NotBlank String mail) throws MessagingException, UnsupportedEncodingException {
         log.info("이메일 전송 요청");
         mailService.send(mail);
     }
