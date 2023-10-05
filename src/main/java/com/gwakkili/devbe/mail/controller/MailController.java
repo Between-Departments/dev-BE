@@ -2,6 +2,7 @@ package com.gwakkili.devbe.mail.controller;
 
 import com.gwakkili.devbe.exception.dto.ExceptionDto;
 import com.gwakkili.devbe.mail.dto.MailAuthCodeDto;
+import com.gwakkili.devbe.mail.dto.MailSendDto;
 import com.gwakkili.devbe.mail.service.MailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,7 +27,6 @@ import java.io.UnsupportedEncodingException;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/mail")
-@Validated
 @Tag(name = "mail", description = "메일 API")
 public class MailController {
 
@@ -38,9 +38,9 @@ public class MailController {
             @ApiResponse(responseCode = "200", description = "메일 전송 성공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "메일 전송 실패", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ExceptionDto.class)))
     })
-    public void send(@Parameter(name = "mail", description = "메일", in = ParameterIn.QUERY) @Email @NotBlank String mail) throws MessagingException, UnsupportedEncodingException {
+    public void send(@RequestBody @Validated MailSendDto mailSendDto) throws MessagingException, UnsupportedEncodingException {
         log.info("이메일 전송 요청");
-        mailService.send(mail);
+        mailService.send(mailSendDto.getMail());
     }
 
     @PostMapping("/confirm")
