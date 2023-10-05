@@ -1,10 +1,14 @@
 package com.gwakkili.devbe.post.entity;
 
 import com.gwakkili.devbe.entity.BaseEntity;
+import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,8 +24,10 @@ public class Post extends BaseEntity {
 
     private Member writer;
 
-    @Enumerated(EnumType.STRING)
-    private Major.Category majorCategory;
+//    @Enumerated(EnumType.STRING)
+//    private Major.Category majorCategory;
+
+    private String major;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -32,19 +38,22 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<PostImage> images = new ArrayList<>();
+
     private int viewCount;
 
     private int recommendCount;
 
+    private boolean isAnonymous;
+
     @Builder
-    public Post(long postId, Member writer, Major.Category majorCategory, Category category, String title, String content) {
-        this.postId = postId;
+    public Post(Member writer, String major, Category category, String title, String content) {
         this.writer = writer;
-        this.majorCategory = majorCategory;
+        this.major = major;
         this.category = category;
         this.title = title;
         this.content = content;
-
     }
 
     public void setTitle(String title) {
@@ -65,10 +74,10 @@ public class Post extends BaseEntity {
 
 
     @RequiredArgsConstructor
-    enum Category{
+    public enum Category{
         NEED_HELP("도움이 필요해요"),
         HOBBY("취미"),
-        LOVE("언애"),
+        LOVE("연애"),
         DAILY("일상"),
         TOGETHER("같이해요"),
         RESTAURANT("맛집"),
