@@ -104,7 +104,7 @@ public class ImageServiceImpl implements ImageService {
         String splitStr = ".com/";
         String decodeUrl = URLDecoder.decode(imgUrl, StandardCharsets.UTF_8);
         String imagePath = decodeUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
-        String thumbnailPath = imagePath.replace("/images/", "/thumbnails/");
+        String thumbnailPath = imagePath.replace("images/", "thumbnails/");
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, imagePath));
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, thumbnailPath));
     }
