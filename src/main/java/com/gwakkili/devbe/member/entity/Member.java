@@ -70,6 +70,14 @@ public class Member extends BaseEntity {
         image.setMember(this);
     }
 
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Role {

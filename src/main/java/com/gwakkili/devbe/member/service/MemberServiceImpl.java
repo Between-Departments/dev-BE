@@ -64,6 +64,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void updateSchool(UpdateSchoolDto updateSchoolDto) {
+        Member member = memberRepository.findByMail(updateSchoolDto.getOldMail())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        member.setMail(updateSchoolDto.getMail());
+        member.setSchool(updateSchoolDto.getSchool());
+    }
+
+    @Override
+    public void updateMajor(UpdateMajorDto updateMajorDto) {
+        Member member = memberRepository.findByMail(updateMajorDto.getMail())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        member.setMajor(updateMajorDto.getMajor());
+    }
+
+    @Override
     public void lock(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
@@ -94,5 +109,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean nicknameDuplicateCheck(String nickname) {
         return memberRepository.existsByNickname(nickname);
+    }
+
+    @Override
+    public boolean passwordConfirm(String mail, String password) {
+        Member member = memberRepository.findByMail(mail)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        return passwordEncoder.matches(password, member.getPassword());
     }
 }
