@@ -129,7 +129,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public PostDto findPostDto(Long postId) {
-        Post findPost = postRepository.findWithWriterById(postId)
+        Post findPost = postRepository.findWithWriterByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
         return PostDto.of(findPost);
     }
