@@ -19,7 +19,7 @@ public class ReplyReport extends Report {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rely_id", nullable = false)
+    @JoinColumn(name = "reply_id", nullable = false)
     private Reply reply;
 
 }
