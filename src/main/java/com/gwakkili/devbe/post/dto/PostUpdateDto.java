@@ -5,7 +5,7 @@ import com.gwakkili.devbe.validation.Major;
 import lombok.Getter;
 
 @Getter
-public class PostSaveDto {
+public class PostUpdateDto {
 
     private String title;
 
@@ -15,6 +15,4 @@ public class PostSaveDto {
     private String major;
 
     private Post.Category category;
-
-    private boolean isAnonymous;
 }

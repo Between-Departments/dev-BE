@@ -22,5 +22,4 @@ public class ReplyReport extends Report {
     @JoinColumn(name = "rely_id", nullable = false)
     private Reply reply;
 
-
 }

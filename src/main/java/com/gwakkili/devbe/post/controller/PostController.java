@@ -1,7 +1,9 @@
 package com.gwakkili.devbe.post.controller;
 
 import com.gwakkili.devbe.post.dto.PostDto;
+import com.gwakkili.devbe.post.dto.PostReportDto;
 import com.gwakkili.devbe.post.dto.PostSaveDto;
+import com.gwakkili.devbe.post.dto.PostUpdateDto;
 import com.gwakkili.devbe.post.service.PostService;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,8 +67,8 @@ public class PostController {
 
     @PostMapping("/{postId}/report")
     @ResponseStatus(HttpStatus.OK)
-    public void report(@PathVariable Long postId,@AuthenticationPrincipal MemberDetails memberDetails){
-        postService.reportPost(postId,memberDetails.getMemberId());
+    public void report(@RequestBody PostReportDto postReportDto, @PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
+        postService.reportPost(postReportDto, postId, memberDetails.getMemberId());
     }
 
     @PostMapping("/{postId}/bookmark")
@@ -89,8 +91,8 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable Long postId,@AuthenticationPrincipal MemberDetails memberDetails){
-        postService.updatePost(postId,memberDetails.getMemberId());
+    public void update(@RequestBody PostUpdateDto postUpdateDto, @PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
+        postService.updatePost(postUpdateDto, postId, memberDetails.getMemberId());
     }
 
 

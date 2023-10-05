@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @Override
     @EntityGraph(attributePaths = {"writer"})
-    Optional<Post> findById(Long id);
+    Optional<Post> findWithWriterById(Long id);
 }

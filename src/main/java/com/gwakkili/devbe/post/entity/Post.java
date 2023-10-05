@@ -2,7 +2,6 @@ package com.gwakkili.devbe.post.entity;
 
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.image.entity.PostImage;
-import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,12 +47,13 @@ public class Post extends BaseEntity {
     private boolean isAnonymous;
 
     @Builder
-    public Post(Member writer, String major, Category category, String title, String content) {
+    public Post(Member writer, String major, Category category, String title, String content, boolean isAnonymous) {
         this.writer = writer;
         this.major = major;
         this.category = category;
         this.title = title;
         this.content = content;
+        this.isAnonymous = isAnonymous;
     }
 
     public void setTitle(String title) {
@@ -70,6 +70,11 @@ public class Post extends BaseEntity {
 
     public void addRecommendCount() {
         this.recommendCount++;
+    }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 
 

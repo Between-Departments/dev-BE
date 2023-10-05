@@ -9,6 +9,16 @@ import lombok.RequiredArgsConstructor;
 @MappedSuperclass
 @Getter
 public class Report extends BaseEntity {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member reporter;
+
+    @Enumerated(value = EnumType.STRING)
+    private Type type;
+
+    private String content;
+
     @RequiredArgsConstructor
     @Getter
     public enum Type {
@@ -20,13 +30,4 @@ public class Report extends BaseEntity {
 
         private final String description;
     }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member reporter;
-
-    @Enumerated(value = EnumType.STRING)
-    private Type Type;
-
-    private String content;
 }
