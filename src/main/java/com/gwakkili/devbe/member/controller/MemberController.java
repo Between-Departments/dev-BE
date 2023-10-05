@@ -6,10 +6,12 @@ import com.gwakkili.devbe.member.dto.*;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.service.MemberService;
 import com.gwakkili.devbe.security.dto.MemberDetails;
+import com.gwakkili.devbe.validation.Major;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
@@ -43,6 +45,26 @@ public class MemberController {
         return memberService.find(memberDetails.getMail());
     }
 
+
+    @GetMapping("/mail/duplicate")
+    @Operation(summary = "메일 중복 획안")
+    public boolean mailDuplicateCheck(@Parameter(name = "mail", description = "메일") String mail) {
+        return memberService.mailDuplicateCheck(mail);
+    }
+
+    @GetMapping("/nickname/duplicate")
+    @Operation(summary = "닉네임 중복 확인")
+    public boolean nicknameDuplicateCheck(@Parameter(name = "nickname", description = "닉네임") String nickname) {
+        return memberService.nicknameDuplicateCheck(nickname);
+    }
+
+    @PostMapping("/password/confirm")
+    @Operation(summary = "비밀번호 확인")
+    @PreAuthorize("isAuthenticated()")
+    public boolean passwordConfirm(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody String password) {
+        return memberService.passwordConfirm(memberDetails.getMail(), password);
+    }
+
     @PatchMapping("/my/password")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "비밀번호 변경")
@@ -58,18 +80,6 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/mail/duplicate")
-    @Operation(summary = "메일 중복 획안")
-    public boolean mailDuplicateCheck(@Parameter(name = "mail", description = "메일") String mail) {
-        return memberService.mailDuplicateCheck(mail);
-    }
-
-    @GetMapping("/nickname/duplicate")
-    @Operation(summary = "닉네임 중복 확인")
-    public boolean nicknameDuplicateCheck(@Parameter(name = "nickname", description = "닉네임") String nickname) {
-        return memberService.nicknameDuplicateCheck(nickname);
-    }
-
     @PatchMapping("/my/image")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "이미지, 닉네임 변경")
@@ -78,6 +88,24 @@ public class MemberController {
         nicknameAndImageDto.setMail(memberDetails.getMail());
         memberService.updateNicknameAndImage(nicknameAndImageDto);
         return nicknameAndImageDto;
+    }
+
+    @PatchMapping("/my/school")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "학교 정보 변경")
+    public void updateSchool(@AuthenticationPrincipal MemberDetails memberDetails,
+                             @RequestBody @Validated UpdateSchoolDto updateSchoolDto) {
+        updateSchoolDto.setOldMail(memberDetails.getMail());
+        memberService.updateSchool(updateSchoolDto);
+    }
+
+    @PatchMapping("/my/major")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "학과 정보 변경")
+    public void updateMajor(@AuthenticationPrincipal MemberDetails memberDetails,
+                            @RequestBody @Validated UpdateMajorDto updateMajorDto) {
+        updateMajorDto.setMail(memberDetails.getMail());
+        memberService.updateMajor(updateMajorDto);
     }
 
     @PatchMapping("/{id}/lock")
@@ -93,4 +121,5 @@ public class MemberController {
     public SliceResponseDto<MemberDto, Member> getList(@ParameterObject SliceRequestDto sliceRequestDto) {
         return memberService.getList(sliceRequestDto);
     }
+
 }

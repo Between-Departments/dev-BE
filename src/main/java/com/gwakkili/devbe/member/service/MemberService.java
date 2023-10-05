@@ -15,6 +15,10 @@ public interface MemberService {
 
     void updateNicknameAndImage(NicknameAndImageDto nicknameAndImageDto);
 
+    void updateSchool(UpdateSchoolDto updateSchoolDto);
+
+    void updateMajor(UpdateMajorDto updateMajorDto);
+
     void lock(Long id);
 
     SliceResponseDto getList(SliceRequestDto sliceRequestDto);
@@ -22,5 +26,7 @@ public interface MemberService {
     boolean mailDuplicateCheck(String mail);
 
     boolean nicknameDuplicateCheck(String nickname);
+
+    boolean passwordConfirm(String mail, String password);
 
 }
