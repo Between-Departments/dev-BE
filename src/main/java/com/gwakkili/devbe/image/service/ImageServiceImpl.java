@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -96,9 +98,10 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
-    public void delete(String imgUrl){
+    public void delete(String imgUrl) {
         String splitStr = ".com/";
-        String fileName = imgUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
+        String decodeUrl = URLDecoder.decode(imgUrl, StandardCharsets.UTF_8);
+        String fileName = decodeUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 }
