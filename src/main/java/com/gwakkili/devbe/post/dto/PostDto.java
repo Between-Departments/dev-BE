@@ -2,7 +2,6 @@ package com.gwakkili.devbe.post.dto;
 
 
 import com.gwakkili.devbe.image.entity.PostImage;
-import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,6 +37,8 @@ public class PostDto {
 
     private LocalDateTime updateAt;
 
+    private boolean isAnonymous;
+
 
     public static PostDto of(Post post){
         List<String> imageUrls = post.getImages().stream().map(PostImage::getUrl).collect(Collectors.toList());
@@ -54,6 +55,7 @@ public class PostDto {
                 .images(imageUrls)
                 .createAt(post.getCreateAt())
                 .updateAt(post.getUpdateAt())
+                .isAnonymous(post.isAnonymous())
                 .build();
     }
 

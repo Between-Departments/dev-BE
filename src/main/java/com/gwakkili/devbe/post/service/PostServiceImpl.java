@@ -100,7 +100,7 @@ public class PostServiceImpl implements PostService{
         Post findPost = find(postId);
 
         if (findPost.getWriter().getMemberId() == findMember.getMemberId()
-                || findMember.getRoles().equals(Member.Role.ROLE_MANAGER)){
+                || findMember.getRoles().contains(Member.Role.ROLE_MANAGER)){
             postRepository.delete(findPost);
         } else{
             // ! 게시글을 삭제하려는 사용자가 글 작성자 본인 또는 ADMIN이 아닐 경우
