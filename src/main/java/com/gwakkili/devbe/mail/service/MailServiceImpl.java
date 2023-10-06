@@ -5,7 +5,7 @@ import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
-import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
+import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
 import com.gwakkili.devbe.shcool.repository.SchoolRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Transactional
 public class MailServiceImpl implements MailService {
 
-    private final MailAuthKeyRepository mailAuthKeyRepository;
+    private final MailAuthCodeRepository mailAuthCodeRepository;
 
     private final SchoolRepository schoolRepository;
 
@@ -61,7 +61,7 @@ public class MailServiceImpl implements MailService {
                 .mail(mail)
                 .authCode(authCode)
                 .expiredTime(60 * 60 * 24).build();
-        mailAuthKeyRepository.save(mailAuthCode);
+        mailAuthCodeRepository.save(mailAuthCode);
     }
 
     private String createCode() {
@@ -72,11 +72,11 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public boolean checkAuthCode(MailAuthCodeDto mailAuthCodeDto) {
-        Optional<MailAuthCode> result = mailAuthKeyRepository.findById(mailAuthCodeDto.getMail());
+        Optional<MailAuthCode> result = mailAuthCodeRepository.findById(mailAuthCodeDto.getMail());
         MailAuthCode mailAuthCode = result.orElseThrow(() -> new NotFoundException(ExceptionCode.MAIL_AUTH_CODE_EXPIRE));
         if (mailAuthCode.getAuthCode().equals(mailAuthCodeDto.getCode())) {
             mailAuthCode.setAuth(true);
-            mailAuthKeyRepository.save(mailAuthCode);
+            mailAuthCodeRepository.save(mailAuthCode);
             return true;
         }
         return false;
@@ -89,7 +89,7 @@ public class MailServiceImpl implements MailService {
      */
     @Override
     public boolean checkAuthComplete(String mail) {
-        Optional<MailAuthCode> result = mailAuthKeyRepository.findById(mail);
+        Optional<MailAuthCode> result = mailAuthCodeRepository.findById(mail);
         if (result.isEmpty()) return false;
         MailAuthCode mailAuthCode = result.get();
         return mailAuthCode.isAuth();

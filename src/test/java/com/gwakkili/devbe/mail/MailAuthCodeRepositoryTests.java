@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.mail;
 
 import com.gwakkili.devbe.mail.entity.MailAuthCode;
-import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
+import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @DataRedisTest
 @DisplayName("인증키 저장소 테스트")
@@ -19,7 +18,7 @@ import java.util.UUID;
 public class MailAuthCodeRepositoryTests {
 
     @Autowired
-    private MailAuthKeyRepository mailAuthKeyRepository;
+    private MailAuthCodeRepository mailAuthCodeRepository;
 
 
     @DisplayName("인증키 저장")
@@ -32,7 +31,7 @@ public class MailAuthCodeRepositoryTests {
                 .expiredTime(60)
                 .build();
         //when
-        MailAuthCode save = mailAuthKeyRepository.save(mailAuthCode);
+        MailAuthCode save = mailAuthCodeRepository.save(mailAuthCode);
         //then
         Assertions.assertThat(save).isSameAs(mailAuthCode);
     }
@@ -46,12 +45,12 @@ public class MailAuthCodeRepositoryTests {
                 .authCode("111111")
                 .expiredTime(60)
                 .build();
-        MailAuthCode save = mailAuthKeyRepository.save(mailAuthCode);
+        MailAuthCode save = mailAuthCodeRepository.save(mailAuthCode);
         //when
         save.setAuth(true);
-        mailAuthKeyRepository.save(save);
+        mailAuthCodeRepository.save(save);
         //then
-        Optional<MailAuthCode> find = mailAuthKeyRepository.findById(save.getMail());
+        Optional<MailAuthCode> find = mailAuthCodeRepository.findById(save.getMail());
         Assertions.assertThat(find.get().isAuth()).isTrue();
     }
 
@@ -64,10 +63,10 @@ public class MailAuthCodeRepositoryTests {
                 .authCode("111111")
                 .expiredTime(1)
                 .build();
-        MailAuthCode save = mailAuthKeyRepository.save(mailAuthCode);
+        MailAuthCode save = mailAuthCodeRepository.save(mailAuthCode);
         //when
         Thread.sleep(1000);
-        boolean exist = mailAuthKeyRepository.existsById(save.getMail());
+        boolean exist = mailAuthCodeRepository.existsById(save.getMail());
         //then
         Assertions.assertThat(exist).isFalse();
     }

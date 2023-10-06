@@ -73,7 +73,7 @@ public class MemberController {
             updatePasswordDto.setMail(memberDetails.getMail());
             memberService.updatePassword(updatePasswordDto);
         } catch (BadCredentialsException e) {
-            bindingResult.rejectValue("oldPassword", "", e.getMessage());
+            bindingResult.rejectValue("password", "", e.getMessage());
             throw new BindException(bindingResult);
         }
     }
@@ -93,7 +93,7 @@ public class MemberController {
     @Operation(summary = "학교 정보 변경")
     public void updateSchool(@AuthenticationPrincipal MemberDetails memberDetails,
                              @RequestBody @Validated UpdateSchoolDto updateSchoolDto) {
-        updateSchoolDto.setOldMail(memberDetails.getMail());
+        updateSchoolDto.setMail(memberDetails.getMail());
         memberService.updateSchool(updateSchoolDto);
     }
 

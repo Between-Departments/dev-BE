@@ -5,7 +5,7 @@ import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
 import com.gwakkili.devbe.mail.service.MailServiceImpl;
-import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
+import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
 import com.gwakkili.devbe.shcool.repository.SchoolRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
@@ -35,7 +35,7 @@ public class MailServiceTests {
     private JavaMailSender javaMailSender;
 
     @Mock
-    private MailAuthKeyRepository mailAuthKeyRepository;
+    private MailAuthCodeRepository mailAuthCodeRepository;
 
     @InjectMocks
     private MailServiceImpl mailService;
@@ -78,7 +78,7 @@ public class MailServiceTests {
             String mail = "test@test.com";
             String code = "123456";
             MailAuthCodeDto mailAuthCodeDto = MailAuthCodeDto.builder().mail(mail).code(code).build();
-            given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(code).build()));
+            given(mailAuthCodeRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(code).build()));
             //when, then
             Assertions.assertThat(mailService.checkAuthCode(mailAuthCodeDto)).isTrue();
         }
@@ -91,7 +91,7 @@ public class MailServiceTests {
             String code = "123456";
             MailAuthCodeDto mailAuthCodeDto = MailAuthCodeDto.builder().mail(mail).code(code).build();
             String diffAuthKey = "567891";
-            given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(diffAuthKey).build()));
+            given(mailAuthCodeRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(diffAuthKey).build()));
             //when then
             Assertions.assertThat(mailService.checkAuthCode(mailAuthCodeDto)).isFalse();
         }
@@ -103,7 +103,7 @@ public class MailServiceTests {
             String mail = "test@test.com";
             String code = "123456";
             MailAuthCodeDto mailAuthCodeDto = MailAuthCodeDto.builder().mail(mail).code(code).build();
-            given(mailAuthKeyRepository.findById(mail)).willReturn(Optional.empty());
+            given(mailAuthCodeRepository.findById(mail)).willReturn(Optional.empty());
             //when then
             Assertions.assertThatThrownBy(() -> mailService.checkAuthCode(mailAuthCodeDto)).isInstanceOf(NotFoundException.class);
         }

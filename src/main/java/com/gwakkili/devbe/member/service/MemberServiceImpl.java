@@ -49,7 +49,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByMail(updatePasswordDto.getMail())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
-        if(!passwordEncoder.matches(updatePasswordDto.getOldPassword(), member.getPassword()))
+        if (!passwordEncoder.matches(updatePasswordDto.getPassword(), member.getPassword()))
             throw new BadCredentialsException("현재 비밀번호와 일치하지 않습니다.");
 
         member.setPassword(passwordEncoder.encode(updatePasswordDto.getNewPassword()));
@@ -65,9 +65,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void updateSchool(UpdateSchoolDto updateSchoolDto) {
-        Member member = memberRepository.findByMail(updateSchoolDto.getOldMail())
+        Member member = memberRepository.findByMail(updateSchoolDto.getMail())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
-        member.setMail(updateSchoolDto.getMail());
+        member.setMail(updateSchoolDto.getNewMail());
         member.setSchool(updateSchoolDto.getSchool());
     }
 
