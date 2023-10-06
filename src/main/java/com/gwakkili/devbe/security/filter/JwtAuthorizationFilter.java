@@ -34,17 +34,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         String accessToken = jwtService.resolveAccessToken(request);
 
-        if(accessToken == null){
-            chain.doFilter(request, response);
-            return;
-        }
         //access token 유효성 검증
         String validateAccessToken = jwtService.validateToken(accessToken);
         AuthenticationEntryPoint authenticationEntryPoint = getAuthenticationEntryPoint();
         // access token 이 유효하지 않으면 예외 발생
         if(validateAccessToken.equals("INVALID")) {
-            authenticationEntryPoint.commence(request, response, new JwtException(ExceptionCode.INVALID_TOKEN));
-        // access token 이 만료되었다면 예외 발생
+            chain.doFilter(request, response);
+            return;
+            // access token 이 만료되었다면 예외 발생
         }else if(validateAccessToken.equals("EXPIRE")){
             authenticationEntryPoint.commence(request, response, new JwtException(ExceptionCode.EXPIRED_TOKEN));
         }
