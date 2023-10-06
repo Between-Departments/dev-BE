@@ -71,7 +71,8 @@ public class JwtService {
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject(memberDetails.getUsername())
+                .claim("memberId", memberDetails.getMemberId())
+                .claim("mail", memberDetails.getUsername())
                 .claim("roles", roles)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
