@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("회원가입 테스트")
-public class MemberSaveTest extends DevBeApplicationTests {
+public class SaveMemberTest extends DevBeApplicationTests {
 
     @Autowired
     private MailAuthKeyRepository mailAuthKeyRepository;
