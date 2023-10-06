@@ -29,7 +29,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = jwtService.generateAccessToken(memberDetails);
         String refreshToken = jwtService.generateRefreshToken(memberDetails);
 
-        Cookie cookie = new Cookie("RefreshToken", "Bearer " + refreshToken);
+        Cookie cookie = new Cookie("RefreshToken", refreshToken);
         cookie.setPath("/api/refresh");
         cookie.setMaxAge((int) jwtService.getRefreshTokenExpireTime() / 1000);
         cookie.setHttpOnly(true);

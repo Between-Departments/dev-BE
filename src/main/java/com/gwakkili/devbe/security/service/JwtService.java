@@ -59,7 +59,7 @@ public class JwtService {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("RefreshToken"))
-                return cookie.getValue().replace("Bearer ", "");
+                return cookie.getValue();
         }
         return null;
     }

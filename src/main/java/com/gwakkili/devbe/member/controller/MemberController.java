@@ -120,4 +120,10 @@ public class MemberController {
         return memberService.getList(sliceRequestDto);
     }
 
+    @DeleteMapping
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete() {
+
+    }
 }
