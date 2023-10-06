@@ -14,12 +14,12 @@ import lombok.*;
 public class UpdateSchoolDto {
 
     @JsonIgnore
-    private String oldMail;
+    private String mail;
 
     @MailDuplicate
     @MailAuth
     @Email
-    private String mail;
+    private String newMail;
 
     @School
     private String school;
