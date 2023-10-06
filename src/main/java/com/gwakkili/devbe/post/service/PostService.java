@@ -1,10 +1,16 @@
 package com.gwakkili.devbe.post.service;
 
-import com.gwakkili.devbe.post.dto.PostDto;
-import com.gwakkili.devbe.post.dto.PostReportDto;
-import com.gwakkili.devbe.post.dto.PostSaveDto;
-import com.gwakkili.devbe.post.dto.PostUpdateDto;
+import com.gwakkili.devbe.dto.SliceRequestDto;
+import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.post.dto.response.BookmarkPostListDto;
+import com.gwakkili.devbe.post.dto.response.MyPostListDto;
+import com.gwakkili.devbe.post.dto.response.PostDetailDto;
+import com.gwakkili.devbe.post.dto.request.PostReportDto;
+import com.gwakkili.devbe.post.dto.request.PostSaveDto;
+import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
 import com.gwakkili.devbe.post.entity.Post;
+import com.gwakkili.devbe.post.entity.PostBookmark;
+import com.gwakkili.devbe.report.entity.PostReport;
 
 public interface PostService {
 
@@ -22,13 +28,13 @@ public interface PostService {
 
     Post find(Long postId);
 
-    PostDto findPostDto(Long postId);
+    PostDetailDto findPostDto(Long postId);
 
-    void findReportedPostList();
+    SliceResponseDto<PostDetailDto, PostReport> findReportedPostList(SliceRequestDto sliceRequestDto);
 
-    void findPostList();
+    SliceResponseDto<PostDetailDto, Post> findPostList(SliceRequestDto sliceRequestDto);
 
-    void findMyPostList(long memberId);
+    SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, long memberId);
 
-    void findBookmarkedPostList(long memberId);
+    SliceResponseDto<BookmarkPostListDto, PostBookmark> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId);
 }

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Data
 @AllArgsConstructor
@@ -31,5 +32,9 @@ public class SliceRequestDto {
     @JsonIgnore
     public Pageable getPageable() {
         return PageRequest.of(page - 1, size);
+    }
+
+    public Pageable getPageableDefaultSorting() {
+        return PageRequest.of(page -1, size, Sort.Direction.DESC, "createAt");
     }
 }

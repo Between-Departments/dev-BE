@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.post.dto;
+package com.gwakkili.devbe.post.dto.request;
 
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.validation.Major;

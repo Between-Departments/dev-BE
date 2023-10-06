@@ -20,7 +20,6 @@ public class Post extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id",nullable = false)
-
     private Member writer;
 
 //    @Enumerated(EnumType.STRING)
@@ -39,6 +38,9 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<PostImage> images = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+//    private List<PostReport> reports = new ArrayList<>();
 
     private int viewCount;
 
@@ -76,6 +78,17 @@ public class Post extends BaseEntity {
         this.title = title;
         this.content = content;
     }
+
+//    public void addNewReport(Member reporter, Report.Type type, String content){
+//        PostReport newPostReport = PostReport.builder()
+//                .reporter(reporter)
+//                .post(this)
+//                .type(type)
+//                .content(content)
+//                .build();
+//
+//        this.reports.add(newPostReport);
+//    }
 
 
     @RequiredArgsConstructor

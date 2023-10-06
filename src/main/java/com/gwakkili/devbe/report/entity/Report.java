@@ -3,11 +3,15 @@ package com.gwakkili.devbe.report.entity;
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @MappedSuperclass
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Report extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -18,6 +22,7 @@ public class Report extends BaseEntity {
     private Type type;
 
     private String content;
+
 
     @RequiredArgsConstructor
     @Getter
