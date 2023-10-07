@@ -43,8 +43,8 @@ public class PostServiceImpl implements PostService{
 
 
     @Override
-    public void saveNewPost(PostSaveDto postSaveDto, long memberId) {
-        Member writer = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+    public PostDetailDto saveNewPost(PostSaveDto postSaveDto, long memberId) {
+        Member writer = memberRepository.findWithImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         Post newPost = Post.builder()
                 .title(postSaveDto.getTitle())
@@ -55,7 +55,9 @@ public class PostServiceImpl implements PostService{
                 .isAnonymous(postSaveDto.isAnonymous())
                 .build();
 
-        postRepository.save(newPost);
+        Post savePost = postRepository.save(newPost);
+
+        return PostDetailDto.of(savePost);
     }
 
 //    @Override
@@ -73,7 +75,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public void reportPost(PostReportDto postReportDto , Long postId, long memberId) {
-        Member reporter = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        Member reporter = memberRepository.getReferenceById(memberId);
         Post findPost = find(postId);
 
         Optional<PostReport> findPostReport = postReportRepository.findByReporterAndPost(reporter, findPost);
@@ -93,7 +95,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public void bookmarkPost(Long postId, long memberId) {
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        Member findMember = memberRepository.getReferenceById(memberId);
         Post findPost = find(postId);
 
         Optional<PostBookmark> findPostBookmark = postBookmarkRepository.findByMemberAndPost(findMember, findPost);
@@ -112,7 +114,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public void recommendPost(Long postId, long memberId) {
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        Member findMember = memberRepository.getReferenceById(memberId);
         Post findPost = find(postId);
 
         Optional<PostRecommend> findPostRecommend = postRecommendRepository.findByMemberAndPost(findMember, findPost);
@@ -144,7 +146,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public void updatePost(PostUpdateDto postUpdateDto, Long postId, long memberId) {
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        Member findMember = memberRepository.getReferenceById(memberId);
         Post findPost = find(postId);
 
         if (findPost.getWriter().getMemberId() == findMember.getMemberId()){

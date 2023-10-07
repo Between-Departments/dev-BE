@@ -14,7 +14,7 @@ import com.gwakkili.devbe.report.entity.PostReport;
 
 public interface PostService {
 
-    void saveNewPost(PostSaveDto postSaveDto, long memberId);
+    PostDetailDto saveNewPost(PostSaveDto postSaveDto, long memberId);
 
     void reportPost(PostReportDto postReportDto, Long postId, long memberId);
 

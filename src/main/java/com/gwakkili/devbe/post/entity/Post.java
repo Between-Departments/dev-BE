@@ -5,6 +5,7 @@ import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +43,11 @@ public class Post extends BaseEntity {
 //    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
 //    private List<PostReport> reports = new ArrayList<>();
 
+    // TODO 어떻게 처리할 것인가에 대한 방법 논의 필요
     private int viewCount;
 
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("SELECT count(1) FROM POSTRECOMMEND pr WHERE pr.post_id = post_id")
     private int recommendCount;
 
     private boolean isAnonymous;

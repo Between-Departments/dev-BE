@@ -1,11 +1,13 @@
 package com.gwakkili.devbe.post.dto.response;
 
 import com.gwakkili.devbe.post.entity.Post;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 @SuperBuilder
 public class MyPostListDto extends AbstractPostListDto{
 

@@ -1,9 +1,9 @@
 package com.gwakkili.devbe.member.repository;
 
 import com.gwakkili.devbe.member.entity.Member;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -17,4 +17,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByMail(String mail);
 
     boolean existsByNickname(String nickname);
+
+    @EntityGraph(attributePaths = {"image"})
+    Optional<Member> findWithImageByMemberId(long memberId);
 }
