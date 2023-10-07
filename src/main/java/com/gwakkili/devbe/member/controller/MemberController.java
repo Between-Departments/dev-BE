@@ -116,7 +116,7 @@ public class MemberController {
     @GetMapping
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     @Operation(summary = "회원 목록 조회")
-    public SliceResponseDto<MemberDto, Member> getList(@ParameterObject SliceRequestDto sliceRequestDto) {
+    public SliceResponseDto<MemberDto, Member> getList(@ParameterObject MemberSliceRequestDto sliceRequestDto) {
         return memberService.getList(sliceRequestDto);
     }
 

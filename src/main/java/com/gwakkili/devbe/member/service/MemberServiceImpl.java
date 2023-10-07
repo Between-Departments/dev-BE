@@ -88,12 +88,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public SliceResponseDto<MemberDto, Member> getList(SliceRequestDto sliceRequestDto) {
-
-        String keyword = sliceRequestDto.getKeyword();
-        Pageable pageable = sliceRequestDto.getPageable();
+        MemberSliceRequestDto memberSliceRequestDto = (MemberSliceRequestDto) sliceRequestDto;
+        String keyword = memberSliceRequestDto.getKeyword();
+        Pageable pageable = memberSliceRequestDto.getPageable();
         Slice<Member> slice;
 
-        if (StringUtils.hasText(sliceRequestDto.getKeyword())) {
+        if (StringUtils.hasText(memberSliceRequestDto.getKeyword())) {
             slice = memberRepository.findAllByMailContaining(keyword, pageable);
         } else slice = memberRepository.findAll(pageable);
 
