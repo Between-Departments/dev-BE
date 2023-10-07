@@ -20,7 +20,6 @@ public class PostDetailDto {
 
     private String writer;
 
-    // TODO 작성자의 이미지는 원본 or 썸네일?
     private String writerImage;
 
     private String major;
