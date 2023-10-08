@@ -113,16 +113,19 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean mailDuplicateCheck(String mail) {
         return memberRepository.existsByMail(mail);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean nicknameDuplicateCheck(String nickname) {
         return memberRepository.existsByNickname(nickname);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean passwordConfirm(String mail, String password) {
         Member member = memberRepository.findByMail(mail)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));

@@ -1,6 +1,8 @@
 package com.gwakkili.devbe.member.controller;
 
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.member.dto.*;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.service.MemberService;
@@ -45,21 +47,26 @@ public class MemberController {
 
     @GetMapping("/mail/duplicate")
     @Operation(summary = "메일 중복 획안")
-    public boolean mailDuplicateCheck(@Parameter(name = "mail", description = "메일") String mail) {
-        return memberService.mailDuplicateCheck(mail);
+    public void mailDuplicateCheck(@Parameter(name = "mail", description = "메일") String mail) {
+        if (memberService.mailDuplicateCheck(mail))
+            throw new CustomException(ExceptionCode.DUPLICATE_MAIL);
+
     }
 
     @GetMapping("/nickname/duplicate")
     @Operation(summary = "닉네임 중복 확인")
-    public boolean nicknameDuplicateCheck(@Parameter(name = "nickname", description = "닉네임") String nickname) {
-        return memberService.nicknameDuplicateCheck(nickname);
+    public void nicknameDuplicateCheck(@Parameter(name = "nickname", description = "닉네임") String nickname) {
+        if (memberService.nicknameDuplicateCheck(nickname))
+            throw new CustomException(ExceptionCode.DUPLICATE_NICKNAME);
+
     }
 
     @PostMapping("/password/confirm")
     @Operation(summary = "비밀번호 확인")
     @PreAuthorize("isAuthenticated()")
-    public boolean passwordConfirm(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody String password) {
-        return memberService.passwordConfirm(memberDetails.getMail(), password);
+    public void passwordConfirm(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody String password) {
+        if (memberService.passwordConfirm(memberDetails.getMail(), password))
+            throw new CustomException(ExceptionCode.INVALID_PASSWORD);
     }
 
     @PatchMapping("/my/password")
@@ -105,11 +112,11 @@ public class MemberController {
         memberService.updateMajor(updateMajorDto);
     }
 
-    @PatchMapping("/{id}/lock")
+    @PatchMapping("/{memberId}/lock")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     @Operation(summary = "회원 정지")
-    public void lockMember(@Parameter(name = "id", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long id) {
-        memberService.lock(id);
+    public void lockMember(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId) {
+        memberService.lock(memberId);
     }
 
     @GetMapping
@@ -119,10 +126,12 @@ public class MemberController {
         return memberService.getList(sliceRequestDto);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{memberId}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete() {
+    @Operation(summary = "회원 탈퇴")
+    public void delete(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId,
+                       @AuthenticationPrincipal MemberDetails memberDetails) {
 
     }
 }
