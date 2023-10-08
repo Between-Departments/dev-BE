@@ -69,6 +69,6 @@ springdoc:
   swagger-ui:
     operations-sorter: alpha
     tags-sorter: alpha
-    path: /swagger
+    path: /api/swagger
   cache:
     disabled: true
