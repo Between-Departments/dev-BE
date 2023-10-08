@@ -12,7 +12,7 @@ import lombok.*;
 public class UpdateMajorDto {
 
     @JsonIgnore
-    String mail;
+    long memberId;
 
     @NotBlank
     @Major

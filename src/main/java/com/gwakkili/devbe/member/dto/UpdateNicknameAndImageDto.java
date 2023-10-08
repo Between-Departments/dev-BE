@@ -13,10 +13,10 @@ import org.hibernate.validator.constraints.URL;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Schema
-public class NicknameAndImageDto {
+public class UpdateNicknameAndImageDto {
 
     @JsonIgnore
-    private String mail;
+    long memberId;
 
     @NotBlank
     @NicknameDuplicate

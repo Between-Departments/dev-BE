@@ -9,11 +9,11 @@ public interface MemberService {
 
     void save(MemberSaveDto saveDto);
 
-    MemberDto find(String mail);
+    MemberDetailDto find(long memberId);
 
     void updatePassword(UpdatePasswordDto updatePasswordDto);
 
-    void updateNicknameAndImage(NicknameAndImageDto nicknameAndImageDto);
+    void updateNicknameAndImage(UpdateNicknameAndImageDto updateNicknameAndImageDto);
 
     void updateSchool(UpdateSchoolDto updateSchoolDto);
 

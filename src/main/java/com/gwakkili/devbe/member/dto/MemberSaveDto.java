@@ -47,17 +47,4 @@ public class MemberSaveDto {
     @URL
     private String imageUrl;
 
-    public Member toEntity(PasswordEncoder passwordEncoder) {
-        Member member = Member.builder()
-                .mail(mail)
-                .nickname(nickname)
-                .password(passwordEncoder.encode(password))
-                .major(major)
-                .school(school)
-                .build();
-        member.setImage(MemberImage.builder().url(imageUrl).build());
-        member.addRole(Member.Role.ROLE_USER);
-        return member;
-    }
-
 }

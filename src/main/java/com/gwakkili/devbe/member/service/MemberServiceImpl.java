@@ -33,20 +33,31 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void save(MemberSaveDto memberSaveDto) {
-        memberRepository.save(memberSaveDto.toEntity(passwordEncoder));
+
+        Member member = Member.builder()
+                .mail(memberSaveDto.getMail())
+                .nickname(memberSaveDto.getNickname())
+                .password(passwordEncoder.encode(memberSaveDto.getPassword()))
+                .major(memberSaveDto.getMajor())
+                .school(memberSaveDto.getSchool())
+                .build();
+        member.setImage(MemberImage.builder().url(memberSaveDto.getImageUrl()).build());
+        member.addRole(Member.Role.ROLE_USER);
+
+        memberRepository.save(member);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public MemberDto find(String mail) {
-        Member member = memberRepository.findByMail(mail)
+    public MemberDetailDto find(long memberId) {
+        Member member = memberRepository.findWithCountById(memberId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
-        return MemberDto.of(member);
+        return MemberDetailDto.of(member);
     }
 
     @Override
     public void updatePassword(UpdatePasswordDto updatePasswordDto) {
-        Member member = memberRepository.findByMail(updatePasswordDto.getMail())
+        Member member = memberRepository.findById(updatePasswordDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         if (!passwordEncoder.matches(updatePasswordDto.getPassword(), member.getPassword()))
@@ -56,16 +67,16 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateNicknameAndImage(NicknameAndImageDto nicknameAndImageDto) {
-        Member member = memberRepository.findByMail(nicknameAndImageDto.getMail())
+    public void updateNicknameAndImage(UpdateNicknameAndImageDto updateNicknameAndImageDto) {
+        Member member = memberRepository.findById(updateNicknameAndImageDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
-        member.setNickname(nicknameAndImageDto.getNickname());
-        member.setImage(MemberImage.builder().url(nicknameAndImageDto.getImageUrl()).build());
+        member.setNickname(updateNicknameAndImageDto.getNickname());
+        member.setImage(MemberImage.builder().url(updateNicknameAndImageDto.getImageUrl()).build());
     }
 
     @Override
     public void updateSchool(UpdateSchoolDto updateSchoolDto) {
-        Member member = memberRepository.findByMail(updateSchoolDto.getMail())
+        Member member = memberRepository.findById(updateSchoolDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.setMail(updateSchoolDto.getNewMail());
         member.setSchool(updateSchoolDto.getSchool());
@@ -73,7 +84,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void updateMajor(UpdateMajorDto updateMajorDto) {
-        Member member = memberRepository.findByMail(updateMajorDto.getMail())
+        Member member = memberRepository.findById(updateMajorDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.setMajor(updateMajorDto.getMajor());
     }

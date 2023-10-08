@@ -14,7 +14,7 @@ import lombok.*;
 public class UpdateSchoolDto {
 
     @JsonIgnore
-    private String mail;
+    long memberId;
 
     @MailDuplicate
     @MailAuth

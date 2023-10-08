@@ -1,6 +1,5 @@
 package com.gwakkili.devbe.member.controller;
 
-import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.member.dto.*;
 import com.gwakkili.devbe.member.entity.Member;
@@ -39,8 +38,8 @@ public class MemberController {
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "나의 회원정보 조회")
-    public MemberDto find(@AuthenticationPrincipal MemberDetails memberDetails){
-        return memberService.find(memberDetails.getMail());
+    public MemberDetailDto find(@AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.find(memberDetails.getMemberId());
     }
 
 
@@ -70,7 +69,7 @@ public class MemberController {
                                @RequestBody @Validated UpdatePasswordDto updatePasswordDto,
                                BindingResult bindingResult) throws BindException {
         try {
-            updatePasswordDto.setMail(memberDetails.getMail());
+            updatePasswordDto.setMemberId(memberDetails.getMemberId());
             memberService.updatePassword(updatePasswordDto);
         } catch (BadCredentialsException e) {
             bindingResult.rejectValue("password", "", e.getMessage());
@@ -81,11 +80,11 @@ public class MemberController {
     @PatchMapping("/my/image")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "이미지, 닉네임 변경")
-    public NicknameAndImageDto updateNicknameAndImage(@AuthenticationPrincipal MemberDetails memberDetails,
-                                                      @RequestBody @Validated NicknameAndImageDto nicknameAndImageDto) {
-        nicknameAndImageDto.setMail(memberDetails.getMail());
-        memberService.updateNicknameAndImage(nicknameAndImageDto);
-        return nicknameAndImageDto;
+    public UpdateNicknameAndImageDto updateNicknameAndImage(@AuthenticationPrincipal MemberDetails memberDetails,
+                                                            @RequestBody @Validated UpdateNicknameAndImageDto updateNicknameAndImageDto) {
+        updateNicknameAndImageDto.setMemberId(memberDetails.getMemberId());
+        memberService.updateNicknameAndImage(updateNicknameAndImageDto);
+        return updateNicknameAndImageDto;
     }
 
     @PatchMapping("/my/school")
@@ -93,7 +92,7 @@ public class MemberController {
     @Operation(summary = "학교 정보 변경")
     public void updateSchool(@AuthenticationPrincipal MemberDetails memberDetails,
                              @RequestBody @Validated UpdateSchoolDto updateSchoolDto) {
-        updateSchoolDto.setMail(memberDetails.getMail());
+        updateSchoolDto.setMemberId(memberDetails.getMemberId());
         memberService.updateSchool(updateSchoolDto);
     }
 
@@ -102,7 +101,7 @@ public class MemberController {
     @Operation(summary = "학과 정보 변경")
     public void updateMajor(@AuthenticationPrincipal MemberDetails memberDetails,
                             @RequestBody @Validated UpdateMajorDto updateMajorDto) {
-        updateMajorDto.setMail(memberDetails.getMail());
+        updateMajorDto.setMemberId(memberDetails.getMemberId());
         memberService.updateMajor(updateMajorDto);
     }
 
