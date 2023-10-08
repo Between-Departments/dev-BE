@@ -26,8 +26,6 @@ public interface PostService {
 
     void updatePost(PostUpdateDto postUpdateDto, Long postId, long memberId);
 
-    Post find(Long postId);
-
     PostDetailDto findPostDto(Long postId);
 
     SliceResponseDto<PostDetailDto, PostReport> findReportedPostList(SliceRequestDto sliceRequestDto);

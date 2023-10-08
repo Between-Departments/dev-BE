@@ -80,6 +80,7 @@ public class PostServiceImpl implements PostService{
 
         Optional<PostReport> findPostReport = postReportRepository.findByReporterAndPost(reporter, findPost);
 
+        // ! HTTP 409 -> 중복 데이터 존재하는 경우 응답 상태 코드
         findPostReport.ifPresentOrElse(report -> { new CustomException(ExceptionCode.DUPLICATE_REPORT); },
                 () ->{
                     PostReport newPostReport = PostReport.builder()
@@ -157,8 +158,7 @@ public class PostServiceImpl implements PostService{
         }
     }
 
-    @Override
-    public Post find(Long postId) {
+    private Post find(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
     }

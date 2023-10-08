@@ -24,5 +24,4 @@ public class DevBeApplicationTests {
     @Autowired
     protected ObjectMapper objectMapper;
 
-
 }

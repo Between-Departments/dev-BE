@@ -13,8 +13,9 @@ import java.util.Optional;
 public interface PostBookmarkRepository extends JpaRepository<PostBookmark, Long> {
     Optional<PostBookmark> findByMemberAndPost(Member member, Post post);
 
+
     @Query("select pb from PostBookmark pb " +
-            "join fetch pb.post p join fetch p.images join fetch p.writer w join fetch w.image " +
+            "join fetch pb.post p join fetch p.images join fetch p.writer w " +
             "where pb.member.memberId =:memberId")
     Slice<PostBookmark> findAllByMemberId(long memberId, Pageable pageable);
 }
