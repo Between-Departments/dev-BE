@@ -75,17 +75,17 @@ public class Member extends BaseEntity {
         this.locked = locked;
     }
 
-    public void setImage(MemberImage image) {
-        this.image = image;
-        image.setMember(this);
-    }
-
     public void setSchool(String school) {
         this.school = school;
     }
 
     public void setMajor(String major) {
         this.major = major;
+    }
+
+    public void setImage(MemberImage image) {
+        this.image = image;
+        image.setMember(this);
     }
 
     @RequiredArgsConstructor
