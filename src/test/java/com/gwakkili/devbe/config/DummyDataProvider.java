@@ -135,7 +135,7 @@ public class DummyDataProvider implements ApplicationRunner {
         IntStream.rangeClosed(1, 100).forEach(i -> {
             Reply reply = Reply.builder()
                     .member(Member.builder().memberId(1).build())
-                    .post(Post.builder().postId(1).build())
+                    .post(postRepository.getReferenceById(1l))
                     .content("testReplyContent" + i)
                     .isAnonymous(false)
                     .build();
