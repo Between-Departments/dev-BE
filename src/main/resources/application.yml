@@ -67,7 +67,7 @@ springdoc:
       enabled: true
   default-consumes-media-type: application/json;charset=UTF-8
   swagger-ui:
-    operations-sorter: alpha
+    operations-sorter: method
     tags-sorter: alpha
     path: /api/swagger
   cache:

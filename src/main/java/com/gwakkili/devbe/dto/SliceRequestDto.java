@@ -39,4 +39,9 @@ public class SliceRequestDto {
         return (sortBy == null) ? PageRequest.of(page - 1, size) :
                 PageRequest.of(page - 1, size, direction, sortBy);
     }
+
+    @JsonIgnore
+    public Pageable getPageableDefaultSorting() {
+        return PageRequest.of(page -1, size, Sort.Direction.DESC, "createAt");
+    }
 }

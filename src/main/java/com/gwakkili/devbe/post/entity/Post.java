@@ -2,10 +2,10 @@ package com.gwakkili.devbe.post.entity;
 
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.image.entity.PostImage;
-import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,6 @@ public class Post extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id",nullable = false)
-
     private Member writer;
 
 //    @Enumerated(EnumType.STRING)
@@ -41,19 +40,27 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<PostImage> images = new ArrayList<>();
 
+//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+//    private List<PostReport> reports = new ArrayList<>();
+
+    // TODO 어떻게 처리할 것인가에 대한 방법 논의 필요
     private int viewCount;
 
+
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("SELECT count(1) FROM POST_RECOMMEND pr WHERE pr.post_id = post_id")
     private int recommendCount;
 
     private boolean isAnonymous;
 
     @Builder
-    public Post(Member writer, String major, Category category, String title, String content) {
+    public Post(Member writer, String major, Category category, String title, String content, boolean isAnonymous) {
         this.writer = writer;
         this.major = major;
         this.category = category;
         this.title = title;
         this.content = content;
+        this.isAnonymous = isAnonymous;
     }
 
     public void setTitle(String title) {
@@ -71,6 +78,22 @@ public class Post extends BaseEntity {
     public void addRecommendCount() {
         this.recommendCount++;
     }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+//    public void addNewReport(Member reporter, Report.Type type, String content){
+//        PostReport newPostReport = PostReport.builder()
+//                .reporter(reporter)
+//                .post(this)
+//                .type(type)
+//                .content(content)
+//                .build();
+//
+//        this.reports.add(newPostReport);
+//    }
 
 
     @RequiredArgsConstructor
