@@ -130,7 +130,7 @@ public class PostController {
     @DeleteMapping("/{postId}")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable Long postId,@AuthenticationPrincipal MemberDetails memberDetails){
-        postService.deletePost(postId,memberDetails.getMemberId());
+        postService.deletePost(postId,memberDetails.getMemberId(), memberDetails.getRoles());
     }
 
     @Operation(method = "PATCH", summary = "특정 게시글 수정")

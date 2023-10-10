@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 @Service
@@ -132,12 +133,12 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public void deletePost(Long postId, long memberId) {
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+    public void deletePost(Long postId, long memberId, Set<Member.Role> roles) {
+        Member findMember = memberRepository.getReferenceById(memberId);
         Post findPost = find(postId);
 
         if (findPost.getWriter().getMemberId() == findMember.getMemberId()
-                || findMember.getRoles().contains(Member.Role.ROLE_MANAGER)){
+                || roles.contains(Member.Role.ROLE_MANAGER)){
             postRepository.delete(findPost);
         } else{
             // ! 게시글을 삭제하려는 사용자가 글 작성자 본인 또는 ADMIN이 아닐 경우

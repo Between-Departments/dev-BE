@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     // TODO 이미지를 가져오는 쿼리가 별도로 나가는지 확인 필요
-    @EntityGraph(attributePaths = {"images","writer"})
+    @EntityGraph(attributePaths = {"images","writer","recommendCount"})
 //    @Query("select p from Post p join fetch p.writer w join fetch w.image where p.postId =:postId")
     Optional<Post> findWithWriterByPostId(Long postId);
 
