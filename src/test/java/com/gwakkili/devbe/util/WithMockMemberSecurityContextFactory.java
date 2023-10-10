@@ -18,7 +18,11 @@ public class WithMockMemberSecurityContextFactory implements WithSecurityContext
 
         final SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         Set<Member.Role> roles = Arrays.stream(customMember.roles()).map(Member.Role::valueOf).collect(Collectors.toSet());
-        UserDetails principal = MemberDetails.builder().mail(customMember.mail()).password(customMember.password()).roles(roles).build();
+        UserDetails principal = MemberDetails.builder()
+                .memberId(customMember.memberId())
+                .mail(customMember.mail())
+                .password(customMember.password())
+                .roles(roles).build();
         final UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities());
 

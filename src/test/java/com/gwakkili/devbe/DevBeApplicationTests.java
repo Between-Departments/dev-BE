@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 @Import({S3MockConfig.class, DummyDataProvider.class})
 @ActiveProfiles("test")
 public class DevBeApplicationTests {

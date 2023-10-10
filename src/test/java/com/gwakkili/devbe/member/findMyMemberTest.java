@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.member;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
+import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,14 +16,19 @@ public class findMyMemberTest extends DevBeApplicationTests {
 
     String url = "/api/members/my";
 
+    private final String mail = "test@test1.ac.kr";
+
     @Test
     @DisplayName("나의 유저정보 조회")
-    @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!")
+    @WithMockMember(memberId = 1, mail = mail)
     public void findMyTest() throws Exception {
 
         //when,then
         mockMvc.perform(get(url))
-                .andExpect(jsonPath("mail").value("test@test1.ac.kr"))
+                .andExpect(jsonPath("mail").value(mail))
+                .andExpect(jsonPath("bookmarkCount").value(0))
+                .andExpect(jsonPath("postCount").value(1))
+                .andExpect(jsonPath("replyCount").value(100))
                 .andDo(print());
     }
 
@@ -33,6 +39,8 @@ public class findMyMemberTest extends DevBeApplicationTests {
         //when,then
         mockMvc.perform(get(url))
                 .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("code").value(ExceptionCode.UNAUTHORIZED.getCode()))
+                .andExpect(jsonPath("message").value(ExceptionCode.UNAUTHORIZED.getMessage()))
                 .andDo(print());
     }
 

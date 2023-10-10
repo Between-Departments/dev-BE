@@ -5,10 +5,12 @@ import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Reply extends BaseEntity {
 
     @Id
@@ -16,31 +18,32 @@ public class Reply extends BaseEntity {
     private long replyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id",nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="post_id",nullable = false)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     private String content;
 
-    private int recommendCount;
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("(SELECT count(*) FROM reply_recommend rr WHERE rr.reply_id = reply_id)")
+    private Integer recommendCount;
 
-    @Builder
-    public Reply(long replyId, Member member, Post post, String content) {
-        this.replyId = replyId;
-        this.member = member;
-        this.post = post;
-        this.content = content;
-    }
+    private boolean isAnonymous;
 
     public void setContent(String content) {
         this.content = content;
     }
 
-    public void addRecommendCount(){
-        this.recommendCount++;
+    @Builder
+    public Reply(long replyId, Member member, Post post, String content, boolean isAnonymous) {
+        this.replyId = replyId;
+        this.member = member;
+        this.post = post;
+        this.content = content;
+        this.isAnonymous = isAnonymous;
     }
 
 }

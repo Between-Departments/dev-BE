@@ -3,6 +3,13 @@ package com.gwakkili.devbe.config;
 import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
+import com.gwakkili.devbe.post.entity.Post;
+import com.gwakkili.devbe.post.repository.PostRepository;
+import com.gwakkili.devbe.reply.entity.Reply;
+import com.gwakkili.devbe.reply.repository.ReplyReportRepository;
+import com.gwakkili.devbe.reply.repository.ReplyRepository;
+import com.gwakkili.devbe.report.entity.ReplyReport;
+import com.gwakkili.devbe.report.entity.Report;
 import com.gwakkili.devbe.shcool.entity.School;
 import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
 import com.gwakkili.devbe.major.repository.MajorRepository;
@@ -13,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.test.context.TestComponent;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +38,14 @@ public class DummyDataProvider implements ApplicationRunner {
 
     private MemberRepository memberRepository;
 
+    private PostRepository postRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private ReplyRepository replyRepository;
+
+    private ReplyReportRepository replyReportRepository;
+
+
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public DummyDataProvider() {
     }
@@ -40,12 +54,15 @@ public class DummyDataProvider implements ApplicationRunner {
     public DummyDataProvider(SchoolRepository schoolRepository,
                              MajorRepository majorRepository,
                              MemberRepository memberRepository,
-                             MailAuthCodeRepository mailAuthCodeRepository,
-                             PasswordEncoder passwordEncoder) {
+                             PostRepository postRepository,
+                             ReplyRepository replyRepository,
+                             ReplyReportRepository replyReportRepository) {
         this.schoolRepository = schoolRepository;
         this.majorRepository = majorRepository;
         this.memberRepository = memberRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.postRepository = postRepository;
+        this.replyRepository = replyRepository;
+        this.replyReportRepository = replyReportRepository;
     }
 
     private void saveSchool(){
@@ -101,12 +118,56 @@ public class DummyDataProvider implements ApplicationRunner {
         memberRepository.saveAll(members);
     }
 
+    private void savePost() {
+        Post post = Post.builder()
+                .title("testTitle")
+                .content("testContent")
+                .category(Post.Category.DAILY)
+                .major("테스트학과1")
+                .writer(Member.builder().memberId(1).build())
+                .build();
+        postRepository.save(post);
+    }
+
+    private void saveReply() {
+
+        List<Reply> replies = new ArrayList<>();
+        IntStream.rangeClosed(1, 100).forEach(i -> {
+            Reply reply = Reply.builder()
+                    .member(Member.builder().memberId(1).build())
+                    .post(postRepository.getReferenceById(1l))
+                    .content("testReplyContent" + i)
+                    .isAnonymous(false)
+                    .build();
+            replies.add(reply);
+        });
+        replyRepository.saveAll(replies);
+
+    }
+
+    private void saveReplyReport() {
+        List<ReplyReport> replyReports = new ArrayList<>();
+        IntStream.rangeClosed(1, 10).forEach(i -> {
+            ReplyReport replyReport = ReplyReport.builder()
+                    .reply(Reply.builder().replyId(new Random().nextInt(1, 10)).build())
+                    .reporter(Member.builder().memberId(1).build())
+                    .content("신고내용" + i)
+                    .Type(Report.Type.PORNOGRAPHY)
+                    .build();
+            replyReports.add(replyReport);
+        });
+        replyReportRepository.saveAll(replyReports);
+    }
+
     @Transactional
     @Override
     public void run(ApplicationArguments args) throws Exception {
         saveSchool();
         saveMajor();
         saveMember();
+        savePost();
+        saveReply();
+        saveReplyReport();
     }
 
 }

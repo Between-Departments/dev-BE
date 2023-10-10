@@ -15,7 +15,7 @@ public class MemberImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long imageId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
