@@ -13,20 +13,20 @@ import org.hibernate.validator.constraints.URL;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Schema
-public class NicknameAndImageDto {
+public class UpdateNicknameAndImageDto {
 
     @JsonIgnore
-    private String mail;
+    long memberId;
 
     @NotBlank
     @NicknameDuplicate
     @Pattern(regexp = "^[A-Za-z0-9가-힣]{1,8}$")
-    @Schema(description = "닉네임", example = "과끼리123")
+    @Schema(description = "닉네임", example = "하이디")
     private String nickname;
 
 
-    @Schema(description = "프로필 이미지 url")
     @NotBlank
     @URL
+    @Schema(description = "프로필 이미지 URL", example = "http://example.com/images/image.jpa")
     private String imageUrl;
 }

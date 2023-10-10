@@ -33,16 +33,19 @@ public enum ExceptionCode {
     UNSUPPORTED_MAIL(HttpStatus.NOT_FOUND, "MAIL_001", "지원하지 않는 학교 메일입니다."),
     MAIL_AUTH_CODE_EXPIRE(HttpStatus.NOT_FOUND, "MAIL_002", "메일 인증 버호가 만료되었습니다."),
     FAIL_SEND_MAIL(HttpStatus.BAD_REQUEST, "MAIL_003", " 메일 전송에 실패하였습니다."),
+
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "MEMBER_001", "해당 계정을 찾을 수 없습니다."),
+    DUPLICATE_MAIL(HttpStatus.CONFLICT, "MEMBER_002", "이미 가입된 메일입니다."),
+    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "MEMBER_003", "이미 가입된 닉네임입니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "MEMBER_004", "비밀번호가 올바르지 않습니다."),
 
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "USER-001", "인증되지 않은 사용자입니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "USER-003", "접근이 거부되었습니다."),
-
+  
+  
     NOT_FOUND_POST(HttpStatus.NOT_FOUND,"POST-001" ,"게시물을 찾을 수 없습니다."),
-
-    DUPLICATE_REPORT(HttpStatus.BAD_REQUEST,"REPORT-001" , "동일한 신고를 여러번 할 수 없습니다.");
-
-
+    DUPLICATE_REPORT(HttpStatus.BAD_REQUEST,"REPORT-001" , "동일한 신고를 여러번 할 수 없습니다."),
+    NOT_FOUND_REPLY(HttpStatus.NOT_FOUND, "REPLY-001", "댓글을 찾을 수 없습니다.");    
 
 
     private final HttpStatus httpStatus;

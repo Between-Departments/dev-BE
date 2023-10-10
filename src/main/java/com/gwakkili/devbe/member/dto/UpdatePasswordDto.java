@@ -16,7 +16,7 @@ import lombok.*;
 public class UpdatePasswordDto {
 
     @JsonIgnore
-    private String mail;
+    long memberId;
 
     @NotBlank
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,16}$")
@@ -31,5 +31,5 @@ public class UpdatePasswordDto {
     @NotBlank
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,16}$")
     @Schema(description = "예전 비밀번호", example = "bb45674567!")
-    private String oldPassword;
+    private String password;
 }

@@ -4,7 +4,7 @@ import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.shcool.entity.School;
-import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
+import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
 import com.gwakkili.devbe.major.repository.MajorRepository;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import com.gwakkili.devbe.shcool.repository.SchoolRepository;
@@ -40,7 +40,7 @@ public class DummyDataProvider implements ApplicationRunner {
     public DummyDataProvider(SchoolRepository schoolRepository,
                              MajorRepository majorRepository,
                              MemberRepository memberRepository,
-                             MailAuthKeyRepository mailAuthKeyRepository,
+                             MailAuthCodeRepository mailAuthCodeRepository,
                              PasswordEncoder passwordEncoder) {
         this.schoolRepository = schoolRepository;
         this.majorRepository = majorRepository;

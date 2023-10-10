@@ -5,33 +5,39 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-@Data
 @AllArgsConstructor
-@Builder
+@Data
 @Schema
 public class SliceRequestDto {
 
     @Schema(description = "페이지 번호", defaultValue = "1")
-    private int page;
+    protected int page;
 
     @Schema(description = "페이지 크기", defaultValue = "10")
-    private int size;
+    protected int size;
 
-    @Schema(description = "검색 키워드", example = "안녕")
-    private String keyword;
+    @Schema(description = "정렬 기준", example = "recommendCount")
+    private String sortBy;
+
+    @Schema(description = "정렬 방향", example = "DESC")
+    private Sort.Direction direction;
 
     public SliceRequestDto() {
         this.page = 1;
         this.size = 10;
+        this.direction = Sort.Direction.DESC;
     }
+
 
     @JsonIgnore
     public Pageable getPageable() {
-        return PageRequest.of(page - 1, size);
+        return (sortBy == null) ? PageRequest.of(page - 1, size) :
+                PageRequest.of(page - 1, size, direction, sortBy);
     }
 
     @JsonIgnore

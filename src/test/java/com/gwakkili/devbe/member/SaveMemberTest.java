@@ -2,7 +2,7 @@ package com.gwakkili.devbe.member;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.mail.entity.MailAuthCode;
-import com.gwakkili.devbe.mail.repository.MailAuthKeyRepository;
+import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
 import com.gwakkili.devbe.member.dto.MemberSaveDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,10 +14,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("회원가입 테스트")
-public class MemberSaveTest extends DevBeApplicationTests {
+public class SaveMemberTest extends DevBeApplicationTests {
 
     @Autowired
-    private MailAuthKeyRepository mailAuthKeyRepository;
+    private MailAuthCodeRepository mailAuthCodeRepository;
     private final String url = "/api/members";
 
     @Test
@@ -39,9 +39,8 @@ public class MemberSaveTest extends DevBeApplicationTests {
                 .expiredTime(60)
                 .authCode("1111")
                 .build();
-        mailAuthKeyRepository.save(mailAuthCode);
+        mailAuthCodeRepository.save(mailAuthCode);
         String content = objectMapper.writeValueAsString(saveDto);
-        System.out.println(content);
 
         //when, then
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(content))

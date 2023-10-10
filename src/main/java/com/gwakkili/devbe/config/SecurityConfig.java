@@ -61,17 +61,17 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
 
         http.csrf(AbstractHttpConfigurer::disable)
-                .cors(cors-> cors.configurationSource(configurationSource))
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(cors -> cors.configurationSource(configurationSource))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(FormLoginConfigurer::disable)
                 .httpBasic(HttpBasicConfigurer::disable)
                 .addFilter(jwtAuthenticationFilter(authenticationManager))
-                .exceptionHandling(handler-> handler
+                .addFilter(jwtAuthorizationFilter(authenticationManager))
+                .addFilterBefore(refreshTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(handler -> handler
                         .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint)
-                )
-                .addFilter(jwtAuthorizationFilter(authenticationManager))
-                .addFilterBefore(refreshTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                );
         return http.build();
     }
 

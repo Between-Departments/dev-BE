@@ -19,8 +19,6 @@ import java.util.Optional;
 @Slf4j
 public class MemberDetailsService implements UserDetailsService {
 
-    private final PasswordEncoder passwordEncoder;
-
     private final MemberRepository memberRepository;
 
     @Override

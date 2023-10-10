@@ -42,7 +42,6 @@ public class MemberDetails implements UserDetails {
                 .locked(member.isLocked())
                 .createAt(member.getCreateAt())
                 .updateAt(member.getUpdateAt())
-                .deleteAt(member.getDeleteAt())
                 .roles(member.getRoles())
                 .build();
     }

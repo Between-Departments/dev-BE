@@ -9,11 +9,15 @@ public interface MemberService {
 
     void save(MemberSaveDto saveDto);
 
-    MemberDto find(String mail);
+    MemberDetailDto find(long memberId);
 
     void updatePassword(UpdatePasswordDto updatePasswordDto);
 
-    void updateNicknameAndImage(NicknameAndImageDto nicknameAndImageDto);
+    void updateNicknameAndImage(UpdateNicknameAndImageDto updateNicknameAndImageDto);
+
+    void updateSchool(UpdateSchoolDto updateSchoolDto);
+
+    void updateMajor(UpdateMajorDto updateMajorDto);
 
     void lock(Long id);
 
@@ -22,5 +26,7 @@ public interface MemberService {
     boolean mailDuplicateCheck(String mail);
 
     boolean nicknameDuplicateCheck(String nickname);
+
+    boolean passwordConfirm(String mail, String password);
 
 }

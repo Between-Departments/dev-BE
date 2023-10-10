@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -47,7 +49,7 @@ public class ImageServiceImpl implements ImageService {
 
             //이미지와 섬네일 업로드
             String imageUrl = uploadImage(multipartFile, imageUploadPath);
-            uploadThumbnailImage(multipartFile, imageUploadPath);
+            uploadThumbnailImage(multipartFile, thumbnailUploadPath);
 
             imageUrlList.add(imageUrl);
         }
@@ -64,6 +66,7 @@ public class ImageServiceImpl implements ImageService {
         try (InputStream inputStream = multipartFile.getInputStream()) {
             // S3에 폴더 및 파일 업로드
             amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, inputStream, objectMetadata));
+            log.info(amazonS3.getUrl(bucket, uploadPath).toString());
             return amazonS3.getUrl(bucket, uploadPath).toString();
         } catch (IOException e) {
             throw new CustomException(ExceptionCode.FAIL_UPLOAD);
@@ -88,6 +91,7 @@ public class ImageServiceImpl implements ImageService {
         // s3에 이미지 저장
         try (InputStream thumbnailInput = new ByteArrayInputStream(bytes);) {
             amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, thumbnailInput, thumbnailMetadata));
+            log.info(amazonS3.getUrl(bucket, uploadPath).toString());
         } catch (IOException e) {
             throw new CustomException(ExceptionCode.FAIL_UPLOAD);
         }
@@ -96,9 +100,12 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
-    public void delete(String imgUrl){
+    public void delete(String imgUrl) {
         String splitStr = ".com/";
-        String fileName = imgUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        String decodeUrl = URLDecoder.decode(imgUrl, StandardCharsets.UTF_8);
+        String imagePath = decodeUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
+        String thumbnailPath = imagePath.replace("images/", "thumbnails/");
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, imagePath));
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, thumbnailPath));
     }
 }

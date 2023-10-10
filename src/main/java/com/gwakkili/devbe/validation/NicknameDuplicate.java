@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = NicknameDuplicateValidator.class)
 public @interface NicknameDuplicate {
 
-    String message() default "이미 가입된 이메일 입니다.";
+    String message() default "이미 가입된 닉네임 입니다.";
 
     Class[] groups() default {};
 

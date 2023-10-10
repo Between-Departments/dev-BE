@@ -7,6 +7,7 @@ import com.gwakkili.devbe.security.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class JwtService {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("RefreshToken"))
-                return cookie.getValue().replace("Bearer ", "");
+                return cookie.getValue();
         }
         return null;
     }
@@ -71,7 +72,8 @@ public class JwtService {
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject(memberDetails.getUsername())
+                .claim("memberId", memberDetails.getMemberId())
+                .claim("mail", memberDetails.getUsername())
                 .claim("roles", roles)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -93,14 +95,18 @@ public class JwtService {
                 .token(token)
                 .mail(memberDetails.getMail())
                 .roles(memberDetails.getRoles())
-                .expiredTime(REFRESH_TOKEN_EXPIRE_TIME/1000)
+                .expiredTime(REFRESH_TOKEN_EXPIRE_TIME / 1000)
                 .build();
         refreshTokenRepository.save(refreshToken);
         return token;
     }
 
+    public void deleteRefreshToken(MemberDetails memberDetails) {
+        refreshTokenRepository.deleteById(memberDetails.getMail());
+    }
+
     // // access 토큰에서 유저정보 추출
-    public Authentication getAuthentication(String token) throws JwtException{
+    public Authentication getAuthentication(String token) throws JwtException {
         //jwt token 복호화
         Claims claims = getClaims(token);
         String mail = claims.getSubject();
@@ -124,10 +130,11 @@ public class JwtService {
 
     // 토큰 유효성 검사
     public String validateToken(String token) {
+        if (token == null) return "INVALID";
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
             return "VALID";
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        } catch (SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");

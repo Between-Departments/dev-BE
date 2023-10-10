@@ -4,8 +4,8 @@ import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.image.entity.MemberImage;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,7 +43,17 @@ public class Member extends BaseEntity {
 
     private boolean locked;
 
-    private LocalDateTime deleteAt;
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("SELECT count(1) FROM post_bookmark pb WHERE pb.member_id = member_id")
+    private int bookmarkCount;
+
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("SELECT count(1) FROM reply r WHERE r.member_id = member_id")
+    private int replyCount;
+
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("SELECT count(1) FROM post p WHERE p.member_id = member_id")
+    private int postCount;
 
     public void addRole(Role role) {
         this.roles.add(role);
@@ -63,6 +73,14 @@ public class Member extends BaseEntity {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
     }
 
     public void setImage(MemberImage image) {

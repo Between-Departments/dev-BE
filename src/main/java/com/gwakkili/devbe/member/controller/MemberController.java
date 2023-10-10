@@ -1,7 +1,8 @@
 package com.gwakkili.devbe.member.controller;
 
-import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.member.dto.*;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.service.MemberService;
@@ -39,8 +40,33 @@ public class MemberController {
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "나의 회원정보 조회")
-    public MemberDto find(@AuthenticationPrincipal MemberDetails memberDetails){
-        return memberService.find(memberDetails.getMail());
+    public MemberDetailDto find(@AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.find(memberDetails.getMemberId());
+    }
+
+
+    @GetMapping("/mail/duplicate")
+    @Operation(summary = "메일 중복 획안")
+    public void mailDuplicateCheck(@Parameter(name = "mail", description = "메일") String mail) {
+        if (memberService.mailDuplicateCheck(mail))
+            throw new CustomException(ExceptionCode.DUPLICATE_MAIL);
+
+    }
+
+    @GetMapping("/nickname/duplicate")
+    @Operation(summary = "닉네임 중복 확인")
+    public void nicknameDuplicateCheck(@Parameter(name = "nickname", description = "닉네임") String nickname) {
+        if (memberService.nicknameDuplicateCheck(nickname))
+            throw new CustomException(ExceptionCode.DUPLICATE_NICKNAME);
+
+    }
+
+    @PostMapping("/password/confirm")
+    @Operation(summary = "비밀번호 확인")
+    @PreAuthorize("isAuthenticated()")
+    public void passwordConfirm(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody String password) {
+        if (memberService.passwordConfirm(memberDetails.getMail(), password))
+            throw new CustomException(ExceptionCode.INVALID_PASSWORD);
     }
 
     @PatchMapping("/my/password")
@@ -50,47 +76,62 @@ public class MemberController {
                                @RequestBody @Validated UpdatePasswordDto updatePasswordDto,
                                BindingResult bindingResult) throws BindException {
         try {
-            updatePasswordDto.setMail(memberDetails.getMail());
+            updatePasswordDto.setMemberId(memberDetails.getMemberId());
             memberService.updatePassword(updatePasswordDto);
         } catch (BadCredentialsException e) {
-            bindingResult.rejectValue("oldPassword", "", e.getMessage());
+            bindingResult.rejectValue("password", "", e.getMessage());
             throw new BindException(bindingResult);
         }
-    }
-
-    @GetMapping("/mail/duplicate")
-    @Operation(summary = "메일 중복 획안")
-    public boolean mailDuplicateCheck(@Parameter(name = "mail", description = "메일") String mail) {
-        return memberService.mailDuplicateCheck(mail);
-    }
-
-    @GetMapping("/nickname/duplicate")
-    @Operation(summary = "닉네임 중복 확인")
-    public boolean nicknameDuplicateCheck(@Parameter(name = "nickname", description = "닉네임") String nickname) {
-        return memberService.nicknameDuplicateCheck(nickname);
     }
 
     @PatchMapping("/my/image")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "이미지, 닉네임 변경")
-    public NicknameAndImageDto updateNicknameAndImage(@AuthenticationPrincipal MemberDetails memberDetails,
-                                                      @RequestBody @Validated NicknameAndImageDto nicknameAndImageDto) {
-        nicknameAndImageDto.setMail(memberDetails.getMail());
-        memberService.updateNicknameAndImage(nicknameAndImageDto);
-        return nicknameAndImageDto;
+    public UpdateNicknameAndImageDto updateNicknameAndImage(@AuthenticationPrincipal MemberDetails memberDetails,
+                                                            @RequestBody @Validated UpdateNicknameAndImageDto updateNicknameAndImageDto) {
+        updateNicknameAndImageDto.setMemberId(memberDetails.getMemberId());
+        memberService.updateNicknameAndImage(updateNicknameAndImageDto);
+        return updateNicknameAndImageDto;
     }
 
-    @PatchMapping("/{id}/lock")
+    @PatchMapping("/my/school")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "학교 정보 변경")
+    public void updateSchool(@AuthenticationPrincipal MemberDetails memberDetails,
+                             @RequestBody @Validated UpdateSchoolDto updateSchoolDto) {
+        updateSchoolDto.setMemberId(memberDetails.getMemberId());
+        memberService.updateSchool(updateSchoolDto);
+    }
+
+    @PatchMapping("/my/major")
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "학과 정보 변경")
+    public void updateMajor(@AuthenticationPrincipal MemberDetails memberDetails,
+                            @RequestBody @Validated UpdateMajorDto updateMajorDto) {
+        updateMajorDto.setMemberId(memberDetails.getMemberId());
+        memberService.updateMajor(updateMajorDto);
+    }
+
+    @PatchMapping("/{memberId}/lock")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     @Operation(summary = "회원 정지")
-    public void lockMember(@Parameter(name = "id", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long id) {
-        memberService.lock(id);
+    public void lockMember(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId) {
+        memberService.lock(memberId);
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     @Operation(summary = "회원 목록 조회")
-    public SliceResponseDto<MemberDto, Member> getList(@ParameterObject SliceRequestDto sliceRequestDto) {
+    public SliceResponseDto<MemberDto, Member> getList(@ParameterObject MemberSliceRequestDto sliceRequestDto) {
         return memberService.getList(sliceRequestDto);
+    }
+
+    @DeleteMapping("/{memberId}")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "회원 탈퇴")
+    public void delete(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId,
+                       @AuthenticationPrincipal MemberDetails memberDetails) {
+
     }
 }
