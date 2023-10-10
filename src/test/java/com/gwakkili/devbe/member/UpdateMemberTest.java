@@ -4,7 +4,7 @@ import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
-import com.gwakkili.devbe.member.dto.NicknameAndImageDto;
+import com.gwakkili.devbe.member.dto.UpdateNicknameAndImageDto;
 import com.gwakkili.devbe.member.dto.UpdateMajorDto;
 import com.gwakkili.devbe.member.dto.UpdatePasswordDto;
 import com.gwakkili.devbe.member.dto.UpdateSchoolDto;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("회원 변경 테스트")
 @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!")
+@Transactional
 public class UpdateMemberTest extends DevBeApplicationTests {
 
     @Autowired
@@ -75,25 +77,25 @@ public class UpdateMemberTest extends DevBeApplicationTests {
         @Test
         @DisplayName("변경 성공")
         public void success() throws Exception {
-            NicknameAndImageDto nicknameAndImageDto = NicknameAndImageDto.builder()
+            UpdateNicknameAndImageDto updateNicknameAndImageDto = UpdateNicknameAndImageDto.builder()
                     .nickname("name2")
                     .imageUrl("http://images/image1.jpg")
                     .build();
-            String content = objectMapper.writeValueAsString(nicknameAndImageDto);
+            String content = objectMapper.writeValueAsString(updateNicknameAndImageDto);
             mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("nickname").value(nicknameAndImageDto.getNickname()))
+                    .andExpect(jsonPath("nickname").value(updateNicknameAndImageDto.getNickname()))
                     .andDo(print());
         }
 
         @Test
         @DisplayName("변경 실퍠: 유효성 검사 실패")
         public void failByInvalidTest() throws Exception {
-            NicknameAndImageDto nicknameAndImageDto = NicknameAndImageDto.builder()
+            UpdateNicknameAndImageDto updateNicknameAndImageDto = UpdateNicknameAndImageDto.builder()
                     .nickname("테스트멤버")
                     .imageUrl("rrere")
                     .build();
-            String content = objectMapper.writeValueAsString(nicknameAndImageDto);
+            String content = objectMapper.writeValueAsString(updateNicknameAndImageDto);
             mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("code").value(ExceptionCode.INVALID_INPUT_VALUE.getCode()))
