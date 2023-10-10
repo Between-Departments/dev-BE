@@ -3,11 +3,13 @@ package com.gwakkili.devbe.report.entity;
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @MappedSuperclass
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Report extends BaseEntity {
     @RequiredArgsConstructor
     @Getter
