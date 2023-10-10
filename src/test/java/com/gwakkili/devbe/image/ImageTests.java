@@ -23,8 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class ImageControllerTest  extends DevBeApplicationTests {
-
+public class ImageTests extends DevBeApplicationTests {
 
 
     private static final String BUCKET_NAME = "test-bucket";
