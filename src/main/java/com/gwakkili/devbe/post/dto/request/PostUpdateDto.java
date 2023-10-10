@@ -1,11 +1,11 @@
-package com.gwakkili.devbe.post.dto;
+package com.gwakkili.devbe.post.dto.request;
 
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.validation.Major;
 import lombok.Getter;
 
 @Getter
-public class PostSaveDto {
+public class PostUpdateDto {
 
     private String title;
 

@@ -38,7 +38,7 @@ public class Member extends BaseEntity {
     @CollectionTable(name = "member_role", joinColumns = @JoinColumn(name = "member_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL)
     private MemberImage image;
 
     private boolean locked;

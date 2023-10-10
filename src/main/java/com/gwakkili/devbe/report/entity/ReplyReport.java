@@ -24,4 +24,5 @@ public class ReplyReport extends Report {
         super(reporter, Type, content);
         this.reply = reply;
     }
+  
 }

@@ -14,7 +14,7 @@ public class PostRecommend {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long memberPostId;
+    private long recommendId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -24,11 +24,8 @@ public class PostRecommend {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    private int recommendCount;
-
     @Builder
-    public PostRecommend(long memberPostId, Member member, Post post) {
-        this.memberPostId = memberPostId;
+    public PostRecommend(Member member, Post post) {
         this.member = member;
         this.post = post;
     }

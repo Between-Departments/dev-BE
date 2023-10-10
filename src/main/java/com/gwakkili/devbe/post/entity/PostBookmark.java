@@ -14,7 +14,7 @@ public class PostBookmark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long memberPostId;
+    private long bookmarkId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -24,12 +24,12 @@ public class PostBookmark {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    private boolean bookmark;
+    private boolean isBookmarked;
 
     @Builder
-    public PostBookmark(long memberPostId, Member member, Post post) {
-        this.memberPostId = memberPostId;
+    public PostBookmark(Member member, Post post, boolean isBookmarked) {
         this.member = member;
         this.post = post;
+        this.isBookmarked = isBookmarked;
     }
 }

@@ -1,6 +1,5 @@
 package com.gwakkili.devbe.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(value = AuditingEntityListener.class)
 @Getter
-public class BaseEntity {
+public abstract class BaseEntity {
 
     @CreatedDate
     private LocalDateTime createAt;

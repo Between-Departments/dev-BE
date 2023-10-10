@@ -1,32 +1,41 @@
 package com.gwakkili.devbe.post.service;
 
-import com.gwakkili.devbe.post.dto.PostDto;
-import com.gwakkili.devbe.post.dto.PostSaveDto;
+import com.gwakkili.devbe.dto.SliceRequestDto;
+import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.member.entity.Member;
+import com.gwakkili.devbe.post.dto.response.BookmarkPostListDto;
+import com.gwakkili.devbe.post.dto.response.MyPostListDto;
+import com.gwakkili.devbe.post.dto.response.PostDetailDto;
+import com.gwakkili.devbe.post.dto.request.PostReportDto;
+import com.gwakkili.devbe.post.dto.request.PostSaveDto;
+import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
 import com.gwakkili.devbe.post.entity.Post;
+import com.gwakkili.devbe.post.entity.PostBookmark;
+import com.gwakkili.devbe.report.entity.PostReport;
+
+import java.util.Set;
 
 public interface PostService {
 
-    void saveNewPost(PostSaveDto postSaveDto, long memberId);
+    PostDetailDto saveNewPost(PostSaveDto postSaveDto, long memberId);
 
-    void reportPost(Long postId, long memberId);
+    void reportPost(PostReportDto postReportDto, Long postId, long memberId);
 
     void bookmarkPost(Long postId, long memberId);
 
     void recommendPost(Long postId, long memberId);
 
-    void deletePost(Long postId, long memberId);
+    void deletePost(Long postId, long memberId, Set<Member.Role> roles);
 
-    void updatePost(Long postId, long memberId);
+    void updatePost(PostUpdateDto postUpdateDto, Long postId, long memberId);
 
-    Post find(Long postId);
+    PostDetailDto findPostDto(Long postId);
 
-    PostDto findPostDto(Long postId);
+    SliceResponseDto<PostDetailDto, PostReport> findReportedPostList(SliceRequestDto sliceRequestDto);
 
-    void findReportedPostList();
+    SliceResponseDto<PostDetailDto, Post> findPostList(SliceRequestDto sliceRequestDto);
 
-    void findPostList();
+    SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, long memberId);
 
-    void findMyPostList(long memberId);
-
-    void findBookmarkedPostList(long memberId);
+    SliceResponseDto<BookmarkPostListDto, PostBookmark> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId);
 }
