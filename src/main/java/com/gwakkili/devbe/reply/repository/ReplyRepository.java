@@ -13,10 +13,15 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
+    @EntityGraph(attributePaths = "recommendCount")
+    @Query("select r from Reply r join fetch r.member m join fetch m.image where r.post = :post")
     Slice<Reply> findByPost(Post post, Pageable pageable);
 
+    @EntityGraph(attributePaths = "recommendCount")
+    @Query("select r from Reply r join fetch r.member m join fetch m.image where r.member = :member")
     Slice<Reply> findByMember(Member member, Pageable pageable);
 
-    @Query("select r ,count(rr) from Reply r join fetch r.member inner join ReplyReport rr on rr.reply = r group by r")
+    @Query("select r ,count(rr) from Reply r join fetch r.member m join fetch m.image " +
+            "inner join ReplyReport rr on rr.reply = r group by r")
     Slice<Object[]> findReported(Pageable pageable);
 }
