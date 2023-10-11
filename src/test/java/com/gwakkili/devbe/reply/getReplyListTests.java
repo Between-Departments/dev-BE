@@ -96,7 +96,7 @@ public class getReplyListTests extends DevBeApplicationTests {
     }
 
     @Nested
-    @DisplayName("나의 댓글 목록 조회 테스트")
+    @DisplayName("신고된 댓글 목록 조회 테스트")
     class getReportedReplyListTest {
 
         String url = "/api/replies/report";
