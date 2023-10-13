@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.reply.dto;
+package com.gwakkili.devbe.report.dto;
 
 import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.report.entity.Report;

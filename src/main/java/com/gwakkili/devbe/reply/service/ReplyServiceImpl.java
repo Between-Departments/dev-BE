@@ -13,7 +13,10 @@ import com.gwakkili.devbe.reply.dto.*;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.entity.ReplyRecommend;
 import com.gwakkili.devbe.reply.repository.ReplyRecommendRepository;
+import com.gwakkili.devbe.report.dto.ReplyReportDto;
+import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import com.gwakkili.devbe.reply.repository.ReplyRepository;
+import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -34,6 +37,8 @@ public class ReplyServiceImpl implements ReplyService {
     private final MemberRepository memberRepository;
 
     private final PostRepository postRepository;
+
+    private final ReplyReportRepository replyReportRepository;
 
 
     @Override
