@@ -1,4 +1,5 @@
 package com.gwakkili.devbe.config;
+import com.gwakkili.devbe.security.filter.JwtLogoutFilter;
 import com.gwakkili.devbe.security.filter.RefreshTokenAuthenticationFilter;
 import com.gwakkili.devbe.security.service.JwtService;
 import com.gwakkili.devbe.security.filter.MailPasswordAuthenticationFilter;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,11 +24,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @EnableMethodSecurity
 public class SecurityConfig {
 
@@ -64,10 +65,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(configurationSource))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(FormLoginConfigurer::disable)
+                .logout(LogoutConfigurer::disable)
                 .httpBasic(HttpBasicConfigurer::disable)
-                .addFilter(jwtAuthenticationFilter(authenticationManager))
+                .addFilter(mailPasswordAuthenticationFilter(authenticationManager))
                 .addFilter(jwtAuthorizationFilter(authenticationManager))
-                .addFilterBefore(refreshTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(refreshTokenAuthenticationFilter(), MailPasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtLogoutFilter(), RefreshTokenAuthenticationFilter.class)
                 .exceptionHandling(handler -> handler
                         .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint)
@@ -78,16 +81,20 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder(){ return new BCryptPasswordEncoder(); }
 
-    public MailPasswordAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager){
-        return new MailPasswordAuthenticationFilter(authenticationManager,authenticationSuccessHandler, authenticationFailureHandler);
+    public MailPasswordAuthenticationFilter mailPasswordAuthenticationFilter(AuthenticationManager authenticationManager) {
+        return new MailPasswordAuthenticationFilter(authenticationManager, authenticationSuccessHandler, authenticationFailureHandler);
     }
 
-    public JwtAuthorizationFilter jwtAuthorizationFilter(AuthenticationManager authenticationManager){
+    public JwtAuthorizationFilter jwtAuthorizationFilter(AuthenticationManager authenticationManager) {
         return new JwtAuthorizationFilter(authenticationManager, jwtService, authenticationEntryPoint);
     }
 
-    public RefreshTokenAuthenticationFilter refreshTokenAuthenticationFilter(){
+    public RefreshTokenAuthenticationFilter refreshTokenAuthenticationFilter() {
         return new RefreshTokenAuthenticationFilter(jwtService, authenticationSuccessHandler, authenticationFailureHandler);
+    }
+
+    public JwtLogoutFilter jwtLogoutFilter() {
+        return new JwtLogoutFilter(jwtService);
     }
 
     @Bean
@@ -95,6 +102,5 @@ public class SecurityConfig {
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 
 }

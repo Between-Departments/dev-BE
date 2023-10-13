@@ -3,7 +3,8 @@ package com.gwakkili.devbe.member.service;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
-import com.gwakkili.devbe.member.dto.*;
+import com.gwakkili.devbe.member.dto.request.*;
+import com.gwakkili.devbe.member.dto.response.MemberDetailDto;
 
 public interface MemberService {
 

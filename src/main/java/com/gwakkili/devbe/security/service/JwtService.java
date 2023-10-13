@@ -83,7 +83,6 @@ public class JwtService {
     // refresh token 생성
     public String generateRefreshToken(MemberDetails memberDetails){
 
-        log.info("rt 만료시간: {}",REFRESH_TOKEN_EXPIRE_TIME);
         // refresh 토큰 생성
         String token = Jwts.builder()
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
@@ -109,10 +108,11 @@ public class JwtService {
     public Authentication getAuthentication(String token) throws JwtException {
         //jwt token 복호화
         Claims claims = getClaims(token);
-        String mail = claims.getSubject();
+        long memberId = ((Number) claims.get("memberId")).longValue();
+        String mail = claims.get("mail").toString();
         Set<Member.Role> roles = Arrays.stream(claims.get("roles").toString().split(","))
                 .map(Member.Role::valueOf).collect(Collectors.toSet());
-        UserDetails principal = MemberDetails.builder().mail(mail).roles(roles).build();
+        UserDetails principal = MemberDetails.builder().memberId(memberId).mail(mail).roles(roles).build();
         return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }
 

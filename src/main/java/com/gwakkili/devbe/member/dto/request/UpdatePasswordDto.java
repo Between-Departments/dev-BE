@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.member.dto;
+package com.gwakkili.devbe.member.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gwakkili.devbe.validation.PasswordConfirm;

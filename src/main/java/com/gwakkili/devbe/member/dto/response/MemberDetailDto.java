@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.member.dto;
+package com.gwakkili.devbe.member.dto.response;
 
 import com.gwakkili.devbe.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Schema
-public class MemberDto {
+public class MemberDetailDto {
 
     @Schema(description = "회원 번호", example = "1")
     private long memberId;
@@ -23,6 +23,12 @@ public class MemberDto {
 
     @Schema(description = "닉네임", example = "닉네임이다")
     private String nickname;
+
+    @Schema(description = "대학교", example = "서울대학교")
+    private String school;
+
+    @Schema(description = "전공", example = "컴퓨터공학과")
+    private String major;
 
     @Schema(description = "권한", example = "ROLE_USER")
     private Set<Member.Role> roles = new HashSet<>();
@@ -36,18 +42,28 @@ public class MemberDto {
     @Schema(description = "변경일")
     private LocalDateTime updateAt;
 
-    @Schema(description = "정지 여부")
-    private boolean locked;
+    @Schema(description = "북마크 개수")
+    private int bookmarkCount;
 
-    public static MemberDto of(Member member) {
-        return MemberDto.builder()
+    @Schema(description = "게시글 개수")
+    private int postCount;
+
+    @Schema(description = "댓글 개수")
+    private int replyCount;
+
+    public static MemberDetailDto of(Member member) {
+        return MemberDetailDto.builder()
                 .memberId(member.getMemberId())
                 .mail(member.getMail())
                 .nickname(member.getNickname())
-                .imageUrl(member.getImage().getThumbnailUrl())
+                .school(member.getSchool())
+                .major(member.getMajor())
+                .imageUrl(member.getImage().getUrl())
+                .bookmarkCount(member.getBookmarkCount())
+                .postCount(member.getPostCount())
+                .replyCount(member.getReplyCount())
                 .createAt(member.getCreateAt())
                 .updateAt(member.getUpdateAt())
-                .locked(member.isLocked())
                 .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.member.dto;
+package com.gwakkili.devbe.member.dto.request;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import io.swagger.v3.oas.annotations.media.Schema;
