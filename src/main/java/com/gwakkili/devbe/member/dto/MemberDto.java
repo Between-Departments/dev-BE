@@ -36,6 +36,9 @@ public class MemberDto {
     @Schema(description = "변경일")
     private LocalDateTime updateAt;
 
+    @Schema(description = "정지 여부")
+    private boolean locked;
+
     public static MemberDto of(Member member) {
         return MemberDto.builder()
                 .memberId(member.getMemberId())
@@ -44,6 +47,7 @@ public class MemberDto {
                 .imageUrl(member.getImage().getThumbnailUrl())
                 .createAt(member.getCreateAt())
                 .updateAt(member.getUpdateAt())
+                .locked(member.isLocked())
                 .build();
     }
 }
