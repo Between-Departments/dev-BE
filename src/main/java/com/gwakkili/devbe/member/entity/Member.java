@@ -43,6 +43,8 @@ public class Member extends BaseEntity {
 
     private boolean locked;
 
+    private int reportCount;
+
     @Basic(fetch = FetchType.LAZY)
     @Formula("(SELECT count(1) FROM post_bookmark pb WHERE pb.member_id = member_id)")
     private Integer bookmarkCount;
@@ -81,6 +83,10 @@ public class Member extends BaseEntity {
 
     public void setMajor(String major) {
         this.major = major;
+    }
+
+    public void addReportCount() {
+        this.replyCount++;
     }
 
     public void setImage(MemberImage image) {
