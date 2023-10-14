@@ -2,20 +2,18 @@ package com.gwakkili.devbe.config;
 
 import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.major.entity.Major;
+import com.gwakkili.devbe.major.repository.MajorRepository;
 import com.gwakkili.devbe.member.entity.Member;
+import com.gwakkili.devbe.member.repository.MemberRepository;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.repository.PostRepository;
 import com.gwakkili.devbe.reply.entity.Reply;
-import com.gwakkili.devbe.reply.repository.ReplyReportRepository;
 import com.gwakkili.devbe.reply.repository.ReplyRepository;
 import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.report.entity.Report;
+import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import com.gwakkili.devbe.shcool.entity.School;
-import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
-import com.gwakkili.devbe.major.repository.MajorRepository;
-import com.gwakkili.devbe.member.repository.MemberRepository;
 import com.gwakkili.devbe.shcool.repository.SchoolRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

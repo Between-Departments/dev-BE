@@ -7,20 +7,18 @@ import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
+import com.gwakkili.devbe.post.dto.request.PostSaveDto;
+import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
 import com.gwakkili.devbe.post.dto.response.BookmarkPostListDto;
 import com.gwakkili.devbe.post.dto.response.MyPostListDto;
 import com.gwakkili.devbe.post.dto.response.PostDetailDto;
-import com.gwakkili.devbe.post.dto.request.PostReportDto;
-import com.gwakkili.devbe.post.dto.request.PostSaveDto;
-import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
+import com.gwakkili.devbe.post.dto.response.ReportPostListDto;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.entity.PostBookmark;
 import com.gwakkili.devbe.post.entity.PostRecommend;
 import com.gwakkili.devbe.post.repository.PostBookmarkRepository;
 import com.gwakkili.devbe.post.repository.PostRecommendRepository;
 import com.gwakkili.devbe.post.repository.PostRepository;
-import com.gwakkili.devbe.report.entity.PostReport;
-import com.gwakkili.devbe.report.repository.PostReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -39,13 +37,12 @@ public class PostServiceImpl implements PostService{
     private final PostRepository postRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostRecommendRepository postRecommendRepository;
-    private final PostReportRepository postReportRepository;
     private final MemberRepository memberRepository;
 
 
     @Override
     public PostDetailDto saveNewPost(PostSaveDto postSaveDto, long memberId) {
-        Member writer = memberRepository.findWithImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        Member writer = memberRepository.findWithImageAndMemberImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         Post newPost = Post.builder()
                 .title(postSaveDto.getTitle())
@@ -61,43 +58,12 @@ public class PostServiceImpl implements PostService{
         return PostDetailDto.of(savePost);
     }
 
-//    @Override
-//    public void reportPost(PostReportDto postReportDto , Long postId, long memberId) {
-//        Member reporter = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
-//        Post findPost = find(postId);
-//
-//        List<PostReport> reports = findPost.getReports();
-//        reports.stream().filter(postReport -> postReport.getReporter().getMemberId() == memberId).findAny()
-//                .ifPresentOrElse(report -> { new CustomException(ExceptionCode.DUPLICATE_REPORT); },
-//                    () ->{
-//                        findPost.addNewReport(reporter, postReportDto.getType(),postReportDto.getContent());
-//                    });
-//    }
-
     @Override
-    public void reportPost(PostReportDto postReportDto , Long postId, long memberId) {
-        Member reporter = memberRepository.getReferenceById(memberId);
-        Post findPost = find(postId);
-
-        Optional<PostReport> findPostReport = postReportRepository.findByReporterAndPost(reporter, findPost);
-
-        // ! HTTP 409 -> 중복 데이터 존재하는 경우 응답 상태 코드
-        findPostReport.ifPresentOrElse(report -> { new CustomException(ExceptionCode.DUPLICATE_REPORT); },
-                () ->{
-                    PostReport newPostReport = PostReport.builder()
-                            .reporter(reporter)
-                            .post(findPost)
-                            .type(postReportDto.getType())
-                            .content(postReportDto.getContent())
-                            .build();
-
-                    postReportRepository.save(newPostReport);
-                });
-    }
-
-    @Override
+    @Transactional
     public void bookmarkPost(Long postId, long memberId) {
         Member findMember = memberRepository.getReferenceById(memberId);
+
+        // ! findById VS getReferenceById
         Post findPost = find(postId);
 
         Optional<PostBookmark> findPostBookmark = postBookmarkRepository.findByMemberAndPost(findMember, findPost);
@@ -107,7 +73,6 @@ public class PostServiceImpl implements PostService{
                     PostBookmark newPostBookmark = PostBookmark.builder()
                             .post(findPost)
                             .member(findMember)
-                            .isBookmarked(true)
                             .build();
 
                     postBookmarkRepository.save(newPostBookmark);
@@ -117,6 +82,8 @@ public class PostServiceImpl implements PostService{
     @Override
     public void recommendPost(Long postId, long memberId) {
         Member findMember = memberRepository.getReferenceById(memberId);
+
+        // ! findById VS getReferenceById
         Post findPost = find(postId);
 
         Optional<PostRecommend> findPostRecommend = postRecommendRepository.findByMemberAndPost(findMember, findPost);
@@ -152,7 +119,7 @@ public class PostServiceImpl implements PostService{
         Post findPost = find(postId);
 
         if (findPost.getWriter().getMemberId() == findMember.getMemberId()){
-            findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent());
+            findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getCategory(), postUpdateDto.getMajor(), postUpdateDto.isAnonymous());
         } else{
             // ! 게시글을 수정하려는 사용자가 글 작성자 본인이 아닐 경우
             throw new CustomException(ExceptionCode.ACCESS_DENIED);
@@ -166,7 +133,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public PostDetailDto findPostDto(Long postId) {
-        Post findPost = postRepository.findWithWriterByPostId(postId)
+        Post findPost = postRepository.findWithDetailByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
         return PostDetailDto.of(findPost);
     }
@@ -187,8 +154,9 @@ public class PostServiceImpl implements PostService{
     @Override
     public SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, long memberId) {
         Pageable pageable = sliceRequestDto.getPageableDefaultSorting();
+        Member findMember = memberRepository.getReferenceById(memberId);
 
-        Slice<Post> slice = postRepository.findAllByWriter(memberId, pageable);
+        Slice<Post> slice = postRepository.findByWriter(findMember, pageable);
         Function<Post, MyPostListDto> fn = MyPostListDto::of;
         return new SliceResponseDto<>(slice, fn);
     }
@@ -196,19 +164,18 @@ public class PostServiceImpl implements PostService{
     @Override
     public SliceResponseDto<BookmarkPostListDto, PostBookmark> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId) {
         Pageable pageable = sliceRequestDto.getPageable();
+        Member findMember = memberRepository.getReferenceById(memberId);
 
-        Slice<PostBookmark> slice = postBookmarkRepository.findAllByMemberId(memberId, pageable);
+        Slice<PostBookmark> slice = postBookmarkRepository.findByMember(findMember, pageable);
         Function<PostBookmark, BookmarkPostListDto> fn = BookmarkPostListDto::of;
         return new SliceResponseDto<>(slice, fn);
     }
     @Override
-    public SliceResponseDto<PostDetailDto, PostReport> findReportedPostList(SliceRequestDto sliceRequestDto) {
+    public SliceResponseDto<ReportPostListDto, Object[]> findReportedPostList(SliceRequestDto sliceRequestDto) {
         Pageable pageable = sliceRequestDto.getPageable();
 
-        // TODO 신고 당한 게시물 목록을 조회할 때 반환해야하는 데이터에 대한 명세가 필요함. 그 전까지 보류
-
-        Slice<PostReport> slice = postReportRepository.findSliceBy(pageable);
-        Function<PostReport, PostDetailDto> fn = PostDetailDto::of;
-        return new SliceResponseDto<>(slice, fn);
+        Slice<Object[]> postList= postRepository.findReported(pageable);
+        Function<Object[], ReportPostListDto> fn = (object -> ReportPostListDto.of((Post) object[0],(long) object[1]));
+        return new SliceResponseDto(postList, fn);
     }
 }
