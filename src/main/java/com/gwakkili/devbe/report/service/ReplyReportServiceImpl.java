@@ -3,6 +3,7 @@ package com.gwakkili.devbe.report.service;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
@@ -44,16 +45,20 @@ public class ReplyReportServiceImpl implements ReplyReportService {
     public void saveReplyReport(ReplyReportSaveDto replyReportSaveDto) {
 
         Reply reply = replyRepository.getReferenceById(replyReportSaveDto.getReplyId());
-        Member member = memberRepository.getReferenceById(replyReportSaveDto.getMemberId());
+        Member reporter = memberRepository.getReferenceById(replyReportSaveDto.getMemberId());
 
-        ReplyReport replyReport = ReplyReport.builder()
-                .reply(reply)
-                .reporter(member)
-                .Type(replyReportSaveDto.getType())
-                .content(replyReportSaveDto.getContent())
-                .build();
+        if (replyReportRepository.existsByReporterAndReply(reporter, reply)) {
+            throw new CustomException(ExceptionCode.DUPLICATE_REPORT);
+        } else {
+            ReplyReport replyReport = ReplyReport.builder()
+                    .reply(reply)
+                    .reporter(reporter)
+                    .Type(replyReportSaveDto.getType())
+                    .content(replyReportSaveDto.getContent())
+                    .build();
 
-        replyReportRepository.save(replyReport);
+            replyReportRepository.save(replyReport);
+        }
     }
 
     @Override

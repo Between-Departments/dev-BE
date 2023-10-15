@@ -4,7 +4,6 @@ import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.reply.entity.Reply;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
