@@ -2,6 +2,7 @@ package com.gwakkili.devbe.member.service;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.event.DeleteByManagerEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.image.entity.MemberImage;
@@ -12,6 +13,7 @@ import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -97,6 +99,17 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.setLocked(true);
     }
+
+    @Override
+    @EventListener
+    public void lock(DeleteByManagerEvent deleteByManagerEvent) {
+        long memberId = deleteByManagerEvent.getMemberId();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        member.addReportCount();
+        if (member.getReportCount() >= 3) member.setLocked(true);
+    }
+
 
     @Override
     @Transactional(readOnly = true)

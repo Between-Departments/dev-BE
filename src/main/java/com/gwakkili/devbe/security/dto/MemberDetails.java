@@ -32,7 +32,6 @@ public class MemberDetails implements UserDetails {
 
     private LocalDateTime updateAt;
 
-    private LocalDateTime deleteAt;
 
     public static MemberDetails of(Member member){
         return MemberDetails.builder()
@@ -79,6 +78,6 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return deleteAt == null;
+        return true;
     }
 }

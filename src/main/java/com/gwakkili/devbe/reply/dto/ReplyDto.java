@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.reply.dto;
 
+import com.gwakkili.devbe.dto.SimpleMemberDto;
 import com.gwakkili.devbe.reply.entity.Reply;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -19,7 +20,7 @@ public class ReplyDto {
     @Schema(description = "게시글 번호", example = "1")
     private long postId;
 
-    private Writer writer;
+    private SimpleMemberDto writer;
 
     @Schema(description = "게시글 내용", example = "안녕하세요~")
     private String content;
@@ -52,7 +53,13 @@ public class ReplyDto {
         return ReplyDto.builder()
                 .replyId(reply.getReplyId())
                 .postId(reply.getPost().getPostId())
-                .writer(new Writer(reply.getMember().getNickname(), reply.getMember().getImage().getThumbnailUrl()))
+                .writer(
+                        SimpleMemberDto.builder()
+                                .memberId(reply.getMember().getMemberId())
+                                .imageUrl(reply.getMember().getImage().getThumbnailUrl())
+                                .nickname(reply.getMember().getNickname())
+                                .build()
+                )
                 .content(reply.getContent())
                 .recommendCount((reply.getRecommendCount() == null) ? 0 : reply.getRecommendCount())
                 .createAt(reply.getCreateAt())

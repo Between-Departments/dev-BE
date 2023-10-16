@@ -2,6 +2,7 @@ package com.gwakkili.devbe.reply.service;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.event.DeleteByManagerEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.AccessDeniedException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
@@ -19,10 +20,12 @@ import com.gwakkili.devbe.reply.repository.ReplyRepository;
 import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -38,8 +41,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     private final PostRepository postRepository;
 
-    private final ReplyReportRepository replyReportRepository;
-
+    private final ApplicationEventPublisher publisher;
 
     @Override
     public ReplyDto saveReply(ReplySaveDto replySaveDto) {
@@ -112,11 +114,12 @@ public class ReplyServiceImpl implements ReplyService {
         Reply reply = replyRepository.findById(replyId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_REPLY));
 
-        // 사용자 권한이 매니저가 아니고 글쓴이가 아닐 경우
-        if (!memberDetails.getRoles().contains(Member.Role.ROLE_MANAGER) &&
-                reply.getMember().getMemberId() != memberDetails.getMemberId())
+        if (memberDetails.getRoles().contains(Member.Role.ROLE_MANAGER)) {
+            long memberId = reply.getMember().getMemberId();
+            publisher.publishEvent(new DeleteByManagerEvent(memberId));
+        } else if (reply.getMember().getMemberId() != memberDetails.getMemberId()) {
             throw new AccessDeniedException(ExceptionCode.ACCESS_DENIED);
-
+        }
         replyRepository.delete(reply);
     }
 

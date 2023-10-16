@@ -15,10 +15,4 @@ public class DevBeApplication {
         SpringApplication.run(DevBeApplication.class, args);
     }
 
-
-    @GetMapping
-    public String test(){
-        return "Test Success!";
-    }
-
 }

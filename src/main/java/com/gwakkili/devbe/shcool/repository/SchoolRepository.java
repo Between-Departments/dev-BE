@@ -12,8 +12,6 @@ public interface SchoolRepository extends JpaRepository<School, Long> {
 
     boolean existsByName(String name);
 
-    Optional<School> findByName(String name);
-
     List<School> findAllByNameContaining(String name);
 
 }
