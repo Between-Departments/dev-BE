@@ -100,6 +100,5 @@ public class Member extends BaseEntity {
         ROLE_USER("회원"),
         ROLE_MANAGER("관리자");
         private final String description;
-        ;
     }
 }
