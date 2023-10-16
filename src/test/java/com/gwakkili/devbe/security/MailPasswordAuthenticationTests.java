@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("mail & password 인증 테스트")
+@Transactional
 public class MailPasswordAuthenticationTests extends DevBeApplicationTests {
 
 

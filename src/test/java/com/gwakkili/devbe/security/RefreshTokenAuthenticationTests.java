@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("refresh token 인증 테스트")
+@Transactional
 public class RefreshTokenAuthenticationTests extends DevBeApplicationTests {
 
 

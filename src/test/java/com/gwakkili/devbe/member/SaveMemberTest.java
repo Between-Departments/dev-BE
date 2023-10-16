@@ -3,7 +3,7 @@ package com.gwakkili.devbe.member;
 import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
-import com.gwakkili.devbe.member.dto.MemberSaveDto;
+import com.gwakkili.devbe.member.dto.request.MemberSaveDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

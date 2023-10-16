@@ -21,13 +21,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.util.Set;
 
 @SpringBootTest
 @DisplayName("JWT 서비스 테스트")
-
+@Transactional
 public class JwtServiceTests extends DevBeApplicationTests {
 
     private JwtService jwtService;
