@@ -3,23 +3,20 @@ package com.gwakkili.devbe.post.service;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.member.entity.Member;
+import com.gwakkili.devbe.post.dto.request.PostSaveDto;
+import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
 import com.gwakkili.devbe.post.dto.response.BookmarkPostListDto;
 import com.gwakkili.devbe.post.dto.response.MyPostListDto;
 import com.gwakkili.devbe.post.dto.response.PostDetailDto;
-import com.gwakkili.devbe.post.dto.request.PostReportDto;
-import com.gwakkili.devbe.post.dto.request.PostSaveDto;
-import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
+import com.gwakkili.devbe.post.dto.response.ReportPostListDto;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.entity.PostBookmark;
-import com.gwakkili.devbe.report.entity.PostReport;
 
 import java.util.Set;
 
 public interface PostService {
 
     PostDetailDto saveNewPost(PostSaveDto postSaveDto, long memberId);
-
-    void reportPost(PostReportDto postReportDto, Long postId, long memberId);
 
     void bookmarkPost(Long postId, long memberId);
 
@@ -31,7 +28,7 @@ public interface PostService {
 
     PostDetailDto findPostDto(Long postId);
 
-    SliceResponseDto<PostDetailDto, PostReport> findReportedPostList(SliceRequestDto sliceRequestDto);
+    SliceResponseDto<ReportPostListDto, Object[]> findReportedPostList(SliceRequestDto sliceRequestDto);
 
     SliceResponseDto<PostDetailDto, Post> findPostList(SliceRequestDto sliceRequestDto);
 

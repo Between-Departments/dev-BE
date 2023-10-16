@@ -3,8 +3,6 @@ package com.gwakkili.devbe.post.dto.response;
 
 import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.post.entity.PostBookmark;
-import com.gwakkili.devbe.report.entity.PostReport;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -51,46 +49,6 @@ public class PostDetailDto {
                 .postId(post.getPostId())
                 .writer(post.getWriter().getNickname())
                 .writerImage(post.getWriter().getImage().getThumbnailUrl())
-                .major(post.getMajor())
-                .category(post.getCategory())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .viewCount(post.getViewCount())
-                .recommendCount(post.getRecommendCount())
-                .images(imageUrls)
-                .createAt(post.getCreateAt())
-                .updateAt(post.getUpdateAt())
-                .isAnonymous(post.isAnonymous())
-                .build();
-    }
-
-    public static PostDetailDto of(PostBookmark postBookmark) {
-        Post post = postBookmark.getPost();
-        List<String> imageUrls = post.getImages().stream().map(PostImage::getUrl).collect(Collectors.toList());
-
-        return PostDetailDto.builder()
-                .postId(post.getPostId())
-                .writer(post.getWriter().getNickname())
-                .major(post.getMajor())
-                .category(post.getCategory())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .viewCount(post.getViewCount())
-                .recommendCount(post.getRecommendCount())
-                .images(imageUrls)
-                .createAt(post.getCreateAt())
-                .updateAt(post.getUpdateAt())
-                .isAnonymous(post.isAnonymous())
-                .build();
-    }
-
-    public static PostDetailDto of(PostReport postReport) {
-        Post post = postReport.getPost();
-        List<String> imageUrls = post.getImages().stream().map(PostImage::getUrl).collect(Collectors.toList());
-
-        return PostDetailDto.builder()
-                .postId(post.getPostId())
-                .writer(post.getWriter().getNickname())
                 .major(post.getMajor())
                 .category(post.getCategory())
                 .title(post.getTitle())

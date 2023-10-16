@@ -15,4 +15,6 @@ public class PostUpdateDto {
     private String major;
 
     private Post.Category category;
+
+    private boolean isAnonymous;
 }

@@ -1,24 +1,32 @@
 package com.gwakkili.devbe.post.dto.response;
 
-public class ReportPostListDto {
+import com.gwakkili.devbe.post.entity.Post;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
-    //    public static AbstractPostListDto of(PostReport postReport) {
-//        Post post = postReport.getPost();
-//        List<String> imageUrls = post.getImages().stream().map(PostImage::getUrl).collect(Collectors.toList());
-//
-//        return AbstractPostListDto.builder()
-//                .postId(post.getPostId())
-//                .writer(post.getWriter().getNickname())
-//                .major(post.getMajor())
-//                .category(post.getCategory())
-//                .title(post.getTitle())
-//                .content(post.getContent())
-//                .viewCount(post.getViewCount())
-//                .recommendCount(post.getRecommendCount())
-//                .images(imageUrls)
-//                .createAt(post.getCreateAt())
-//                .updateAt(post.getUpdateAt())
-//                .isAnonymous(post.isAnonymous())
-//                .build();
-//    }
+@Getter
+@SuperBuilder
+public class ReportPostListDto extends AbstractPostListDto{
+
+    private String writer;
+
+    //    @Schema(description = "작성자 프로필 이미지 주소",example = "http://www.example.com/image_123123")
+    private String writerImage;
+
+    private long totalReportCount;
+
+    public static ReportPostListDto of(Post post, long totalReportCount) {
+        return ReportPostListDto.builder()
+                .postId(post.getPostId())
+                .writer(post.getWriter().getNickname())
+                .writerImage(post.getWriter().getImage().getThumbnailUrl())
+                .totalReportCount(totalReportCount)
+                .title(post.getTitle())
+                .content(post.getContent()) // ! unused in API
+                .createAt(post.getCreateAt()) // ! unused in API
+                .updateAt(post.getUpdateAt()) // ! unused in API
+                .build();
+    }
+
+
 }

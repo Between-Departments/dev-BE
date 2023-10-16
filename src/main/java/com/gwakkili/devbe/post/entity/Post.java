@@ -79,21 +79,13 @@ public class Post extends BaseEntity {
         this.recommendCount++;
     }
 
-    public void update(String title, String content) {
+    public void update(String title, String content, Category category, String major, boolean isAnonymous) {
         this.title = title;
         this.content = content;
+        this.category = category;
+        this.major = major;
+        this.isAnonymous = isAnonymous;
     }
-
-//    public void addNewReport(Member reporter, Report.Type type, String content){
-//        PostReport newPostReport = PostReport.builder()
-//                .reporter(reporter)
-//                .post(this)
-//                .type(type)
-//                .content(content)
-//                .build();
-//
-//        this.reports.add(newPostReport);
-//    }
 
 
     @RequiredArgsConstructor

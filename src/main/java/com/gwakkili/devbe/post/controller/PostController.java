@@ -2,16 +2,15 @@ package com.gwakkili.devbe.post.controller;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.post.dto.request.PostSaveDto;
+import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
 import com.gwakkili.devbe.post.dto.response.BookmarkPostListDto;
 import com.gwakkili.devbe.post.dto.response.MyPostListDto;
 import com.gwakkili.devbe.post.dto.response.PostDetailDto;
-import com.gwakkili.devbe.post.dto.request.PostReportDto;
-import com.gwakkili.devbe.post.dto.request.PostSaveDto;
-import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
+import com.gwakkili.devbe.post.dto.response.ReportPostListDto;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.entity.PostBookmark;
 import com.gwakkili.devbe.post.service.PostService;
-import com.gwakkili.devbe.report.entity.PostReport;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -61,7 +60,7 @@ public class PostController {
     })
     @GetMapping("/report")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public SliceResponseDto<PostDetailDto, PostReport> getReportedPostList(@ParameterObject SliceRequestDto sliceRequestDto){
+    public SliceResponseDto<ReportPostListDto, Object[]> getReportedPostList(@ParameterObject SliceRequestDto sliceRequestDto){
         return postService.findReportedPostList(sliceRequestDto);
     }
 
@@ -93,23 +92,13 @@ public class PostController {
         return postService.saveNewPost(postSaveDto,memberDetails.getMemberId());
     }
 
-    @Operation(method = "POST", summary = "특정 게시글 신고")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "특정 게시글 신고 성공")
-    })
-    @PostMapping("/{postId}/report")
-    @ResponseStatus(HttpStatus.OK)
-    public void report(@RequestBody PostReportDto postReportDto, @PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
-        postService.reportPost(postReportDto, postId, memberDetails.getMemberId());
-    }
-
     @Operation(method = "POST", summary = "특정 게시글 북마크")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 게시글 북마크 성공")
     })
     @PostMapping("/{postId}/bookmark")
     @ResponseStatus(HttpStatus.OK)
-    public void bookmark(@PathVariable Long postId,@AuthenticationPrincipal MemberDetails memberDetails){
+    public void bookmark(@PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
         postService.bookmarkPost(postId,memberDetails.getMemberId());
     }
 
@@ -119,7 +108,7 @@ public class PostController {
     })
     @PostMapping("/{postId}/recommend")
     @ResponseStatus(HttpStatus.OK)
-    public void recommend(@PathVariable Long postId,@AuthenticationPrincipal MemberDetails memberDetails){
+    public void recommend(@PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
         postService.recommendPost(postId,memberDetails.getMemberId());
     }
 
@@ -129,7 +118,7 @@ public class PostController {
     })
     @DeleteMapping("/{postId}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable Long postId,@AuthenticationPrincipal MemberDetails memberDetails){
+    public void delete(@PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
         postService.deletePost(postId,memberDetails.getMemberId(), memberDetails.getRoles());
     }
 

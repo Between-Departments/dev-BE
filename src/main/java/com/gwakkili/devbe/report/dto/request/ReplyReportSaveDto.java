@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.report.dto;
+package com.gwakkili.devbe.report.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gwakkili.devbe.report.entity.Report;

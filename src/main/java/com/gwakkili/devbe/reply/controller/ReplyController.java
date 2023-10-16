@@ -5,8 +5,6 @@ import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.reply.dto.*;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.service.ReplyService;
-import com.gwakkili.devbe.report.dto.ReplyReportDto;
-import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

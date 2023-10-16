@@ -24,12 +24,9 @@ public class PostBookmark {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    private boolean isBookmarked;
-
     @Builder
-    public PostBookmark(Member member, Post post, boolean isBookmarked) {
+    public PostBookmark(Member member, Post post) {
         this.member = member;
         this.post = post;
-        this.isBookmarked = isBookmarked;
     }
 }
