@@ -12,19 +12,28 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    // ! @EntityGraph로 @OneToMany가 걸린 컬렉션을 갖고올 시, 디폴트로 left join이 걸림
+    // * 단건 게시물 조회
     @EntityGraph(attributePaths = {"images", "recommendCount", "replyCount"})
     @Query("select p from Post p join fetch p.writer w join fetch w.image where p.postId =:postId")
     Optional<Post> findWithDetailByPostId(Long postId);
 
-    // * 내가 작성한 게시물 목록을 갖고 올 때 사용
+    // * 내가 작성한 게시물 목록
     @EntityGraph(attributePaths = {"recommendCount", "replyCount"})
     Slice<Post> findByWriterAndBoardType(Pageable pageable, Member writer,  Post.BoardType boardType);
 
-
-    // ! inner Join VS left Join
+    // * 신고된 게시물 목록
     @Query("select p, count(pr.postReportId) from Post p " +
-            "join fetch p.writer w join fetch w.image inner join PostReport pr on pr.post.postId = p.postId " +
+            "join fetch p.writer w join fetch w.image " +
+            "inner join PostReport pr on pr.post.postId = p.postId " +
             "group by p.postId")
     Slice<Object[]> findReported(Pageable pageable);
+
+
+    // * 북마크한 게시물 목록
+    @EntityGraph(attributePaths = {"recommendCount", "replyCount"})
+    @Query("select p from Post p " +
+            "inner join PostBookmark pb on pb.post.postId = p.postId and pb.member =:member " +
+            "where p.boardType =:boardType")
+    Slice<Post> findBookmarked(Pageable pageable, Member member, Post.BoardType boardType);
+
 }

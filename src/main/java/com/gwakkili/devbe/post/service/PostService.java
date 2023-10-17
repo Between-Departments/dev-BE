@@ -8,7 +8,6 @@ import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
 import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
 import com.gwakkili.devbe.post.dto.response.*;
 import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.post.entity.PostBookmark;
 
 import java.util.Set;
 
@@ -32,5 +31,5 @@ public interface PostService {
 
     SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition);
 
-    SliceResponseDto<BookmarkPostListDto, PostBookmark> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition);
+    SliceResponseDto<BookmarkPostListDto, Post> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition);
 }

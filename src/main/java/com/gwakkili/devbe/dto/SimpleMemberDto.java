@@ -26,6 +26,4 @@ public class SimpleMemberDto {
         this.nickname = isAnonymous ? "익명" : member.getNickname();
         this.imageUrl = isAnonymous ? "익명 프로픨 이미지 주소" : member.getImage().getThumbnailUrl();
     }
-
-
 }

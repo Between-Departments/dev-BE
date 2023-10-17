@@ -167,12 +167,16 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public SliceResponseDto<BookmarkPostListDto, PostBookmark> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition) {
+    public SliceResponseDto<BookmarkPostListDto, Post> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition) {
         Pageable pageable = sliceRequestDto.getPageable();
         Member findMember = memberRepository.getReferenceById(memberId);
 
-        Slice<PostBookmark> slice = postBookmarkRepository.findByMemberAndBoardType(pageable, findMember, postSearchCondition.getBoardType());
-        Function<PostBookmark, BookmarkPostListDto> fn = BookmarkPostListDto::of;
+        Slice<Post> slice = postRepository.findBookmarked(pageable, findMember, postSearchCondition.getBoardType());
+
+//        Slice<PostBookmark> slice = postBookmarkRepository.findByMemberAndBoardType(pageable, findMember, postSearchCondition.getBoardType());
+
+
+        Function<Post, BookmarkPostListDto> fn = BookmarkPostListDto::of;
         return new SliceResponseDto<>(slice, fn);
     }
     @Override

@@ -7,7 +7,6 @@ import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
 import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
 import com.gwakkili.devbe.post.dto.response.*;
 import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.post.entity.PostBookmark;
 import com.gwakkili.devbe.post.service.PostService;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,7 +75,7 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "북마크한 게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping("/bookmark")
-    public SliceResponseDto<BookmarkPostListDto, PostBookmark> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
+    public SliceResponseDto<BookmarkPostListDto, Post> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.findBookmarkedPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
     }
 

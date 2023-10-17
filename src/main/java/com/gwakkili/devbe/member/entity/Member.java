@@ -33,7 +33,7 @@ public class Member extends BaseEntity {
     private String major;
 
     @Builder.Default
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "member_role", joinColumns = @JoinColumn(name = "member_id"))
     private Set<Role> roles = new HashSet<>();

@@ -19,19 +19,19 @@ public class PostDetailDto {
 
     private SimpleMemberDto writer;
 
-    private String major;
+//    private String major;
 
-    private Post.Tag tag;
+//    private Post.Tag tag;
 
     private String title;
 
     private String content;
 
-    private int viewCount;
+    private long viewCount;
 
-    private int recommendCount;
+    private long recommendCount;
 
-    private int replyCount;
+    private long replyCount;
 
     // * 원본 이미지의 링크
     private List<String> images;
@@ -47,8 +47,8 @@ public class PostDetailDto {
         return PostDetailDto.builder()
                 .postId(post.getPostId())
                 .writer(new SimpleMemberDto(post.getWriter(), post.isAnonymous()))
-                .major(post.getMajor())
-                .tag(post.getTag())
+//                .major(post.getMajor())
+//                .tag(post.getTag())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .viewCount(post.getViewCount())

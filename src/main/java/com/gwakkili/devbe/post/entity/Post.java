@@ -43,15 +43,15 @@ public class Post extends BaseEntity {
     private List<PostImage> images = new ArrayList<>();
 
     // TODO 어떻게 처리할 것인가에 대한 방법 논의 필요
-    private int viewCount;
+    private long viewCount;
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("SELECT count(1) FROM POST_RECOMMEND pr WHERE pr.post_id = post_id")
-    private int recommendCount;
+    private long recommendCount;
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("SELECT count(1) FROM REPLY r WHERE r.post_id = post_id")
-    private int replyCount;
+    private long replyCount;
 
     private boolean isAnonymous;
 
@@ -70,11 +70,11 @@ public class Post extends BaseEntity {
         this.viewCount++;
     }
 
-    public void setRecommendCount(int recommendCount) {
+    public void setRecommendCount(long recommendCount) {
         this.recommendCount = recommendCount;
     }
 
-    public void setReplyCount(int replyCount) {
+    public void setReplyCount(long replyCount) {
         this.replyCount = replyCount;
     }
     public void addImages(List<String> imageUrls) {

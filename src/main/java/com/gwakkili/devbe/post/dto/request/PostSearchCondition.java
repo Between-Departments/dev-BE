@@ -18,6 +18,10 @@ public class PostSearchCondition {
 
     private Post.Tag tag;
 
+    public PostSearchCondition(Post.BoardType boardType) {
+        this.boardType = boardType;
+    }
+
     public PostSearchCondition(String keyword, Post.BoardType boardType, String major, Post.Tag tag) {
         this.keyword = keyword;
         this.boardType = boardType;

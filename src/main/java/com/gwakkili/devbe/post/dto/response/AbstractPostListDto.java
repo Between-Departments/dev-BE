@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @SuperBuilder
@@ -16,11 +17,13 @@ public abstract class AbstractPostListDto {
 
     private String content;
 
-    private int viewCount;
+    private List<String> thumbnailImages;
 
-    private int recommendCount;
+    private long viewCount;
 
-    private int replyCount;
+    private long recommendCount;
+
+    private long replyCount;
 
     private LocalDateTime createAt;
 }
