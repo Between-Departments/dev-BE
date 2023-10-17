@@ -12,20 +12,14 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    // TODO 이미지를 가져오는 쿼리가 별도로 나가는지 확인 필요
-    // ! Member에서 MemberImage를 LAZY로하던 EAGER로 하던 상관없이 SQL에서 안갖고옴.
     // ! @EntityGraph로 @OneToMany가 걸린 컬렉션을 갖고올 시, 디폴트로 left join이 걸림
-    @EntityGraph(attributePaths = {"images", "recommendCount"})
+    @EntityGraph(attributePaths = {"images", "recommendCount", "replyCount"})
     @Query("select p from Post p join fetch p.writer w join fetch w.image where p.postId =:postId")
     Optional<Post> findWithDetailByPostId(Long postId);
 
-
-    // * 검색 조건에 맞게 Post를 갖고올 떄 쓰는 함수
-    Slice<Post> findSliceBy(Pageable pageable);
-
     // * 내가 작성한 게시물 목록을 갖고 올 때 사용
-    @EntityGraph(attributePaths = {"images"})
-    Slice<Post> findByWriter(Member writer, Pageable pageable);
+    @EntityGraph(attributePaths = {"recommendCount", "replyCount"})
+    Slice<Post> findByWriterAndBoardType(Pageable pageable, Member writer,  Post.BoardType boardType);
 
 
     // ! inner Join VS left Join

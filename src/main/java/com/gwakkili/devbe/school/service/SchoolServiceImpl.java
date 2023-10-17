@@ -1,7 +1,7 @@
-package com.gwakkili.devbe.shcool.service;
+package com.gwakkili.devbe.school.service;
 
-import com.gwakkili.devbe.shcool.entity.School;
-import com.gwakkili.devbe.shcool.repository.SchoolRepository;
+import com.gwakkili.devbe.school.entity.School;
+import com.gwakkili.devbe.school.repository.SchoolRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

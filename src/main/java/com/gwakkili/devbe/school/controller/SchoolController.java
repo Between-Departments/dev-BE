@@ -1,6 +1,6 @@
-package com.gwakkili.devbe.shcool.controller;
+package com.gwakkili.devbe.school.controller;
 
-import com.gwakkili.devbe.shcool.service.SchoolService;
+import com.gwakkili.devbe.school.service.SchoolService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

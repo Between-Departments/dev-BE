@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.shcool.entity;
+package com.gwakkili.devbe.school.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

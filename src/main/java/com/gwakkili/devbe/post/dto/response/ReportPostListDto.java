@@ -24,7 +24,6 @@ public class ReportPostListDto extends AbstractPostListDto{
                 .title(post.getTitle())
                 .content(post.getContent()) // ! unused in API
                 .createAt(post.getCreateAt()) // ! unused in API
-                .updateAt(post.getUpdateAt()) // ! unused in API
                 .build();
     }
 

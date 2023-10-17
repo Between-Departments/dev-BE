@@ -1,10 +1,9 @@
-package com.gwakkili.devbe.shcool.repository;
+package com.gwakkili.devbe.school.repository;
 
-import com.gwakkili.devbe.shcool.entity.School;
+import com.gwakkili.devbe.school.entity.School;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface SchoolRepository extends JpaRepository<School, Long> {
 

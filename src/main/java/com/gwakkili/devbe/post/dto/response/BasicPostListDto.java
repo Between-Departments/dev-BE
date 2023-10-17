@@ -3,7 +3,6 @@ package com.gwakkili.devbe.post.dto.response;
 import com.gwakkili.devbe.dto.SimpleMemberDto;
 import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.post.entity.PostBookmark;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @SuperBuilder
-public class BookmarkPostListDto extends AbstractPostListDto{
+public class BasicPostListDto extends AbstractPostListDto {
 
     private SimpleMemberDto writer;
 
@@ -20,11 +19,10 @@ public class BookmarkPostListDto extends AbstractPostListDto{
 
     private List<String> thumbnailImages;
 
-    public static BookmarkPostListDto of(PostBookmark postBookmark) {
-        Post post = postBookmark.getPost();
+    public static BasicPostListDto of(Post post){
         List<String> thumbnailImages = post.getImages().stream().map(PostImage::getThumbnailUrl).collect(Collectors.toList());
 
-        return BookmarkPostListDto.builder()
+        return BasicPostListDto.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .content(post.getContent().substring(0,40) +"...")
