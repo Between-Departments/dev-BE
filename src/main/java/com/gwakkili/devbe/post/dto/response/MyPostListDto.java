@@ -20,7 +20,7 @@ public class MyPostListDto extends AbstractPostListDto{
         return MyPostListDto.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
-                .content(post.getContent().substring(0,40) +"...")
+                .content(post.getContent().length() > 40 ? post.getContent().substring(0,40) +"..." : post.getContent())
                 .viewCount(post.getViewCount())
                 .recommendCount(post.getRecommendCount())
                 .thumbnailImages(thumbnailImages)

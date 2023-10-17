@@ -27,7 +27,7 @@ public class BookmarkPostListDto extends AbstractPostListDto{
         return BookmarkPostListDto.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
-                .content(post.getContent().substring(0,40) +"...")
+                .content(post.getContent().length() > 40 ? post.getContent().substring(0,40) +"..." : post.getContent())
                 .viewCount(post.getViewCount())
                 .recommendCount(post.getRecommendCount())
                 .replyCount(post.getReplyCount())
