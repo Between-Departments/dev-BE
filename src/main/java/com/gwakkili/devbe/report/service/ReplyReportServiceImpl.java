@@ -53,7 +53,7 @@ public class ReplyReportServiceImpl implements ReplyReportService {
             ReplyReport replyReport = ReplyReport.builder()
                     .reply(reply)
                     .reporter(reporter)
-                    .Type(replyReportSaveDto.getType())
+                    .type(replyReportSaveDto.getType())
                     .content(replyReportSaveDto.getContent())
                     .build();
 

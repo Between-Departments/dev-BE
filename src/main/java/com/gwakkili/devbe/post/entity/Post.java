@@ -5,6 +5,7 @@ import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
 
 import java.util.ArrayList;
@@ -23,13 +24,13 @@ public class Post extends BaseEntity {
     @JoinColumn(name="member_id",nullable = false)
     private Member writer;
 
-//    @Enumerated(EnumType.STRING)
-//    private Major.Category majorCategory;
-
     private String major;
 
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private BoardType boardType;
+
+    @Enumerated(EnumType.STRING)
+    private Tag tag;
 
     @Column(nullable = false)
     private String title;
@@ -37,60 +38,93 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<PostImage> images = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
-//    private List<PostReport> reports = new ArrayList<>();
 
     // TODO 어떻게 처리할 것인가에 대한 방법 논의 필요
     private int viewCount;
-
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("SELECT count(1) FROM POST_RECOMMEND pr WHERE pr.post_id = post_id")
     private int recommendCount;
 
+    @Basic(fetch = FetchType.LAZY)
+    @Formula("SELECT count(1) FROM REPLY r WHERE r.post_id = post_id")
+    private int replyCount;
+
     private boolean isAnonymous;
 
     @Builder
-    public Post(Member writer, String major, Category category, String title, String content, boolean isAnonymous) {
+    public Post(Member writer, String major, BoardType boardType, Tag tag, String title, String content, boolean isAnonymous) {
         this.writer = writer;
         this.major = major;
-        this.category = category;
+        this.boardType = boardType;
+        this.tag = tag;
         this.title = title;
         this.content = content;
         this.isAnonymous = isAnonymous;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public void addViewCount() {
         this.viewCount++;
     }
 
-    public void addRecommendCount() {
-        this.recommendCount++;
+    public void setRecommendCount(int recommendCount) {
+        this.recommendCount = recommendCount;
     }
 
-    public void update(String title, String content, Category category, String major, boolean isAnonymous) {
+    public void setReplyCount(int replyCount) {
+        this.replyCount = replyCount;
+    }
+    public void addImages(List<String> imageUrls) {
+        for (String imageUrl : imageUrls) {
+            PostImage newPostImage = PostImage.builder()
+                    .post(this)
+                    .url(imageUrl)
+                    .build();
+
+            this.getImages().add(newPostImage);
+        }
+    }
+
+    public void update(String title, String content, BoardType boardType, Tag tag, String major, boolean isAnonymous, List<String> imageUrls) {
         this.title = title;
         this.content = content;
-        this.category = category;
+        this.boardType = boardType;
+        this.tag = tag;
         this.major = major;
         this.isAnonymous = isAnonymous;
+
+        updateImages(imageUrls);
+    }
+
+
+    private void updateImages(List<String> imageUrls) {
+        ArrayList<PostImage> updatedImages = new ArrayList<>();
+
+        for (String imageUrl : imageUrls) {
+            PostImage newPostImage = PostImage.builder()
+                    .post(this)
+                    .url(imageUrl)
+                    .build();
+            updatedImages.add(newPostImage);
+        }
+
+        this.images = updatedImages;
+    }
+
+    @RequiredArgsConstructor
+    public enum BoardType{
+        NEED_HELP("도움이 필요해요"),
+        FREE("자유게시판");
+
+        private final String description;
     }
 
 
     @RequiredArgsConstructor
-    public enum Category{
-        NEED_HELP("도움이 필요해요"),
+    public enum Tag {
         HOBBY("취미"),
         LOVE("연애"),
         DAILY("일상"),

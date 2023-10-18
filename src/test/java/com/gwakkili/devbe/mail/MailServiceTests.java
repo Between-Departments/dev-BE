@@ -6,7 +6,7 @@ import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
 import com.gwakkili.devbe.mail.service.MailServiceImpl;
 import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
-import com.gwakkili.devbe.shcool.repository.SchoolRepository;
+import com.gwakkili.devbe.school.repository.SchoolRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;

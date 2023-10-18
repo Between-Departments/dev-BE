@@ -9,6 +9,8 @@ import lombok.Getter;
 @Builder
 public class PostReportDto {
 
+    private long postReportId;
+
     private long postId;
 
     private String reporter;
@@ -18,7 +20,8 @@ public class PostReportDto {
     private String content;
     public static PostReportDto of(PostReport postReport) {
         return PostReportDto.builder()
-                // ! 이러면 postId가 N개 중복으로 나감
+                .postReportId(postReport.getPostReportId())
+                // TODO 이러면 postId가 N개 중복으로 나감 -> 지워도 되지 않을까?
                 .postId(postReport.getPost().getPostId())
                 .reporter(postReport.getReporter().getNickname())
                 .type(postReport.getType())
