@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.shcool.service;
+package com.gwakkili.devbe.school.service;
 
 import java.util.List;
 

@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.post.dto.response;
 
 
+import com.gwakkili.devbe.dto.SimpleMemberDto;
 import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.post.entity.Post;
 import lombok.Builder;
@@ -16,14 +17,11 @@ public class PostDetailDto {
 
     private long postId;
 
-    private String writer;
-
-    private String writerImage;
+    private SimpleMemberDto writer;
 
     private String major;
 
-    // ! Post.Category 접근 제어자 변경 : none(default private 인듯?) -> public
-    private Post.Category category;
+    private Post.Tag tag;
 
     private String title;
 
@@ -33,11 +31,12 @@ public class PostDetailDto {
 
     private int recommendCount;
 
+    private int replyCount;
+
+    // * 원본 이미지의 링크
     private List<String> images;
 
     private LocalDateTime createAt;
-
-    private LocalDateTime updateAt;
 
     private boolean isAnonymous;
 
@@ -47,17 +46,16 @@ public class PostDetailDto {
 
         return PostDetailDto.builder()
                 .postId(post.getPostId())
-                .writer(post.getWriter().getNickname())
-                .writerImage(post.getWriter().getImage().getThumbnailUrl())
+                .writer(new SimpleMemberDto(post.getWriter(), post.isAnonymous()))
                 .major(post.getMajor())
-                .category(post.getCategory())
+                .tag(post.getTag())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .viewCount(post.getViewCount())
                 .recommendCount(post.getRecommendCount())
+                .replyCount(post.getReplyCount())
                 .images(imageUrls)
                 .createAt(post.getCreateAt())
-                .updateAt(post.getUpdateAt())
                 .isAnonymous(post.isAnonymous())
                 .build();
     }

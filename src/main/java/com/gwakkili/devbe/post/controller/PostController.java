@@ -3,11 +3,9 @@ package com.gwakkili.devbe.post.controller;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.post.dto.request.PostSaveDto;
+import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
 import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
-import com.gwakkili.devbe.post.dto.response.BookmarkPostListDto;
-import com.gwakkili.devbe.post.dto.response.MyPostListDto;
-import com.gwakkili.devbe.post.dto.response.PostDetailDto;
-import com.gwakkili.devbe.post.dto.response.ReportPostListDto;
+import com.gwakkili.devbe.post.dto.response.*;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.entity.PostBookmark;
 import com.gwakkili.devbe.post.service.PostService;
@@ -50,8 +48,8 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping
-    public SliceResponseDto<PostDetailDto, Post> getPostList(@ParameterObject SliceRequestDto sliceRequestDto){
-        return postService.findPostList(sliceRequestDto);
+    public SliceResponseDto<BasicPostListDto, Post> getPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition){
+        return postService.findPostList(sliceRequestDto, postSearchCondition);
     }
 
     @Operation(method = "GET", summary = "신고된 게시글 목록 조회 (ADMIN 전용)")
@@ -69,8 +67,8 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "내가 작성한 게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping("/my")
-    public SliceResponseDto<MyPostListDto, Post> getMyPostList(@ParameterObject SliceRequestDto sliceRequestDto, @AuthenticationPrincipal MemberDetails memberDetails){
-        return postService.findMyPostList(sliceRequestDto, memberDetails.getMemberId());
+    public SliceResponseDto<MyPostListDto, Post> getMyPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
+        return postService.findMyPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
     }
 
     @Operation(method = "GET", summary = "북마크한 게시글 목록 조회")
@@ -78,8 +76,8 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "북마크한 게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping("/bookmark")
-    public SliceResponseDto<BookmarkPostListDto, PostBookmark> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto, @AuthenticationPrincipal MemberDetails memberDetails){
-        return postService.findBookmarkedPostList(sliceRequestDto, memberDetails.getMemberId());
+    public SliceResponseDto<BookmarkPostListDto, PostBookmark> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
+        return postService.findBookmarkedPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
     }
 
     @Operation(method = "POST", summary = "게시글 생성")

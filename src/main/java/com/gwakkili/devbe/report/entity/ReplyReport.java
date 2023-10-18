@@ -19,8 +19,8 @@ public class ReplyReport extends Report {
     private Reply reply;
 
     @Builder
-    public ReplyReport(Member reporter, Report.Type Type, String content, Reply reply) {
-        super(reporter, Type, content);
+    public ReplyReport(Member reporter, Type type, String content, Reply reply) {
+        super(reporter, type, content);
         this.reply = reply;
     }
   

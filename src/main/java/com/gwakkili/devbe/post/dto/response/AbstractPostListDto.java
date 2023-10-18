@@ -16,7 +16,11 @@ public abstract class AbstractPostListDto {
 
     private String content;
 
-    private LocalDateTime createAt;
+    private int viewCount;
 
-    private LocalDateTime updateAt;
+    private int recommendCount;
+
+    private int replyCount;
+
+    private LocalDateTime createAt;
 }
