@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -27,12 +28,14 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = jwtService.generateAccessToken(memberDetails);
         String refreshToken = jwtService.generateRefreshToken(memberDetails);
 
-        Cookie cookie = new Cookie("RefreshToken", refreshToken);
-        cookie.setPath("/api/refresh");
-        cookie.setMaxAge((int) jwtService.getRefreshTokenExpireTime() / 1000);
-        cookie.setHttpOnly(true);
+        ResponseCookie responseCookie = ResponseCookie.from("RefreshToken", refreshToken)
+                .path("/api/refresh")
+                .maxAge((int) jwtService.getRefreshTokenExpireTime() / 1000)
+                .httpOnly(true)
+                .sameSite("None")
+                .build();
 
         response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addCookie(cookie);
+        response.addHeader("Set-Cookie", responseCookie.toString());
     }
 }
