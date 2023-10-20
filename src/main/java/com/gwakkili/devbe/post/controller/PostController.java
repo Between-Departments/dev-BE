@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -85,7 +86,8 @@ public class PostController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostDetailDto create(@RequestBody PostSaveDto postSaveDto, @AuthenticationPrincipal MemberDetails memberDetails){
+    public PostDetailDto create(@RequestBody @Validated PostSaveDto postSaveDto,
+                                @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.saveNewPost(postSaveDto,memberDetails.getMemberId());
     }
 

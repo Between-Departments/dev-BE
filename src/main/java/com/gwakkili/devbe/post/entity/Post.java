@@ -134,5 +134,4 @@ public class Post extends BaseEntity {
 
         private final String description;
     }
-
 }
