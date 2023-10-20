@@ -53,9 +53,9 @@ public class PostServiceImpl implements PostService{
                 .content(postSaveDto.getContent())
                 .writer(writer)
                 .boardType(postSaveDto.getBoardType())
-                .tag(postSaveDto.getTag())
-                .major(postSaveDto.getMajor())
-                .isAnonymous(postSaveDto.isAnonymous())
+                .tag(Post.BoardType.FREE.equals(postSaveDto.getBoardType()) ? postSaveDto.getTag() : null)
+                .major(Post.BoardType.NEED_HELP.equals(postSaveDto.getBoardType()) ? String.valueOf(postSaveDto.getMajorCategory()) : null)
+                .isAnonymous(postSaveDto.getIsAnonymous())
                 .build();
 
         newPost.addImages(postSaveDto.getImageUrls());

@@ -19,9 +19,9 @@ public class PostDetailDto {
 
     private SimpleMemberDto writer;
 
-    private String major;
-
-    private Post.Tag tag;
+//    private String major;
+//
+//    private Post.Tag tag;
 
     private String title;
 
@@ -47,8 +47,8 @@ public class PostDetailDto {
         return PostDetailDto.builder()
                 .postId(post.getPostId())
                 .writer(new SimpleMemberDto(post.getWriter(), post.isAnonymous()))
-                .major(post.getMajor())
-                .tag(post.getTag())
+//                .major(post.getMajor())
+//                .tag(post.getTag())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .viewCount(post.getViewCount())

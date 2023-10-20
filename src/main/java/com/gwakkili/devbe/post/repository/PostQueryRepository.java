@@ -57,8 +57,8 @@ public class PostQueryRepository {
 
         List<Post> content = result.stream().map(tuple -> {
             Post findPost = tuple.get(post);
-            findPost.setRecommendCount(tuple.get(post.recommendCount));
-            findPost.setReplyCount(tuple.get(post.replyCount));
+//            findPost.setRecommendCount(tuple.get(post.recommendCount));
+//            findPost.setReplyCount(tuple.get(post.replyCount));
             return findPost;
         }).collect(Collectors.toList());
 
