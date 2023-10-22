@@ -12,16 +12,14 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,9 +46,15 @@ public class JwtService {
     }
 
     // access token을 request에서 추출
-    public String resolveAccessToken(HttpServletRequest request){
-        String jwtHeader= request.getHeader("Authorization");
-        if(jwtHeader == null || !jwtHeader.startsWith("Bearer")) return null;
+    public String resolveAccessToken(HttpServletRequest request) {
+        String jwtHeader = request.getHeader("Authorization");
+        if (jwtHeader == null || !jwtHeader.startsWith("Bearer")) return null;
+        return jwtHeader.replace("Bearer ", "");
+    }
+
+    public String resolveAccessToken(StompHeaderAccessor headerAccessor) {
+        String jwtHeader = headerAccessor.getFirstNativeHeader("Authorization");
+        if (jwtHeader == null || !jwtHeader.startsWith("Bearer")) return null;
         return jwtHeader.replace("Bearer ", "");
     }
 
