@@ -168,8 +168,8 @@ public class PostServiceImpl implements PostService{
     @Override
     public SliceResponseDto<BasicPostListDto, Post> findPostList(SliceRequestDto sliceRequestDto, PostSearchCondition postSearchCondition) {
         Pageable pageable = sliceRequestDto.getPageable();
-        Slice<Post> slice = postQueryRepository.findPostList(pageable, postSearchCondition);
 
+        Slice<Post> slice = postQueryRepository.findPostList(pageable, postSearchCondition);
         Function<Post, BasicPostListDto> fn = BasicPostListDto::of;
         return new SliceResponseDto<>(slice, fn);
     }
@@ -180,7 +180,6 @@ public class PostServiceImpl implements PostService{
         Member findMember = memberRepository.getReferenceById(memberId);
 
         Slice<Post> slice = postRepository.findByWriterAndBoardType(pageable, findMember, postSearchCondition.getBoardType());
-
         Function<Post, MyPostListDto> fn = MyPostListDto::of;
         return new SliceResponseDto<>(slice, fn);
     }
@@ -191,10 +190,6 @@ public class PostServiceImpl implements PostService{
         Member findMember = memberRepository.getReferenceById(memberId);
 
         Slice<Post> slice = postRepository.findBookmarked(pageable, findMember, postSearchCondition.getBoardType());
-
-//        Slice<PostBookmark> slice = postBookmarkRepository.findByMemberAndBoardType(pageable, findMember, postSearchCondition.getBoardType());
-
-
         Function<Post, BookmarkPostListDto> fn = BookmarkPostListDto::of;
         return new SliceResponseDto<>(slice, fn);
     }
@@ -205,6 +200,6 @@ public class PostServiceImpl implements PostService{
 
         Slice<Object[]> postList= postRepository.findReported(pageable);
         Function<Object[], ReportPostListDto> fn = (object -> ReportPostListDto.of((Post) object[0],(long) object[1]));
-        return new SliceResponseDto(postList, fn);
+        return new SliceResponseDto<>(postList, fn);
     }
 }
