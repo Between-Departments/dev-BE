@@ -36,6 +36,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.security:spring-security-messaging'
 
     // 섬네일 설정
     implementation "net.coobird:thumbnailator:0.4.20"
