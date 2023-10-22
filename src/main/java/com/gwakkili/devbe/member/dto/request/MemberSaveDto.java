@@ -21,6 +21,7 @@ public class MemberSaveDto {
     @MailDuplicate
     @MailAuth
     @Schema(description = "메일", example = "test1@sun.ac.kr")
+    @NotBlank
     private String mail;
 
     @NotBlank

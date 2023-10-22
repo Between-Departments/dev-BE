@@ -33,12 +33,12 @@ public class Member extends BaseEntity {
     private String major;
 
     @Builder.Default
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "member_role", joinColumns = @JoinColumn(name = "member_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
     private MemberImage image;
 
     private boolean locked;
