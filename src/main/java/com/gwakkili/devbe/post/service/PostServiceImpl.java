@@ -42,7 +42,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public PostDetailDto saveNewPost(PostSaveDto postSaveDto, long memberId) {
+    public PostDetailDto saveNewFreePost(FreePostSaveDto postSaveDto, long memberId) {
         Member writer = memberRepository.findWithImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
 
@@ -51,7 +51,6 @@ public class PostServiceImpl implements PostService{
                 .content(postSaveDto.getContent())
                 .writer(writer)
                 .boardType(Post.BoardType.FREE)
-                .tag(postSaveDto.getTag())
                 .major(null)
                 .isAnonymous(postSaveDto.getIsAnonymous())
                 .build();
@@ -65,7 +64,7 @@ public class PostServiceImpl implements PostService{
     @Override
     @Transactional
     public PostDetailDto saveNewNeedHelpPost(NeedHelpPostSaveDto postSaveDto, long memberId) {
-        Member writer = memberRepository.findWithImageAndMemberImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        Member writer = memberRepository.findWithImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         Post newPost = Post.builder()
                 .title(postSaveDto.getTitle())
