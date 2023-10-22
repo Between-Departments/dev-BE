@@ -55,7 +55,7 @@ public class PostServiceImpl implements PostService{
                 .isAnonymous(postSaveDto.getIsAnonymous())
                 .build();
 
-        newPost.addImages(postSaveDto.getImageUrls());
+        if(postSaveDto.getImageUrls() != null) newPost.addImages(postSaveDto.getImageUrls());
 
         Post savePost = postRepository.save(newPost);
         return PostDetailDto.of(savePost);
@@ -76,7 +76,7 @@ public class PostServiceImpl implements PostService{
                 .isAnonymous(postSaveDto.getIsAnonymous())
                 .build();
 
-        newPost.addImages(postSaveDto.getImageUrls());
+        if(postSaveDto.getImageUrls() != null) newPost.addImages(postSaveDto.getImageUrls());
 
         Post savePost = postRepository.save(newPost);
         return PostDetailDto.of(savePost);

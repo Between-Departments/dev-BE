@@ -67,7 +67,7 @@ public class PostSaveTests extends DevBeApplicationTests {
                 .title("title1")
                 .content("content1")
                 .majorCategory(Major.Category.ENGINEERING)
-                .imageUrls(imageUrls)
+//                .imageUrls(imageUrls)
                 .isAnonymous(false)
                 .build();
 
