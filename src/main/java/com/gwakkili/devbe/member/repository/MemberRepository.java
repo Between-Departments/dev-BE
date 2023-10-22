@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+    @EntityGraph(attributePaths = {"roles"})
     Optional<Member> findByMail(String mail);
 
     Slice<Member> findAllByMailContaining(String mail, Pageable pageable);
