@@ -23,7 +23,7 @@ public class ReplySaveDto {
     private long postId;
 
     @Schema(description = "게시글 내용", example = "안녕하세요~")
-    @Length(max = 100)
+    @Length(max = 500)
     @NotBlank
     private String content;
 
