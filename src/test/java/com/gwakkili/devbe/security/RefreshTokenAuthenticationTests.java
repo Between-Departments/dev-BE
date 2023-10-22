@@ -120,4 +120,13 @@ public class RefreshTokenAuthenticationTests extends DevBeApplicationTests {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("refreshToken 인증 실패 : 토큰을 찾을 수 없음")
+    public void failAuthenticationByNotFoundToken() throws Exception {
+        //when, then
+        mockMvc.perform(post(uri).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
 }
