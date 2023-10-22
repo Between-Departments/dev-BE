@@ -3,6 +3,7 @@ package com.gwakkili.devbe.post.dto.response;
 
 import com.gwakkili.devbe.dto.SimpleMemberDto;
 import com.gwakkili.devbe.image.entity.PostImage;
+import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,38 +18,44 @@ public class PostDetailDto {
 
     private long postId;
 
-    private SimpleMemberDto writer;
-
-    private String major;
-
-    private Post.Tag tag;
+    private PostSimpleMemberDto writer;
 
     private String title;
 
     private String content;
 
-    private int viewCount;
+    private long viewCount;
 
-    private int recommendCount;
+    private long recommendCount;
 
-    private int replyCount;
+    private long replyCount;
 
     // * 원본 이미지의 링크
     private List<String> images;
 
     private LocalDateTime createAt;
 
-    private boolean isAnonymous;
+    private Boolean isAnonymous;
 
+    @Getter
+    static class PostSimpleMemberDto extends SimpleMemberDto{
+
+        private String school;
+        private String major;
+
+        private PostSimpleMemberDto(Member member, Boolean isAnonymous) {
+            super(member, isAnonymous);
+            this.school = isAnonymous ? null : member.getSchool();
+            this.major = isAnonymous ? null : member.getMajor();
+        }
+    }
 
     public static PostDetailDto of(Post post){
         List<String> imageUrls = post.getImages().stream().map(PostImage::getUrl).collect(Collectors.toList());
 
         return PostDetailDto.builder()
                 .postId(post.getPostId())
-                .writer(new SimpleMemberDto(post.getWriter(), post.isAnonymous()))
-                .major(post.getMajor())
-                .tag(post.getTag())
+                .writer(new PostSimpleMemberDto(post.getWriter(), post.getIsAnonymous()))
                 .title(post.getTitle())
                 .content(post.getContent())
                 .viewCount(post.getViewCount())
@@ -56,7 +63,7 @@ public class PostDetailDto {
                 .replyCount(post.getReplyCount())
                 .images(imageUrls)
                 .createAt(post.getCreateAt())
-                .isAnonymous(post.isAnonymous())
+                .isAnonymous(post.getIsAnonymous())
                 .build();
     }
 }

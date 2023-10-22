@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 @SuperBuilder
 public class MyPostListDto extends AbstractPostListDto{
 
-    private List<String> thumbnailImages;
-
     public static MyPostListDto of(Post post){
         List<String> thumbnailImages = post.getImages().stream().map(PostImage::getThumbnailUrl).collect(Collectors.toList());
 

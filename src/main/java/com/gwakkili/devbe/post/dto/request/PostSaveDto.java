@@ -1,26 +1,29 @@
 package com.gwakkili.devbe.post.dto.request;
 
-import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.validation.Major;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 
 @Getter
-public class PostSaveDto {
+@SuperBuilder
+@NoArgsConstructor
+public abstract class PostSaveDto {
 
+    @Length(min = 3, max = 30)
     private String title;
 
+    @Length(min = 5, max = 1000)
     private String content;
 
+    // ? 프로젝트에서 사용하고 있는 S3 서버의 url이 맞는지에 대한 검증이 필요한가?
     private List<String> imageUrls;
 
-    @Major
-    private String major;
-
-    private Post.BoardType boardType;
-
-    private Post.Tag tag;
-
-    private boolean isAnonymous;
+    @NotNull
+    private Boolean isAnonymous;
+  
 }

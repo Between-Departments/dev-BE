@@ -49,6 +49,15 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ExceptionDto> exceptionHandler(Exception exception) {
+        log.error(exception.toString());
+
+        ExceptionCode code = ExceptionCode.SERVER_ERROR;
+        ExceptionDto exceptionDto = new ExceptionDto(code);
+        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
+    }
+
     //메일 전송 실패
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> mailExceptionHandler(MailException exception) {
