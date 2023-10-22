@@ -3,18 +3,17 @@ package com.gwakkili.devbe.post.service;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.member.entity.Member;
-import com.gwakkili.devbe.post.dto.request.PostSaveDto;
-import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
-import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
+import com.gwakkili.devbe.post.dto.request.*;
 import com.gwakkili.devbe.post.dto.response.*;
 import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.post.entity.PostBookmark;
 
 import java.util.Set;
 
 public interface PostService {
 
-    PostDetailDto saveNewPost(PostSaveDto postSaveDto, long memberId);
+    PostDetailDto saveNewFreePost(FreePostSaveDto postSaveDto, long memberId);
+
+    PostDetailDto saveNewNeedHelpPost(NeedHelpPostSaveDto postSaveDto, long memberId);
 
     void bookmarkPost(Long postId, long memberId);
 
@@ -32,5 +31,5 @@ public interface PostService {
 
     SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition);
 
-    SliceResponseDto<BookmarkPostListDto, PostBookmark> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition);
+    SliceResponseDto<BookmarkPostListDto, Post> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition);
 }

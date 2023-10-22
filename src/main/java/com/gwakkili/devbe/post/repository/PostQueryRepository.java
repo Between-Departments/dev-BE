@@ -38,12 +38,11 @@ public class PostQueryRepository {
         List<Tuple> result = query.
                 select(post,
                         JPAExpressions.select(postRecommend.count())
-                        .from(postRecommend)
-                        .where(postRecommend.post.postId.eq(post.postId)),
+                                .from(postRecommend)
+                                .where(postRecommend.post.postId.eq(post.postId)),
                         JPAExpressions.select(reply.count())
                                 .from(reply)
-                                .where(reply.post.postId.eq(post.postId))
-                )
+                                .where(reply.post.postId.eq(post.postId)))
                 .from(post)
                 .join(post.writer, member).fetchJoin()
                 .join(member.image, memberImage).fetchJoin()
@@ -55,10 +54,11 @@ public class PostQueryRepository {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
+
         List<Post> content = result.stream().map(tuple -> {
             Post findPost = tuple.get(post);
-//            findPost.setRecommendCount(tuple.get(post.recommendCount));
-//            findPost.setReplyCount(tuple.get(post.replyCount));
+            findPost.setRecommendCount(tuple.get(1,Long.class));
+            findPost.setReplyCount(tuple.get(2, Long.class));
             return findPost;
         }).collect(Collectors.toList());
 

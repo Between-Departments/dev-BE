@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.post.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.member.entity.Member;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -43,20 +45,20 @@ public class Post extends BaseEntity {
     private List<PostImage> images = new ArrayList<>();
 
     // TODO 어떻게 처리할 것인가에 대한 방법 논의 필요
-    private int viewCount;
+    private long viewCount;
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("SELECT count(1) FROM POST_RECOMMEND pr WHERE pr.post_id = post_id")
-    private int recommendCount;
+    private long recommendCount;
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("SELECT count(1) FROM REPLY r WHERE r.post_id = post_id")
-    private int replyCount;
+    private long replyCount;
 
-    private boolean isAnonymous;
+    private Boolean isAnonymous;
 
     @Builder
-    public Post(Member writer, String major, BoardType boardType, Tag tag, String title, String content, boolean isAnonymous) {
+    public Post(Member writer, String major, BoardType boardType, Tag tag, String title, String content, Boolean isAnonymous) {
         this.writer = writer;
         this.major = major;
         this.boardType = boardType;
@@ -70,11 +72,11 @@ public class Post extends BaseEntity {
         this.viewCount++;
     }
 
-    public void setRecommendCount(int recommendCount) {
+    public void setRecommendCount(long recommendCount) {
         this.recommendCount = recommendCount;
     }
 
-    public void setReplyCount(int replyCount) {
+    public void setReplyCount(long replyCount) {
         this.replyCount = replyCount;
     }
     public void addImages(List<String> imageUrls) {
@@ -120,6 +122,14 @@ public class Post extends BaseEntity {
         FREE("자유게시판");
 
         private final String description;
+
+        @JsonCreator
+        public static BoardType from(String val){
+            return Arrays.stream(values())
+                    .filter(boardType -> String.valueOf(boardType).equals(val))
+                    .findAny()
+                    .orElse(null);
+        }
     }
 
 
@@ -133,6 +143,13 @@ public class Post extends BaseEntity {
         CHITCHAT("잡담");
 
         private final String description;
-    }
 
+        @JsonCreator
+        public static Tag from(String val){
+            return Arrays.stream(values())
+                    .filter(tag -> String.valueOf(tag).equals(val))
+                    .findAny()
+                    .orElse(null);
+        }
+    }
 }

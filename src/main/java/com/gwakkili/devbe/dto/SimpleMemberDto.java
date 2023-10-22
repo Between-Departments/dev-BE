@@ -13,19 +13,17 @@ import lombok.Data;
 public class SimpleMemberDto {
 
     @Schema(description = "회원 번호")
-    long memberId;
+    private Long memberId;
 
     @Schema(description = "닉네임", example = "하이디1")
-    String nickname;
+    private String nickname;
 
     @Schema(description = "프로필 이미지 url", example = "http://example.com/images/image.jpg")
-    String imageUrl;
+    private String imageUrl;
 
-    public SimpleMemberDto(Member member, boolean isAnonymous) {
-        this.memberId = member.getMemberId();
+    public SimpleMemberDto(Member member, Boolean isAnonymous) {
+        this.memberId = isAnonymous ? null : member.getMemberId();
         this.nickname = isAnonymous ? "익명" : member.getNickname();
-        this.imageUrl = isAnonymous ? "익명 프로픨 이미지 주소" : member.getImage().getThumbnailUrl();
+        this.imageUrl = isAnonymous ? "https://gwaggiri-bucket.s3.ap-northeast-2.amazonaws.com/images/default_profile.jpg" : member.getImage().getThumbnailUrl();
     }
-
-
 }

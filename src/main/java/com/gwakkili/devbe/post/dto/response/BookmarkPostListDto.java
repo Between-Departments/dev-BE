@@ -3,7 +3,6 @@ package com.gwakkili.devbe.post.dto.response;
 import com.gwakkili.devbe.dto.SimpleMemberDto;
 import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.post.entity.PostBookmark;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
@@ -18,10 +17,8 @@ public class BookmarkPostListDto extends AbstractPostListDto{
 
     private boolean isAnonymous;
 
-    private List<String> thumbnailImages;
 
-    public static BookmarkPostListDto of(PostBookmark postBookmark) {
-        Post post = postBookmark.getPost();
+    public static BookmarkPostListDto of(Post post) {
         List<String> thumbnailImages = post.getImages().stream().map(PostImage::getThumbnailUrl).collect(Collectors.toList());
 
         return BookmarkPostListDto.builder()
@@ -32,9 +29,9 @@ public class BookmarkPostListDto extends AbstractPostListDto{
                 .recommendCount(post.getRecommendCount())
                 .replyCount(post.getReplyCount())
                 .createAt(post.getCreateAt())
-                .writer(new SimpleMemberDto(post.getWriter(), post.isAnonymous()))
+                .writer(Post.BoardType.NEED_HELP.equals(post.getBoardType()) ? null : new SimpleMemberDto(post.getWriter(), post.getIsAnonymous()))
                 .thumbnailImages(thumbnailImages)
-                .isAnonymous(post.isAnonymous())
+                .isAnonymous(post.getIsAnonymous())
                 .build();
     }
 }

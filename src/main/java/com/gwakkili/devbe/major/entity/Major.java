@@ -1,7 +1,10 @@
 package com.gwakkili.devbe.major.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Arrays;
 
 @Entity
 @Getter
@@ -29,5 +32,13 @@ public class Major {
         MEDICAL("의학 계열");
 
         private final String description;
+
+        @JsonCreator
+        public static Category from(String val){
+            return Arrays.stream(values())
+                    .filter(category -> String.valueOf(category).equals(val))
+                    .findAny()
+                    .orElse(null);
+        }
     }
 }
