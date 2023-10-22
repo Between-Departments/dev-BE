@@ -8,9 +8,7 @@ import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
-import com.gwakkili.devbe.post.dto.request.PostSaveDto;
-import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
-import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
+import com.gwakkili.devbe.post.dto.request.*;
 import com.gwakkili.devbe.post.dto.response.*;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.entity.PostBookmark;
@@ -42,19 +40,18 @@ public class PostServiceImpl implements PostService{
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
 
-
     @Override
     @Transactional
-    public PostDetailDto saveNewPost(PostSaveDto postSaveDto, long memberId) {
+    public PostDetailDto saveNewFreePost(FreePostSaveDto postSaveDto, long memberId) {
         Member writer = memberRepository.findWithImageAndMemberImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         Post newPost = Post.builder()
                 .title(postSaveDto.getTitle())
                 .content(postSaveDto.getContent())
                 .writer(writer)
-                .boardType(postSaveDto.getBoardType())
-                .tag(Post.BoardType.FREE.equals(postSaveDto.getBoardType()) ? postSaveDto.getTag() : null)
-                .major(Post.BoardType.NEED_HELP.equals(postSaveDto.getBoardType()) ? String.valueOf(postSaveDto.getMajorCategory()) : null)
+                .boardType(Post.BoardType.FREE)
+                .tag(postSaveDto.getTag())
+                .major(null)
                 .isAnonymous(postSaveDto.getIsAnonymous())
                 .build();
 
@@ -63,6 +60,28 @@ public class PostServiceImpl implements PostService{
         Post savePost = postRepository.save(newPost);
         return PostDetailDto.of(savePost);
     }
+
+    @Override
+    @Transactional
+    public PostDetailDto saveNewNeedHelpPost(NeedHelpPostSaveDto postSaveDto, long memberId) {
+        Member writer = memberRepository.findWithImageAndMemberImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+
+        Post newPost = Post.builder()
+                .title(postSaveDto.getTitle())
+                .content(postSaveDto.getContent())
+                .writer(writer)
+                .boardType(Post.BoardType.NEED_HELP)
+                .tag(null)
+                .major(String.valueOf(postSaveDto.getMajorCategory()))
+                .isAnonymous(postSaveDto.getIsAnonymous())
+                .build();
+
+        newPost.addImages(postSaveDto.getImageUrls());
+
+        Post savePost = postRepository.save(newPost);
+        return PostDetailDto.of(savePost);
+    }
+
     @Override
     @Transactional
     public void updatePost(PostUpdateDto postUpdateDto, Long postId, long memberId) {
@@ -179,6 +198,7 @@ public class PostServiceImpl implements PostService{
         Function<Post, BookmarkPostListDto> fn = BookmarkPostListDto::of;
         return new SliceResponseDto<>(slice, fn);
     }
+
     @Override
     public SliceResponseDto<ReportPostListDto, Object[]> findReportedPostList(SliceRequestDto sliceRequestDto) {
         Pageable pageable = sliceRequestDto.getPageable();

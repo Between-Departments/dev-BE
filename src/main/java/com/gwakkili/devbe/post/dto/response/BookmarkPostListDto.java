@@ -29,9 +29,9 @@ public class BookmarkPostListDto extends AbstractPostListDto{
                 .recommendCount(post.getRecommendCount())
                 .replyCount(post.getReplyCount())
                 .createAt(post.getCreateAt())
-                .writer(Post.BoardType.NEED_HELP.equals(post.getBoardType()) ? null : new SimpleMemberDto(post.getWriter(), post.isAnonymous()))
+                .writer(Post.BoardType.NEED_HELP.equals(post.getBoardType()) ? null : new SimpleMemberDto(post.getWriter(), post.getIsAnonymous()))
                 .thumbnailImages(thumbnailImages)
-                .isAnonymous(post.isAnonymous())
+                .isAnonymous(post.getIsAnonymous())
                 .build();
     }
 }

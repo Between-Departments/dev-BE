@@ -2,9 +2,7 @@ package com.gwakkili.devbe.post.controller;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
-import com.gwakkili.devbe.post.dto.request.PostSaveDto;
-import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
-import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
+import com.gwakkili.devbe.post.dto.request.*;
 import com.gwakkili.devbe.post.dto.response.*;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.service.PostService;
@@ -80,15 +78,26 @@ public class PostController {
         return postService.findBookmarkedPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
     }
 
-    @Operation(method = "POST", summary = "게시글 생성")
+    @Operation(method = "POST", summary = "자유게시판 글 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "게시글 생성 성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostDetailDto.class)))
     })
-    @PostMapping
+    @PostMapping("/free")
     @ResponseStatus(HttpStatus.CREATED)
-    public PostDetailDto create(@RequestBody @Validated PostSaveDto postSaveDto,
+    public PostDetailDto create(@RequestBody @Validated FreePostSaveDto postSaveDto,
                                 @AuthenticationPrincipal MemberDetails memberDetails){
-        return postService.saveNewPost(postSaveDto,memberDetails.getMemberId());
+        return postService.saveNewFreePost(postSaveDto,memberDetails.getMemberId());
+    }
+
+    @Operation(method = "POST", summary = "도움이 필요해요 글 생성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "게시글 생성 성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostDetailDto.class)))
+    })
+    @PostMapping("/needhelp")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PostDetailDto create(@RequestBody @Validated NeedHelpPostSaveDto postSaveDto,
+                                @AuthenticationPrincipal MemberDetails memberDetails){
+        return postService.saveNewNeedHelpPost(postSaveDto,memberDetails.getMemberId());
     }
 
     @Operation(method = "POST", summary = "특정 게시글 북마크")
