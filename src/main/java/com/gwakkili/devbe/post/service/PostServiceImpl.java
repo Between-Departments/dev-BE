@@ -42,8 +42,9 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public PostDetailDto saveNewFreePost(FreePostSaveDto postSaveDto, long memberId) {
-        Member writer = memberRepository.findWithImageAndMemberImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+    public PostDetailDto saveNewPost(PostSaveDto postSaveDto, long memberId) {
+        Member writer = memberRepository.findWithImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+
 
         Post newPost = Post.builder()
                 .title(postSaveDto.getTitle())
