@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Tag(name = "Report", description = "신고 API")
 public class ReportController {
 
     private final PostReportService postReportService;
@@ -66,6 +68,7 @@ public class ReportController {
 
     @PostMapping("/replies/{replyId}/report")
     @PreAuthorize("hasRole('ROLE_USER')")
+    @Operation(summary = "댓글 신고")
     public void saveReplyReport(@Parameter(in = ParameterIn.PATH, description = "댓글 번호") @PathVariable long replyId,
                                 @AuthenticationPrincipal MemberDetails memberDetails,
                                 @RequestBody ReplyReportSaveDto replyReportSaveDto) {
@@ -76,7 +79,9 @@ public class ReportController {
 
     @DeleteMapping("/replies/{replyId}/report/{reportId}")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public void deleteReplyReport(@PathVariable long replyId, @PathVariable long reportId) {
+    @Operation(summary = "댓글 신고 삭제")
+    public void deleteReplyReport(@Parameter(in = ParameterIn.PATH, description = "댓글 번호") @PathVariable long replyId,
+                                  @Parameter(in = ParameterIn.PATH, description = "댓글 신고 번호") @PathVariable long reportId) {
         replyReportService.deleteReplyReport(reportId);
     }
 }

@@ -58,6 +58,7 @@ public class JwtService {
     public String resolveRefreshToken(HttpServletRequest request) {
 
         Cookie[] cookies = request.getCookies();
+        if (cookies == null) return null;
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("RefreshToken"))
                 return cookie.getValue();

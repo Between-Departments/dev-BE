@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.post.dto.request;
 
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,5 +25,5 @@ public abstract class PostSaveDto {
 
     @NotNull
     private Boolean isAnonymous;
-
+  
 }
