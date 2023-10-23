@@ -10,11 +10,13 @@ import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.repository.PostRepository;
-import com.gwakkili.devbe.reply.dto.*;
+import com.gwakkili.devbe.reply.dto.ReplyDto;
+import com.gwakkili.devbe.reply.dto.ReplySaveDto;
+import com.gwakkili.devbe.reply.dto.ReplyUpdateDto;
+import com.gwakkili.devbe.reply.dto.ReportedReplyDto;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.entity.ReplyRecommend;
 import com.gwakkili.devbe.reply.repository.ReplyRecommendRepository;
-import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import com.gwakkili.devbe.reply.repository.ReplyRepository;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -44,7 +45,7 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     public ReplyDto saveReply(ReplySaveDto replySaveDto) {
 
-        Member writer = memberRepository.getReferenceById(replySaveDto.getPostId());
+        Member writer = memberRepository.getReferenceById(replySaveDto.getWriter());
         Post post = postRepository.getReferenceById(replySaveDto.getPostId());
 
         Reply reply = Reply.builder()
