@@ -7,8 +7,6 @@ server:
       enabled: true
       force: true
 
-
-
 spring:
   servlet:
     multipart:
