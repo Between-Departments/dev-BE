@@ -48,11 +48,11 @@ public class Post extends BaseEntity {
     private long viewCount;
 
     @Basic(fetch = FetchType.LAZY)
-    @Formula("SELECT count(1) FROM POST_RECOMMEND pr WHERE pr.post_id = post_id")
+    @Formula("(SELECT count(1) FROM POST_RECOMMEND pr WHERE pr.post_id = post_id) as recommendCount")
     private long recommendCount;
 
     @Basic(fetch = FetchType.LAZY)
-    @Formula("SELECT count(1) FROM REPLY r WHERE r.post_id = post_id")
+    @Formula("(SELECT count(1) FROM REPLY r WHERE r.post_id = post_id) as replyCount")
     private long replyCount;
 
     private Boolean isAnonymous;
