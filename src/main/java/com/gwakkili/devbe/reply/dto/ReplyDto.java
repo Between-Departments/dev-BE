@@ -34,9 +34,6 @@ public class ReplyDto {
     @Schema(description = "변경일")
     private LocalDateTime updateAt;
 
-    @Schema(description = "익명 여부")
-    private boolean isAnonymous;
-
     @Data
     @AllArgsConstructor
     @Schema
@@ -61,7 +58,7 @@ public class ReplyDto {
                                 .build()
                 )
                 .content(reply.getContent())
-                .recommendCount((reply.getRecommendCount() == null) ? 0 : reply.getRecommendCount())
+                .recommendCount(reply.getRecommendCount())
                 .createAt(reply.getCreateAt())
                 .updateAt(reply.getUpdateAt())
                 .build();

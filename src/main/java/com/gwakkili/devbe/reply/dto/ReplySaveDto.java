@@ -27,7 +27,4 @@ public class ReplySaveDto {
     @NotBlank
     private String content;
 
-    @Schema(description = "익명 여부")
-    private boolean isAnonymous;
-
 }

@@ -51,7 +51,6 @@ public class ReplyServiceImpl implements ReplyService {
                 .post(post)
                 .member(writer)
                 .content(replySaveDto.getContent())
-                .isAnonymous(replySaveDto.isAnonymous())
                 .build();
 
         Reply saveReply = replyRepository.save(reply);
