@@ -242,7 +242,6 @@ public class DummyDataProvider implements ApplicationRunner {
                     .member(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
                     .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
                     .content("testReplyContent" + i)
-                    .isAnonymous(false)
                     .build();
             replies.add(reply);
 
@@ -252,7 +251,6 @@ public class DummyDataProvider implements ApplicationRunner {
                         .member(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
                         .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
                         .content("testReplyContent" + i)
-                        .isAnonymous(true)
                         .build();
 
                 replies.add(anonymousReply);
