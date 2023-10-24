@@ -27,9 +27,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("select m from Member m join fetch m.image where m.memberId = :memberId")
     Optional<Member> findWithImageByMemberId(long memberId);
 
-
     @EntityGraph(attributePaths = {"bookmarkCount", "postCount", "replyCount", "image", "roles"})
     @Query("select m from Member m where m.memberId = :memberId")
-    Optional<Member> findWithCountById(@Param("memberId") long memberId);
+    Optional<Member> findWithCountById(long memberId);
 
 }

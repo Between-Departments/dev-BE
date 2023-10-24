@@ -29,21 +29,19 @@ public class Reply extends BaseEntity {
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("(SELECT count(*) FROM reply_recommend rr WHERE rr.reply_id = reply_id)")
-    private Integer recommendCount;
+    private int recommendCount;
 
-    private boolean isAnonymous;
 
     public void setContent(String content) {
         this.content = content;
     }
 
     @Builder
-    public Reply(long replyId, Member member, Post post, String content, boolean isAnonymous) {
+    public Reply(long replyId, Member member, Post post, String content) {
         this.replyId = replyId;
         this.member = member;
         this.post = post;
         this.content = content;
-        this.isAnonymous = isAnonymous;
     }
 
 }

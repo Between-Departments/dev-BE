@@ -46,7 +46,10 @@ public enum ExceptionCode {
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "POST-001", "게시물을 찾을 수 없습니다."),
     DUPLICATE_REPORT(HttpStatus.BAD_REQUEST, "REPORT-001", "동일한 신고를 여러번 할 수 없습니다."),
     NOT_FOUND_REPLY(HttpStatus.NOT_FOUND, "REPLY-001", "댓글을 찾을 수 없습니다."),
-    NOT_FOUND_REORT(HttpStatus.NOT_FOUND, "REPORT-002", "신고 내역을 찾을 수 없습니다");
+    NOT_FOUND_REPORT(HttpStatus.NOT_FOUND, "REPORT-002", "신고 내역을 찾을 수 없습니다"),
+    NOT_FOUND_CHAT_ROOM(HttpStatus.NOT_FOUND, "CHAT-001", "채팅방을 찾을 수 없습니다"),
+    DUPLICATE_CHAT_ROOM(HttpStatus.CONFLICT, "CHAT-002", "채팅방이 이미 존재합니다."),
+    NOT_FOUND_CHAT_MESSAGE(HttpStatus.NOT_FOUND, "CHAT-003", "채팅 메시지를 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;

@@ -1,5 +1,9 @@
 package com.gwakkili.devbe.config;
 
+import com.gwakkili.devbe.chat.entity.ChatMessage;
+import com.gwakkili.devbe.chat.entity.ChatRoom;
+import com.gwakkili.devbe.chat.repository.ChatMessageRepository;
+import com.gwakkili.devbe.chat.repository.ChatRoomRepository;
 import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.major.repository.MajorRepository;
@@ -34,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 @TestComponent
 public class DummyDataProvider implements ApplicationRunner {
@@ -58,6 +63,9 @@ public class DummyDataProvider implements ApplicationRunner {
 
     private ReplyRecommendRepository replyRecommendRepository;
 
+    private ChatRoomRepository chatRoomRepository;
+
+    private ChatMessageRepository chatMessageRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -74,7 +82,9 @@ public class DummyDataProvider implements ApplicationRunner {
                              PostReportRepository postReportRepository,
                              PostBookmarkRepository postBookmarkRepository,
                              PostRecommendRepository postRecommendRepository,
-                             ReplyRecommendRepository replyRecommendRepository) {
+                             ReplyRecommendRepository replyRecommendRepository,
+                             ChatRoomRepository chatRoomRepository,
+                             ChatMessageRepository chatMessageRepository) {
         this.schoolRepository = schoolRepository;
         this.majorRepository = majorRepository;
         this.memberRepository = memberRepository;
@@ -85,6 +95,8 @@ public class DummyDataProvider implements ApplicationRunner {
         this.postBookmarkRepository = postBookmarkRepository;
         this.postRecommendRepository = postRecommendRepository;
         this.replyRecommendRepository = replyRecommendRepository;
+        this.chatRoomRepository = chatRoomRepository;
+        this.chatMessageRepository = chatMessageRepository;
     }
 
 
@@ -230,7 +242,6 @@ public class DummyDataProvider implements ApplicationRunner {
                     .member(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
                     .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
                     .content("testReplyContent" + i)
-                    .isAnonymous(false)
                     .build();
             replies.add(reply);
 
@@ -240,7 +251,6 @@ public class DummyDataProvider implements ApplicationRunner {
                         .member(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
                         .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
                         .content("testReplyContent" + i)
-                        .isAnonymous(true)
                         .build();
 
                 replies.add(anonymousReply);
@@ -326,9 +336,47 @@ public class DummyDataProvider implements ApplicationRunner {
         postBookmarkRepository.saveAll(postBookmarks);
     }
 
+    //* 테스트용 채팅방 -> 총 10개, 마지막 채팅방에는 메시지 X
+    private void saveChatRoom() {
+        List<ChatRoom> chatRooms = new ArrayList<>();
+        IntStream.rangeClosed(2, 11).forEach(i -> {
+            ChatRoom chatRoom;
+            if (i % 2 == 0) {
+                chatRoom = ChatRoom.builder()
+                        .master(Member.builder().memberId(1).build())
+                        .member(Member.builder().memberId(i).build())
+                        .build();
+            } else {
+                chatRoom = ChatRoom.builder()
+                        .master(Member.builder().memberId(i).build())
+                        .member(Member.builder().memberId(1).build())
+                        .build();
+            }
+            chatRooms.add(chatRoom);
+        });
+        chatRoomRepository.saveAll(chatRooms);
+    }
 
-    @Transactional
+    //* 테스트용 채팅 메시지 -> 채팅 방당 30개
+    private void saveChatMessage() {
+        List<ChatMessage> chatMessages = new ArrayList<>();
+        LongStream.rangeClosed(2, 10).forEach(i -> {
+            IntStream.rangeClosed(1, 30).forEach(j -> {
+                ChatMessage chatMessage = ChatMessage.builder()
+                        .chatRoom(chatRoomRepository.getReferenceById(i - 1))
+                        .sender(memberRepository.getReferenceById((j % 2 == 0) ? 1L : i))
+                        .content("Test message" + i)
+                        .build();
+                chatMessages.add(chatMessage);
+            });
+
+        });
+        chatMessageRepository.saveAll(chatMessages);
+    }
+
+
     @Override
+    @Transactional
     public void run(ApplicationArguments args) throws Exception {
         saveSchool();
         saveMajor();
@@ -340,6 +388,7 @@ public class DummyDataProvider implements ApplicationRunner {
         savePostRecommend();
         saveReplyRecommend();
         savePostBookmark();
+        saveChatRoom();
+        saveChatMessage();
     }
-
 }
