@@ -65,7 +65,6 @@ public class ReplyServiceImpl implements ReplyService {
 
         Post post = postRepository.getReferenceById(postId);
         Slice<Reply> replyList = replyRepository.findByPost(post, sliceResponseDto.getPageable());
-        if (replyList.getNumberOfElements() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_REPLY);
         Function<Reply, ReplyDto> fn = (ReplyDto::of);
         return new SliceResponseDto(replyList, fn);
     }
