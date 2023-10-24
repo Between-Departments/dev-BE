@@ -29,7 +29,6 @@ public class ReplySaveTests extends DevBeApplicationTests {
         ReplySaveDto replySaveDto = ReplySaveDto.builder()
                 .postId(1)
                 .content("test1")
-                .isAnonymous(false)
                 .build();
 
         String content = objectMapper.writeValueAsString(replySaveDto);
@@ -45,12 +44,11 @@ public class ReplySaveTests extends DevBeApplicationTests {
     @WithMockMember
     public void failByInvalid() throws Exception {
         //given
-        String str = IntStream.rangeClosed(1, 100).mapToObj(String::valueOf).collect(Collectors.joining());
+        String str = IntStream.rangeClosed(1, 500).mapToObj(String::valueOf).collect(Collectors.joining());
         System.out.println(str);
         ReplySaveDto replySaveDto = ReplySaveDto.builder()
                 .postId(1)
                 .content(str)
-                .isAnonymous(false)
                 .build();
 
         //when, then
