@@ -44,7 +44,8 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     public ReplyDto saveReply(ReplySaveDto replySaveDto) {
 
-        Member writer = memberRepository.getReferenceById(replySaveDto.getPostId());
+        Member writer = memberRepository.findWithImageByMemberId(replySaveDto.getPostId())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         Post post = postRepository.getReferenceById(replySaveDto.getPostId());
 
         Reply reply = Reply.builder()
