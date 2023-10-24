@@ -6,17 +6,22 @@ import com.gwakkili.devbe.chat.dto.Response.ChatMessageDto;
 import com.gwakkili.devbe.chat.dto.Response.ChatRoomDto;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.chat.entity.ChatRoom;
+import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+
+import java.util.List;
 
 public interface ChatService {
 
     ChatRoomDto saveChatRoom(SaveChatRoomDto saveChatRoomDto);
 
-    SliceResponseDto<ChatRoomDto, ChatRoom> getChatRoomList(long memberId);
+    List<ChatRoomDto> getChatRoomList(long memberId);
 
-    void deleteChatRoom(long chatRoomId);
+    void deleteChatRoom(long roomId, long memberId);
 
-    ChatMessageDto saveChatMessage(SaveChatMessageDto saveChatMessageDto);
+    ChatMessageDto saveChatMessage(SaveChatMessageDto saveChatMessageDto, int MemberNumInRoom);
 
-    SliceResponseDto<ChatMessageDto, ChatMessage> getChatMessageList(long chatRoomId);
+    void updateChatMessageIsRead(long roomId, long memberId);
+
+    SliceResponseDto<ChatMessageDto, ChatMessage> getChatMessageList(long roomId, long memberId, SliceRequestDto sliceRequestDto);
 }

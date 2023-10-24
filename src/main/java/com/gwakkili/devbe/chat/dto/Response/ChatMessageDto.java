@@ -1,7 +1,8 @@
 package com.gwakkili.devbe.chat.dto.Response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
-import com.gwakkili.devbe.dto.SimpleMemberDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,29 +11,27 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@Schema
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ChatMessageDto {
 
+    @Schema(description = "채팅 메시지 번호")
     private long chatMessageId;
 
-    private long chatRoomId;
+    @Schema(description = "발신자", example = "신방과곰돌이")
+    private String sender;
 
-    private SimpleMemberDto sender;
-
+    @Schema(description = "채팅 내용", example = "안녕하세요~")
     private String content;
 
+    @Schema(description = "생성 일자")
     private LocalDateTime createAt;
+
 
     public static ChatMessageDto of(ChatMessage chatMessage) {
         return ChatMessageDto.builder()
                 .chatMessageId(chatMessage.getChatMessageId())
-                .chatRoomId(chatMessage.getChatRoom().getChatRoomId())
-                .sender(
-                        SimpleMemberDto.builder()
-                                .memberId(chatMessage.getSender().getMemberId())
-                                .nickname(chatMessage.getSender().getNickname())
-                                .imageUrl(chatMessage.getSender().getImage().getThumbnailUrl())
-                                .build()
-                )
+                .sender(chatMessage.getSender().getNickname())
                 .content(chatMessage.getContent())
                 .createAt(chatMessage.getCreateAt())
                 .build();
