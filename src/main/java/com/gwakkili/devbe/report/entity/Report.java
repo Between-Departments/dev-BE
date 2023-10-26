@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.report.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
@@ -7,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @MappedSuperclass
 @Getter
@@ -34,5 +37,13 @@ public class Report extends BaseEntity {
         WRONG_INFO("잘못된 정보");
 
         private final String description;
+
+        @JsonCreator
+        public static Type from(String val){
+            return Arrays.stream(values())
+                    .filter(boardType -> String.valueOf(boardType).equals(val))
+                    .findAny()
+                    .orElse(null);
+        }
     }
 }

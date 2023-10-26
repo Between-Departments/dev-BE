@@ -22,23 +22,23 @@ public class Post extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long postId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id",nullable = false)
-    private Member writer;
-
-    private String major;
-
-    @Enumerated(EnumType.STRING)
-    private BoardType boardType;
-
-    @Enumerated(EnumType.STRING)
-    private Tag tag;
-
     @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id",nullable = false)
+    private Member writer;
+
+    @Enumerated(EnumType.STRING)
+    private BoardType boardType;
+
+    private String major;
+
+    @Enumerated(EnumType.STRING)
+    private Tag tag;
 
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

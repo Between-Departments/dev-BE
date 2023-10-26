@@ -3,15 +3,20 @@ package com.gwakkili.devbe.post.repository;
 import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
 import com.gwakkili.devbe.post.entity.Post;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +36,6 @@ public class PostQueryRepository {
         this.query = new JPAQueryFactory(em);
     }
 
-
     // ! 특정 목록
     // * 검색 키워드, 게시판 타입, 태그, 전공
     public Slice<Post> findPostList(Pageable pageable, PostSearchCondition postSearchCondition){
@@ -46,14 +50,14 @@ public class PostQueryRepository {
                 .from(post)
                 .join(post.writer, member).fetchJoin()
                 .join(member.image, memberImage).fetchJoin()
-                .where(majorEq(postSearchCondition.getMajor()),
-                        boardTypeEq(postSearchCondition.getBoardType()),
+                .where(boardTypeEq(postSearchCondition.getBoardType()),
+                        majorCategoryEq(String.valueOf(postSearchCondition.getMajorCategory())),
                         tagEq(postSearchCondition.getTag()),
                         keywordContains(postSearchCondition.getKeyword()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
+                .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
                 .fetch();
-
 
         List<Post> content = result.stream().map(tuple -> {
             Post findPost = tuple.get(post);
@@ -74,12 +78,12 @@ public class PostQueryRepository {
     }
 
 
-    private BooleanExpression majorEq(String major){
-        return !hasText(major) ? null : post.major.eq(major);
-    }
-
     private BooleanExpression boardTypeEq(Post.BoardType boardType){
         return boardType == null ? null : post.boardType.eq(boardType);
+    }
+
+    private BooleanExpression majorCategoryEq(String majorCategory){
+        return !hasText(majorCategory) ? null : post.major.eq(majorCategory);
     }
 
     private BooleanExpression tagEq(Post.Tag tag){
@@ -88,6 +92,20 @@ public class PostQueryRepository {
 
     private BooleanExpression keywordContains(String keyword){
         return !hasText(keyword) ? null : post.content.contains(keyword);
+    }
+
+    private List<OrderSpecifier> getOrderSpecifier(Sort sort){
+        List<OrderSpecifier> orders = new ArrayList<>();
+
+        sort.stream().forEach(order -> {
+            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+            String prop = order.getProperty();
+
+            PathBuilder orderByExpression = new PathBuilder(Post.class, "post");
+            orders.add(new OrderSpecifier(direction, orderByExpression.get(prop)));
+        });
+
+        return orders;
     }
 
 }
