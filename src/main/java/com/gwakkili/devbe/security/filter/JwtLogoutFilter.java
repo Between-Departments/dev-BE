@@ -17,8 +17,8 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
-    private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/api/logout",
-            "POST");
+    private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER =
+            new AntPathRequestMatcher("/api/logout", "POST");
 
     public JwtLogoutFilter(JwtService jwtService) {
         this.jwtService = jwtService;
@@ -26,17 +26,20 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         if (!DEFAULT_ANT_PATH_REQUEST_MATCHER.matches(request)) {
             filterChain.doFilter(request, response);
             return;
         }
+
         String accessToken = jwtService.resolveAccessToken(request);
-        System.out.println(accessToken);
         if (!jwtService.validateToken(accessToken).equals("VALID")) {
             filterChain.doFilter(request, response);
             return;
         }
+
         Authentication authentication = jwtService.getAuthentication(accessToken);
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         jwtService.deleteRefreshToken(memberDetails);

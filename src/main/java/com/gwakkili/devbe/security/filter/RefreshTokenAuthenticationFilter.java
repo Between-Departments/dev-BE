@@ -39,25 +39,32 @@ public class RefreshTokenAuthenticationFilter extends AbstractAuthenticationProc
         String accessToken = jwtService.resolveAccessToken(request);
         String refreshToken = jwtService.resolveRefreshToken(request);
 
+        String accessTokenValidate = jwtService.validateToken(accessToken);
+        String refreshTokenValidate = jwtService.validateToken(refreshToken);
+
         // access token 과 refresh token 유효성 검사
-        if(refreshToken == null || accessToken == null){
+        if (accessTokenValidate.equals("NOT_FOUND") || refreshTokenValidate.equals("NOT_FOUND")) {
             throw new JwtException(ExceptionCode.NOT_FOUND_TOKEN);
-        }else if(jwtService.validateToken(refreshToken).equals("INVALID") || jwtService.validateToken(accessToken).equals("INVALID")){
+        } else if (accessTokenValidate.equals("INVALID") || refreshTokenValidate.equals("INVALID")) {
             throw new JwtException(ExceptionCode.INVALID_TOKEN);
-        }else if(jwtService.validateToken(refreshToken).equals("EXPIRE")){
+        } else if (refreshTokenValidate.equals("EXPIRE")) {
             throw new JwtException(ExceptionCode.EXPIRED_TOKEN);
         }
 
-        // 사용자에게 받은 refreshToken에서 mail을 추출
+        // 사용자에게 받은 refreshToken 에서 mail 추출
         String mail = jwtService.getClaims(refreshToken).getSubject();
 
-        //redis에 저장되 있는 refresh 토큰과 사용자가 보낸 refresh 토큰 비교
+        //redis 에 저장되 있는 refresh 토큰과 사용자가 보낸 refresh 토큰 비교
         RefreshToken redisRefreshToken = jwtService.getRefreshToken(mail);
-        if(redisRefreshToken == null || !redisRefreshToken.getToken().equals(refreshToken))
+        if (redisRefreshToken == null || !redisRefreshToken.getToken().equals(refreshToken))
             throw new JwtException(ExceptionCode.INVALID_TOKEN);
 
-        //redis에 저장되어 있는 값으로 AuthenticationToken 생성
-        MemberDetails memberDetails = MemberDetails.builder().mail(redisRefreshToken.getMail()).roles(redisRefreshToken.getRoles()).build();
+        //redis 에 저장되어 있는 값으로 AuthenticationToken 생성
+        MemberDetails memberDetails = MemberDetails.builder()
+                .mail(redisRefreshToken.getMail())
+                .roles(redisRefreshToken.getRoles())
+                .build();
+
         return new UsernamePasswordAuthenticationToken(memberDetails, "", memberDetails.getAuthorities());
     }
 }

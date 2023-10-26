@@ -32,6 +32,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
                 .path("/api/refresh")
                 .maxAge((int) jwtService.getRefreshTokenExpireTime() / 1000)
                 .httpOnly(true)
+                .secure(true)
                 .sameSite("None")
                 .build();
 
