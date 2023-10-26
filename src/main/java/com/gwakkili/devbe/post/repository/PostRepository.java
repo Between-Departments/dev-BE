@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,9 +45,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "select post_id, title, major, create_at from " +
             "(select *, ROW_NUMBER() over (partition by tmp1.major order by tmp1.recommendCount desc) as rnk " +
-            "from (select *, (select count(1) from post_recommend pr where pr.post_id = p.post_id) as recommendCount, from post p where p.board_type = 'NEED_HELP' and p.create_at >= ? and p.create_at <= ?) as tmp1) as tmp2 " +
+            "from (select *, (select count(1) from post_recommend pr where pr.post_id = p.post_id) as recommendCount from post p where p.board_type = 'NEED_HELP' and p.create_at >= ? and p.create_at <= ?) as tmp1) as tmp2 " +
             "where tmp2.rnk = 1",nativeQuery = true)
-    List<Object[]> findDailyHot(LocalDateTime start, LocalDateTime end);
-
+    List<Object[]> findDailyHot(Timestamp start, Timestamp end);
 
 }
