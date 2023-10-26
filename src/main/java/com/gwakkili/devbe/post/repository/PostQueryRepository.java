@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.post.repository;
 
+import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
 import com.gwakkili.devbe.post.entity.Post;
 import com.querydsl.core.Tuple;
@@ -51,7 +52,7 @@ public class PostQueryRepository {
                 .join(post.writer, member).fetchJoin()
                 .join(member.image, memberImage).fetchJoin()
                 .where(boardTypeEq(postSearchCondition.getBoardType()),
-                        majorCategoryEq(String.valueOf(postSearchCondition.getMajorCategory())),
+                        majorCategoryEq(postSearchCondition.getMajorCategory()),
                         tagEq(postSearchCondition.getTag()),
                         keywordContains(postSearchCondition.getKeyword()))
                 .offset(pageable.getOffset())
@@ -78,19 +79,19 @@ public class PostQueryRepository {
     }
 
 
-    private BooleanExpression boardTypeEq(Post.BoardType boardType){
+    private BooleanExpression boardTypeEq(Post.BoardType boardType) {
         return boardType == null ? null : post.boardType.eq(boardType);
     }
 
-    private BooleanExpression majorCategoryEq(String majorCategory){
-        return !hasText(majorCategory) ? null : post.major.eq(majorCategory);
+    private BooleanExpression majorCategoryEq(Major.Category majorCategory) {
+        return majorCategory == null ? null : post.major.eq(majorCategory.toString());
     }
 
-    private BooleanExpression tagEq(Post.Tag tag){
+    private BooleanExpression tagEq(Post.Tag tag) {
         return tag == null ? null : post.tag.eq(tag);
     }
 
-    private BooleanExpression keywordContains(String keyword){
+    private BooleanExpression keywordContains(String keyword) {
         return !hasText(keyword) ? null : post.content.contains(keyword);
     }
 
