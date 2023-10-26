@@ -7,6 +7,7 @@ import com.gwakkili.devbe.exception.customExcption.JwtException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,16 +21,19 @@ import java.io.IOException;
  * Exception에 맞는 응답 반환
  */
 @Component
+@RequiredArgsConstructor
 public class JwtLoginFailureHandler implements AuthenticationFailureHandler {
+
+    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         ExceptionCode exceptionCode;
         if (exception instanceof BadCredentialsException || exception instanceof UsernameNotFoundException) {
             exceptionCode = ExceptionCode.BAD_CREDENTIAL;
-        } else if(exception instanceof AuthenticationCredentialsNotFoundException){
+        } else if (exception instanceof AuthenticationCredentialsNotFoundException) {
             exceptionCode = ExceptionCode.AUTHENTICATION_DENIED;
-        } else if(exception instanceof LockedException){
+        } else if (exception instanceof LockedException) {
             exceptionCode = ExceptionCode.AUTHENTICATION_LOCKED;
         } else if(exception instanceof AuthenticationServiceException){
             exceptionCode = ExceptionCode.ILLEGAL_AUTHENTICATION_FORMAT;
@@ -43,7 +47,7 @@ public class JwtLoginFailureHandler implements AuthenticationFailureHandler {
 
 
     private void setResponse(HttpServletResponse response, ExceptionCode exceptionCode) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+
         ExceptionDto exceptionDto = new ExceptionDto(exceptionCode);
         String responseBody = objectMapper.writeValueAsString(exceptionDto);
 

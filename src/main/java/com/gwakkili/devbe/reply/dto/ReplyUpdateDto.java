@@ -20,6 +20,6 @@ public class ReplyUpdateDto {
 
     @Schema(description = "게시글 내용", example = "안녕하세요~")
     @NotBlank
-    @Length(max = 100)
+    @Length(max = 500)
     private String content;
 }

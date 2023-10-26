@@ -45,14 +45,15 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     public ReplyDto saveReply(ReplySaveDto replySaveDto) {
 
-        Member writer = memberRepository.getReferenceById(replySaveDto.getWriter());
+        Member writer = memberRepository.findWithImageByMemberId(replySaveDto.getWriter())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+
         Post post = postRepository.getReferenceById(replySaveDto.getPostId());
 
         Reply reply = Reply.builder()
                 .post(post)
                 .member(writer)
                 .content(replySaveDto.getContent())
-                .isAnonymous(replySaveDto.isAnonymous())
                 .build();
 
         Reply saveReply = replyRepository.save(reply);
@@ -66,7 +67,6 @@ public class ReplyServiceImpl implements ReplyService {
 
         Post post = postRepository.getReferenceById(postId);
         Slice<Reply> replyList = replyRepository.findByPost(post, sliceResponseDto.getPageable());
-        if (replyList.getNumberOfElements() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_REPLY);
         Function<Reply, ReplyDto> fn = (ReplyDto::of);
         return new SliceResponseDto(replyList, fn);
     }

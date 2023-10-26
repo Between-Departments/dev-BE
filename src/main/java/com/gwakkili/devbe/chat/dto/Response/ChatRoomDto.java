@@ -1,43 +1,66 @@
 package com.gwakkili.devbe.chat.dto.Response;
 
-import com.gwakkili.devbe.chat.entity.ChatMessage;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gwakkili.devbe.chat.entity.ChatRoom;
+import com.gwakkili.devbe.chat.entity.RecentChatMessage;
 import com.gwakkili.devbe.dto.SimpleMemberDto;
+import com.gwakkili.devbe.member.entity.Member;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@Schema
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ChatRoomDto {
 
-    private long ChatRoomId;
+    @Schema(description = "채팅방 번호", example = "1")
+    private long chatRoomId;
 
+    @Schema(description = "채팅 상대")
+    private SimpleMemberDto member;
+
+    @Schema(description = "최근 채팅 메시지")
     private ChatMessageDto recentChatMessage;
 
-    public static ChatRoomDto of(ChatRoom chatRoom, ChatMessage chatMessage) {
+    @Schema(description = "않읽은 메시지 개수", example = "5")
+    private Integer notReadCount;
+
+    public static ChatRoomDto of(ChatRoom chatRoom, RecentChatMessage recentChatMessage, int notReadCount, boolean isMaster) {
+
+        Member member = (isMaster) ? chatRoom.getMember() : chatRoom.getMaster();
         return ChatRoomDto.builder()
-                .ChatRoomId(chatRoom.getChatRoomId())
-                .recentChatMessage(
-                        ChatMessageDto.builder()
-                                .chatMessageId(chatMessage.getChatMessageId())
-                                .chatRoomId(chatMessage.getChatRoom().getChatRoomId())
-                                .sender(SimpleMemberDto.builder()
-                                        .memberId(chatMessage.getSender().getMemberId())
-                                        .nickname(chatMessage.getSender().getNickname())
-                                        .imageUrl(chatMessage.getSender().getImage().getThumbnailUrl())
-                                        .build()
-                                )
-                                .content(chatMessage.getContent())
-                                .createAt(chatMessage.getCreateAt())
+                .chatRoomId(chatRoom.getChatRoomId())
+                .member(
+                        SimpleMemberDto.builder()
+                                .memberId(member.getMemberId())
+                                .nickname(member.getNickname())
+                                .imageUrl(member.getImage().getThumbnailUrl())
                                 .build()
                 )
+                .recentChatMessage(
+                        (recentChatMessage == null) ? null : ChatMessageDto.builder()
+                                .chatMessageId(recentChatMessage.getChatMessageId())
+                                .content(recentChatMessage.getContent())
+                                .createAt(recentChatMessage.getCreateAt())
+                                .build()
+                )
+                .notReadCount(notReadCount)
                 .build();
     }
 
     public static ChatRoomDto of(ChatRoom chatRoom) {
         return ChatRoomDto.builder()
-                .ChatRoomId(chatRoom.getChatRoomId())
+                .chatRoomId(chatRoom.getChatRoomId())
+                .member(
+                        SimpleMemberDto.builder()
+                                .memberId(chatRoom.getMember().getMemberId())
+                                .nickname(chatRoom.getMember().getNickname())
+                                .imageUrl(chatRoom.getMember().getImage().getThumbnailUrl())
+                                .build()
+                )
                 .build();
     }
 }
