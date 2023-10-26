@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.post.service;
 
+import com.gwakkili.devbe.dto.ListResponseDto;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
@@ -8,7 +9,10 @@ import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
-import com.gwakkili.devbe.post.dto.request.*;
+import com.gwakkili.devbe.post.dto.request.FreePostSaveDto;
+import com.gwakkili.devbe.post.dto.request.NeedHelpPostSaveDto;
+import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
+import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
 import com.gwakkili.devbe.post.dto.response.*;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.entity.PostBookmark;
@@ -24,6 +28,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -45,13 +52,13 @@ public class PostServiceImpl implements PostService{
     public PostDetailDto saveNewFreePost(FreePostSaveDto postSaveDto, long memberId) {
         Member writer = memberRepository.findWithImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
-
         Post newPost = Post.builder()
                 .title(postSaveDto.getTitle())
                 .content(postSaveDto.getContent())
                 .writer(writer)
                 .boardType(Post.BoardType.FREE)
                 .major(null)
+                .tag(postSaveDto.getTag())
                 .isAnonymous(postSaveDto.getIsAnonymous())
                 .build();
 
@@ -71,8 +78,8 @@ public class PostServiceImpl implements PostService{
                 .content(postSaveDto.getContent())
                 .writer(writer)
                 .boardType(Post.BoardType.NEED_HELP)
-                .tag(null)
                 .major(String.valueOf(postSaveDto.getMajorCategory()))
+                .tag(null)
                 .isAnonymous(postSaveDto.getIsAnonymous())
                 .build();
 
@@ -92,8 +99,8 @@ public class PostServiceImpl implements PostService{
             throw new CustomException(ExceptionCode.ACCESS_DENIED);
         }
 
+        // ! 이미지 교체 로직 쿼리 갯수 확인 필요 -> imageUrls Lazy Loading 확인
         findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(),postUpdateDto.getBoardType(), postUpdateDto.getTag(), postUpdateDto.getMajor(), postUpdateDto.isAnonymous(),postUpdateDto.getImageUrls());
-        // ! 이미지 교체 로직 쿼리 갯수 확인 필요
     }
     @Override
     @Transactional
@@ -113,9 +120,7 @@ public class PostServiceImpl implements PostService{
     @Transactional
     public void bookmarkPost(Long postId, long memberId) {
         Member findMember = memberRepository.getReferenceById(memberId);
-
-        // ! findById VS getReferenceById
-        Post findPost = find(postId);
+        Post findPost = postRepository.getReferenceById(postId);
 
         Optional<PostBookmark> findPostBookmark = postBookmarkRepository.findByMemberAndPost(findMember, findPost);
 
@@ -134,9 +139,7 @@ public class PostServiceImpl implements PostService{
     @Transactional
     public void recommendPost(Long postId, long memberId) {
         Member findMember = memberRepository.getReferenceById(memberId);
-
-        // ! findById VS getReferenceById
-        Post findPost = find(postId);
+        Post findPost = postRepository.getReferenceById(postId);
 
         Optional<PostRecommend> findPostRecommend = postRecommendRepository.findByMemberAndPost(findMember, findPost);
 
@@ -194,6 +197,7 @@ public class PostServiceImpl implements PostService{
         return new SliceResponseDto<>(slice, fn);
     }
 
+
     @Override
     public SliceResponseDto<ReportPostListDto, Object[]> findReportedPostList(SliceRequestDto sliceRequestDto) {
         Pageable pageable = sliceRequestDto.getPageable();
@@ -201,5 +205,24 @@ public class PostServiceImpl implements PostService{
         Slice<Object[]> postList= postRepository.findReported(pageable);
         Function<Object[], ReportPostListDto> fn = (object -> ReportPostListDto.of((Post) object[0],(long) object[1]));
         return new SliceResponseDto<>(postList, fn);
+    }
+    @Override
+    public ListResponseDto<BasicPostListDto, Post> findWeeklyHotPostList() {
+        LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = end.minusDays(7);
+
+        List<Post> postList = postRepository.findWeeklyHot(start, end);
+        Function<Post, BasicPostListDto> fn = BasicPostListDto::of;
+        return new ListResponseDto<>(postList, fn);
+    }
+
+    @Override
+    public ListResponseDto<BasicPostListDto,Object[]> findDailyHotPostList() {
+        LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = end.minusDays(1);
+
+        List<Object[]> postList = postRepository.findDailyHot(start, end);
+        Function<Object[], BasicPostListDto> fn = (object -> BasicPostListDto.of((Long)object[0],(String) object[1],(String)object[2],((Timestamp) object[3]).toLocalDateTime()));
+        return new ListResponseDto<>(postList, fn);
     }
 }

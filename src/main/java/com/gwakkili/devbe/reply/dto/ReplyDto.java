@@ -20,6 +20,8 @@ public class ReplyDto {
     @Schema(description = "게시글 번호", example = "1")
     private long postId;
 
+    private long postWriterId;
+
     private SimpleMemberDto writer;
 
     @Schema(description = "게시글 내용", example = "안녕하세요~")
@@ -50,6 +52,7 @@ public class ReplyDto {
         return ReplyDto.builder()
                 .replyId(reply.getReplyId())
                 .postId(reply.getPost().getPostId())
+                .postWriterId(reply.getPost().getWriter().getMemberId())
                 .writer(
                         SimpleMemberDto.builder()
                                 .memberId(reply.getMember().getMemberId())

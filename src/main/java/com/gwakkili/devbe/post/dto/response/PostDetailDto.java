@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.post.dto.response;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gwakkili.devbe.dto.SimpleMemberDto;
 import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.member.entity.Member;
@@ -30,7 +31,7 @@ public class PostDetailDto {
 
     private long replyCount;
 
-    // * 원본 이미지의 링크
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<String> images;
 
     private LocalDateTime createAt;
@@ -38,6 +39,7 @@ public class PostDetailDto {
     private Boolean isAnonymous;
 
     @Getter
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     static class PostSimpleMemberDto extends SimpleMemberDto{
 
         private String school;
