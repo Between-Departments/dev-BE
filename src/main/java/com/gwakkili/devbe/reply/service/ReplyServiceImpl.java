@@ -4,7 +4,6 @@ import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
-import com.gwakkili.devbe.exception.customExcption.AccessDeniedException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
@@ -14,16 +13,15 @@ import com.gwakkili.devbe.reply.dto.*;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.entity.ReplyRecommend;
 import com.gwakkili.devbe.reply.repository.ReplyRecommendRepository;
-import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import com.gwakkili.devbe.reply.repository.ReplyRepository;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -98,7 +96,7 @@ public class ReplyServiceImpl implements ReplyService {
 
         // 현재 요청한 사용자가 글쓴이가 아닐경우
         if (reply.getMember().getMemberId() != replyUpdateDto.getMemberId())
-            throw new AccessDeniedException(ExceptionCode.ACCESS_DENIED);
+            throw new AccessDeniedException("접근 거부");
 
         reply.setContent(replyUpdateDto.getContent());
 
@@ -115,7 +113,7 @@ public class ReplyServiceImpl implements ReplyService {
             long memberId = reply.getMember().getMemberId();
             publisher.publishEvent(new DeleteByManagerEvent(memberId));
         } else if (reply.getMember().getMemberId() != memberDetails.getMemberId()) {
-            throw new AccessDeniedException(ExceptionCode.ACCESS_DENIED);
+            throw new AccessDeniedException("접근 거부");
         }
         replyRepository.delete(reply);
     }
