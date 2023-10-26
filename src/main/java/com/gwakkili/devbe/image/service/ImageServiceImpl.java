@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
+import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
@@ -35,11 +36,13 @@ public class ImageServiceImpl implements ImageService {
     private final AmazonS3 amazonS3;
 
     @Override
-    public List<String> upload(List<MultipartFile> multipartFiles) throws IOException {
+    public List<String> upload(List<MultipartFile> multipartFiles) {
 
 
         List<String> imageUrlList = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
+            if (!multipartFile.getContentType().startsWith("image"))
+                throw new UnsupportedException(ExceptionCode.UNSUPPORTED_MEDIA_TYPE);
             // 이미지와 썸네일 이미지 업로드 경로 생성
             String originalName = multipartFile.getOriginalFilename();
             String uuid = UUID.randomUUID().toString();
@@ -48,29 +51,29 @@ public class ImageServiceImpl implements ImageService {
             String thumbnailUploadPath = "thumbnails/" + datePath + "/" + uuid + "_" + originalName;
 
             //이미지와 섬네일 업로드
-            String imageUrl = uploadImage(multipartFile, imageUploadPath);
-            uploadThumbnailImage(multipartFile, thumbnailUploadPath);
+            try {
+                String imageUrl = uploadImage(multipartFile, imageUploadPath);
+                uploadThumbnailImage(multipartFile, thumbnailUploadPath);
+                imageUrlList.add(imageUrl);
+            } catch (IOException e) {
+                throw new CustomException(ExceptionCode.FAIL_UPLOAD);
+            }
 
-            imageUrlList.add(imageUrl);
         }
         return imageUrlList;
     }
 
-    private String uploadImage(MultipartFile multipartFile, String uploadPath) {
+    private String uploadImage(MultipartFile multipartFile, String uploadPath) throws IOException {
 
         //메타 데이터 생성
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(multipartFile.getSize());
         objectMetadata.setContentType(multipartFile.getContentType());
 
-        try (InputStream inputStream = multipartFile.getInputStream()) {
-            // S3에 폴더 및 파일 업로드
-            amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, inputStream, objectMetadata));
-            log.info(amazonS3.getUrl(bucket, uploadPath).toString());
-            return amazonS3.getUrl(bucket, uploadPath).toString();
-        } catch (IOException e) {
-            throw new CustomException(ExceptionCode.FAIL_UPLOAD);
-        }
+        // S3에 폴더 및 파일 업로드
+        InputStream inputStream = multipartFile.getInputStream();
+        amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, inputStream, objectMetadata));
+        return amazonS3.getUrl(bucket, uploadPath).toString();
     }
 
     private void uploadThumbnailImage(MultipartFile multipartFile, String uploadPath) throws IOException {
@@ -89,12 +92,9 @@ public class ImageServiceImpl implements ImageService {
         thumbnailMetadata.setContentType(multipartFile.getContentType());
 
         // s3에 이미지 저장
-        try (InputStream thumbnailInput = new ByteArrayInputStream(bytes);) {
-            amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, thumbnailInput, thumbnailMetadata));
-            log.info(amazonS3.getUrl(bucket, uploadPath).toString());
-        } catch (IOException e) {
-            throw new CustomException(ExceptionCode.FAIL_UPLOAD);
-        }
+        InputStream thumbnailInput = new ByteArrayInputStream(bytes);
+        amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, thumbnailInput, thumbnailMetadata));
+
     }
 
 
