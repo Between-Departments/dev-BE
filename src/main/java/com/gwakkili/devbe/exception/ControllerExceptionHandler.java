@@ -7,11 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mail.MailException;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Locale;
 import java.util.Map;
@@ -57,6 +62,41 @@ public class ControllerExceptionHandler {
 //        ExceptionDto exceptionDto = new ExceptionDto(code);
 //        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
 //    }
+
+    @MessageExceptionHandler
+    @SendToUser("/api/sub/errors")
+    public ExceptionDto CustomMessageExceptionHandler(CustomException exception) {
+        log.error(exception.getMessage());
+        ExceptionDto exceptionDto = new ExceptionDto(exception.getExceptionCode());
+        return exceptionDto;
+    }
+
+    //지원하지 않는 HTTP 메소드 호출시 발생
+    @ExceptionHandler
+    protected ResponseEntity<ExceptionDto> methodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException exception) {
+        ExceptionCode code = ExceptionCode.METHOD_NOT_ALLOWED;
+        log.error(exception.toString());
+        ExceptionDto exceptionDto = new ExceptionDto(code);
+        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
+    }
+
+    //타입 불일치로 바인딩 에러시에 발생
+    @ExceptionHandler
+    protected ResponseEntity<ExceptionDto> methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException exception) {
+        log.error(exception.toString());
+        ExceptionCode code = ExceptionCode.INVALID_INPUT_VALUE;
+        ExceptionDto exceptionDTO = new ExceptionDto(code);
+        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDTO);
+    }
+
+    //입력이 잘못된 형식일떄 발생
+    @ExceptionHandler
+    protected ResponseEntity<ExceptionDto> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException exception) {
+        log.error(exception.toString());
+        ExceptionCode code = ExceptionCode.INVALID_FORMAT;
+        ExceptionDto exceptionDto = new ExceptionDto(code);
+        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
+    }
 
     //메일 전송 실패
     @ExceptionHandler
