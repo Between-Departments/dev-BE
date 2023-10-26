@@ -12,13 +12,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
-public class NotificationController {
+public class SseNotificationController {
 
-    private final NotificationService notificationService;
+    private final SseNotificationService sseNotificationService;
 
     @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter connect(@AuthenticationPrincipal MemberDetails memberDetails){
         System.out.println("memberDetails = " + memberDetails);
-        return notificationService.connect(memberDetails.getMemberId());
+        return sseNotificationService.connect(memberDetails.getMemberId());
     }
 }

@@ -8,7 +8,7 @@ import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationService {
+public class SseNotificationService {
 
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
 
