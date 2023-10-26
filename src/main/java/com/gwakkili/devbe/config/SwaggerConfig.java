@@ -24,7 +24,7 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
 
         Server server = new Server();
-        server.setUrl("http://43.201.168.231");
+        server.setUrl("https://hiddenbuddy.o-r.kr");
         server.setDescription("개발 서버");
 
         Server local = new Server();
