@@ -6,19 +6,18 @@ import com.gwakkili.devbe.chat.dto.Response.ChatMessageDto;
 import com.gwakkili.devbe.chat.dto.Response.ChatRoomDto;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.chat.entity.ChatRoom;
-import com.gwakkili.devbe.chat.entity.RecentChatMessage;
 import com.gwakkili.devbe.chat.repository.ChatMessageRepository;
 import com.gwakkili.devbe.chat.repository.ChatRoomRepository;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
-import com.gwakkili.devbe.exception.customExcption.AccessDeniedException;
-import com.gwakkili.devbe.exception.customExcption.CustomException;
+import com.gwakkili.devbe.exception.customExcption.DuplicateException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,12 +40,11 @@ public class ChatServiceImpl implements ChatService {
     public ChatRoomDto saveChatRoom(SaveChatRoomDto saveChatRoomDto) {
 
         Member master = memberRepository.getReferenceById(saveChatRoomDto.getMasterId());
-        System.out.println(saveChatRoomDto.getMemberId());
         Member member = memberRepository.findWithImageByMemberId(saveChatRoomDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         if (chatRoomRepository.existsByMasterAndMember(master, member))
-            throw new CustomException(ExceptionCode.DUPLICATE_CHAT_ROOM);
+            throw new DuplicateException(ExceptionCode.DUPLICATE_CHAT_ROOM);
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .master(master)
@@ -66,10 +64,9 @@ public class ChatServiceImpl implements ChatService {
 
         return dataList.stream().map(objects -> {
             ChatRoom chatRoom = (ChatRoom) objects[0];
-            RecentChatMessage recentChatMessage = (RecentChatMessage) objects[1];
-            int notReadCount = ((Number) objects[2]).intValue();
+            ChatMessage chatMessage = (ChatMessage) objects[1];
             boolean isMaster = chatRoom.getMaster().getMemberId() == memberId;
-            return ChatRoomDto.of(chatRoom, recentChatMessage, notReadCount, isMaster);
+            return ChatRoomDto.of(chatRoom, chatMessage, isMaster);
         }).collect(Collectors.toList());
     }
 
@@ -78,7 +75,7 @@ public class ChatServiceImpl implements ChatService {
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_CHAT_ROOM));
 
         if (chatRoom.getMaster().getMemberId() != memberId && chatRoom.getMember().getMemberId() != memberId)
-            throw new AccessDeniedException(ExceptionCode.ACCESS_DENIED);
+            throw new AccessDeniedException("요청 거부");
 
         return chatRoom;
     }
@@ -117,8 +114,6 @@ public class ChatServiceImpl implements ChatService {
     public SliceResponseDto<ChatMessageDto, ChatMessage> getChatMessageList(long roomId, long memberId, SliceRequestDto sliceRequestDto) {
         ChatRoom chatRoom = getChatRoom(roomId, memberId);
         Slice<ChatMessage> chatMessageList = chatMessageRepository.findByChatRoom(chatRoom, sliceRequestDto.getPageable());
-        if (chatMessageList.getNumberOfElements() == 0)
-            throw new NotFoundException(ExceptionCode.NOT_FOUND_CHAT_MESSAGE);
         Function<ChatMessage, ChatMessageDto> fn = (ChatMessageDto::of);
         return new SliceResponseDto(chatMessageList, fn);
     }

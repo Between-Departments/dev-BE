@@ -10,22 +10,22 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.IOException;
 
 @Slf4j
 // 메일과 비밀번호를 이용하여 인증을 진행하는 filter
-public class MailPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class MailPasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     public MailPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
                                             AuthenticationSuccessHandler successHandler,
                                             AuthenticationFailureHandler failureHandler) {
 
-        super(authenticationManager);
-        setFilterProcessesUrl("/api/login");
+        super(new AntPathRequestMatcher("/api/login", "POST"), authenticationManager);
         setAuthenticationSuccessHandler(successHandler);
         setAuthenticationFailureHandler(failureHandler);
     }
@@ -37,7 +37,8 @@ public class MailPasswordAuthenticationFilter extends UsernamePasswordAuthentica
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             MemberDetails memberDetails = objectMapper.readValue(request.getInputStream(), MemberDetails.class);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberDetails.getUsername(), memberDetails.getPassword());
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(memberDetails.getUsername(), memberDetails.getPassword());
             return super.getAuthenticationManager().authenticate(authenticationToken);
         } catch (IOException e) {
             throw new AuthenticationServiceException("잘못된 로그인 요청 형식입니다.");

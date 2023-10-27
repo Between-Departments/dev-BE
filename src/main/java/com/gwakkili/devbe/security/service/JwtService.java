@@ -135,7 +135,7 @@ public class JwtService {
 
     // 토큰 유효성 검사
     public String validateToken(String token) {
-        if (token == null) return "INVALID";
+        if (token == null) return "NOT_FOUND";
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
             return "VALID";
@@ -143,7 +143,6 @@ public class JwtService {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");
-            return "EXPIRE";
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {

@@ -35,7 +35,7 @@ public class MemberController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "회원 가입")
-    public void save(@RequestBody @Validated MemberSaveDto memberSaveDto) throws BindException {
+    public void save(@RequestBody @Validated MemberSaveDto memberSaveDto) {
         memberService.save(memberSaveDto);
     }
 

@@ -24,6 +24,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
@@ -67,10 +69,10 @@ public class SecurityConfig {
                 .formLogin(FormLoginConfigurer::disable)
                 .logout(LogoutConfigurer::disable)
                 .httpBasic(HttpBasicConfigurer::disable)
-                .addFilter(mailPasswordAuthenticationFilter(authenticationManager))
+                .addFilterAt(mailPasswordAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(jwtAuthorizationFilter(authenticationManager))
                 .addFilterBefore(refreshTokenAuthenticationFilter(), MailPasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtLogoutFilter(), RefreshTokenAuthenticationFilter.class)
+                .addFilterBefore(jwtLogoutFilter(), LogoutFilter.class)
                 .exceptionHandling(handler -> handler
                         .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint)
@@ -86,7 +88,7 @@ public class SecurityConfig {
     }
 
     public JwtAuthorizationFilter jwtAuthorizationFilter(AuthenticationManager authenticationManager) {
-        return new JwtAuthorizationFilter(authenticationManager, jwtService, authenticationEntryPoint);
+        return new JwtAuthorizationFilter(authenticationManager, jwtService);
     }
 
     public RefreshTokenAuthenticationFilter refreshTokenAuthenticationFilter() {

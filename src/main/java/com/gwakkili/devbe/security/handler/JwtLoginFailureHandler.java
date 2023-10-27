@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gwakkili.devbe.exception.ExceptionResponseBuilder;
 import com.gwakkili.devbe.exception.dto.ExceptionDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.JwtException;
@@ -24,10 +25,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtLoginFailureHandler implements AuthenticationFailureHandler {
 
-    private final ObjectMapper objectMapper;
+    private final ExceptionResponseBuilder exceptionResponseBuilder;
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         ExceptionCode exceptionCode;
         if (exception instanceof BadCredentialsException || exception instanceof UsernameNotFoundException) {
             exceptionCode = ExceptionCode.BAD_CREDENTIAL;
@@ -35,25 +36,13 @@ public class JwtLoginFailureHandler implements AuthenticationFailureHandler {
             exceptionCode = ExceptionCode.AUTHENTICATION_DENIED;
         } else if (exception instanceof LockedException) {
             exceptionCode = ExceptionCode.AUTHENTICATION_LOCKED;
-        } else if(exception instanceof AuthenticationServiceException){
+        } else if (exception instanceof AuthenticationServiceException) {
             exceptionCode = ExceptionCode.ILLEGAL_AUTHENTICATION_FORMAT;
-        }else if(exception instanceof JwtException){
+        } else if (exception instanceof JwtException) {
             exceptionCode = ((JwtException) exception).getExceptionCode();
-        } else{
+        } else {
             exceptionCode = ExceptionCode.AUTHENTICATION_FAILURE;
         }
-        setResponse(response, exceptionCode);
-    }
-
-
-    private void setResponse(HttpServletResponse response, ExceptionCode exceptionCode) throws IOException {
-
-        ExceptionDto exceptionDto = new ExceptionDto(exceptionCode);
-        String responseBody = objectMapper.writeValueAsString(exceptionDto);
-
-        response.setStatus(exceptionCode.getHttpStatus().value());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(responseBody);
+        exceptionResponseBuilder.setHttpResponse(response, exceptionCode);
     }
 }

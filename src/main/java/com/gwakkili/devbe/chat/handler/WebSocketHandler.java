@@ -1,7 +1,6 @@
 package com.gwakkili.devbe.chat.handler;
 
 import com.gwakkili.devbe.chat.service.ChatService;
-import com.gwakkili.devbe.exception.customExcption.AccessDeniedException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.security.service.JwtService;
@@ -15,6 +14,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -52,11 +52,10 @@ public class WebSocketHandler implements ChannelInterceptor {
         String accessToken = jwtService.resolveAccessToken(headerAccessor);
 
         // 토큰 유효성 검사
-        String validateAccessToken = jwtService.validateToken(accessToken);
-        if (validateAccessToken.equals("INVALID")) {
-            throw new MessageDeliveryException("INVALID");
-        } else if (validateAccessToken.equals("EXPIRE")) {
-            throw new MessageDeliveryException("EXPIRE");
+        switch (jwtService.validateToken(accessToken)) {
+            case "INVALID" -> throw new MessageDeliveryException("INVALID");
+            case "EXPIRE" -> throw new MessageDeliveryException("EXPIRE");
+            case "NOT_FOUND" -> throw new MessageDeliveryException("NOT_FOUND_TOKEN");
         }
         // STOMP 헤더에 유정정보 추가
         Authentication authentication = jwtService.getAuthentication(accessToken);
@@ -76,7 +75,7 @@ public class WebSocketHandler implements ChannelInterceptor {
         // 채팅방 번호 추출
         long roomId = Long.parseLong(antPathMatcher.extractUriTemplateVariables(url, destination).get("roomId"));
         Authentication authentication = (Authentication) headerAccessor.getUser();
-
+        if (authentication == null) throw new MessageDeliveryException("UNAUTHORIZED");
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
 
         //채팅방 입장 및 예외 처리
@@ -85,7 +84,7 @@ public class WebSocketHandler implements ChannelInterceptor {
         } catch (AccessDeniedException e) {
             throw new MessageDeliveryException("ACCESS_DENIED");
         } catch (NotFoundException e) {
-            throw new MessageDeliveryException("NOT_FOUND");
+            throw new MessageDeliveryException("NOT_FOUND_CHAT_ROOM");
         }
     }
 }
