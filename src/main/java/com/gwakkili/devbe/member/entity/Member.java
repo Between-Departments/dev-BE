@@ -47,7 +47,7 @@ public class Member extends BaseEntity {
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("(SELECT count(1) FROM post_bookmark pb WHERE pb.member_id = member_id)")
-    private Integer bookmarkCount;
+    private int bookmarkCount;
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("(SELECT count(1) FROM reply r WHERE r.member_id = member_id)")
