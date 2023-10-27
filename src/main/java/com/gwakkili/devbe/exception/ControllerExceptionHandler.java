@@ -32,7 +32,6 @@ public class ControllerExceptionHandler {
     //커스텀 에러시 발생
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> customExceptionHandler(CustomException exception) {
-        log.error(exception.toString());
         ExceptionDto exceptionDto = new ExceptionDto(exception.getExceptionCode());
         return ResponseEntity.status(exception.getExceptionCode().getHttpStatus()).body(exceptionDto);
     }
@@ -40,7 +39,6 @@ public class ControllerExceptionHandler {
     //바인딩 에러시 발생
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> bindExceptionHandler(BindException exception) {
-        log.error(exception.toString());
         ExceptionCode code = ExceptionCode.INVALID_INPUT_VALUE;
 
         Map<String, String> fieldErrors = exception.getBindingResult().getFieldErrors()
@@ -66,7 +64,6 @@ public class ControllerExceptionHandler {
     @MessageExceptionHandler
     @SendToUser("/api/sub/errors")
     public ExceptionDto CustomMessageExceptionHandler(CustomException exception) {
-        log.error(exception.getMessage());
         ExceptionDto exceptionDto = new ExceptionDto(exception.getExceptionCode());
         return exceptionDto;
     }
@@ -75,7 +72,6 @@ public class ControllerExceptionHandler {
     @ExceptionHandler
     protected ResponseEntity<ExceptionDto> methodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException exception) {
         ExceptionCode code = ExceptionCode.METHOD_NOT_ALLOWED;
-        log.error(exception.toString());
         ExceptionDto exceptionDto = new ExceptionDto(code);
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
     }
@@ -83,7 +79,6 @@ public class ControllerExceptionHandler {
     //타입 불일치로 바인딩 에러시에 발생
     @ExceptionHandler
     protected ResponseEntity<ExceptionDto> methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException exception) {
-        log.error(exception.toString());
         ExceptionCode code = ExceptionCode.INVALID_INPUT_VALUE;
         ExceptionDto exceptionDTO = new ExceptionDto(code);
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDTO);
@@ -92,7 +87,6 @@ public class ControllerExceptionHandler {
     //입력이 잘못된 형식일떄 발생
     @ExceptionHandler
     protected ResponseEntity<ExceptionDto> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException exception) {
-        log.error(exception.toString());
         ExceptionCode code = ExceptionCode.INVALID_FORMAT;
         ExceptionDto exceptionDto = new ExceptionDto(code);
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
@@ -101,7 +95,6 @@ public class ControllerExceptionHandler {
     //메일 전송 실패
     @ExceptionHandler
     public ResponseEntity<ExceptionDto> mailExceptionHandler(MailException exception) {
-        log.error(exception.toString());
         ExceptionCode code = ExceptionCode.FAIL_SEND_MAIL;
         ExceptionDto exceptionDto = new ExceptionDto(ExceptionCode.FAIL_SEND_MAIL);
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);

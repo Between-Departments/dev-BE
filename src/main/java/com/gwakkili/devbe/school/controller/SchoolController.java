@@ -21,7 +21,7 @@ public class SchoolController {
 
     @GetMapping
     @Operation(summary = "대학교 이름목록 조회")
-    List<String> getNameList(@Parameter(name = "keyword", description = "검색 키워드") String keyword) {
+    public List<String> getNameList(@Parameter(name = "keyword", description = "검색 키워드") String keyword) {
         return schoolService.getNameList(keyword);
     }
 }
