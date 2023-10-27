@@ -66,7 +66,7 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
     @GetMapping
-    public SliceResponseDto<BasicPostListDto, Post> getPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition){
+    public SliceResponseDto<BasicPostListDto, Post> getPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ParameterObject PostSearchCondition postSearchCondition){
         return postService.findPostList(sliceRequestDto, postSearchCondition);
     }
 
