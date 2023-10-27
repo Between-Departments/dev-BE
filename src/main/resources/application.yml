@@ -23,6 +23,7 @@ spring:
       - secret
 
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
     properties:
