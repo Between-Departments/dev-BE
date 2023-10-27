@@ -47,8 +47,8 @@ public class LoggingAspect {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String member = (principal instanceof MemberDetails) ? ((MemberDetails) principal).getUsername() : (String) principal;
         String uuid = UUID.randomUUID().toString();
-//        MDC.put("uuid", uuid);
-//        MDC.put("member", member);
+        MDC.put("uuid", uuid);
+        MDC.put("member", member);
         String handler = joinPoint.getSignature().toShortString();
         log.info("handler[{}], request[method:{}, uri:{}, parameters:({})]", handler, method, requestURI, params);
     }
