@@ -6,6 +6,7 @@ import com.gwakkili.devbe.chat.dto.Response.ChatMessageDto;
 import com.gwakkili.devbe.chat.dto.Response.ChatRoomDto;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.chat.entity.ChatRoom;
+import com.gwakkili.devbe.chat.entity.RecentChatMessage;
 import com.gwakkili.devbe.chat.repository.ChatMessageRepository;
 import com.gwakkili.devbe.chat.repository.ChatRoomRepository;
 import com.gwakkili.devbe.dto.SliceRequestDto;
@@ -21,9 +22,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,17 +56,17 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ChatRoomDto> getChatRoomList(long memberId) {
+    public SliceResponseDto<ChatRoomDto, Object[]> getChatRoomList(long memberId, SliceRequestDto sliceRequestDto) {
         Member member = memberRepository.getReferenceById(memberId);
-        List<Object[]> dataList = chatRoomRepository.findWithRecentMessageByMember(member);
-        if (dataList.size() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_CHAT_ROOM);
-
-        return dataList.stream().map(objects -> {
+        Slice<Object[]> dataList = chatRoomRepository.findWithRecentMessageByMember(member, sliceRequestDto.getPageable());
+        if (dataList.getNumberOfElements() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_CHAT_ROOM);
+        Function<Object[], ChatRoomDto> fn = (objects -> {
             ChatRoom chatRoom = (ChatRoom) objects[0];
-            ChatMessage chatMessage = (ChatMessage) objects[1];
+            RecentChatMessage recentChatMessage = (RecentChatMessage) objects[1];
             boolean isMaster = chatRoom.getMaster().getMemberId() == memberId;
-            return ChatRoomDto.of(chatRoom, chatMessage, isMaster);
-        }).collect(Collectors.toList());
+            return ChatRoomDto.of(chatRoom, recentChatMessage, isMaster);
+        });
+        return new SliceResponseDto(dataList, fn);
     }
 
     private ChatRoom getChatRoom(long roomId, long memberId) {

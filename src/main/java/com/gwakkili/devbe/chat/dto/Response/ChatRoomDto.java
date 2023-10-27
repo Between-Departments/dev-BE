@@ -29,7 +29,7 @@ public class ChatRoomDto {
     @Schema(description = "않읽은 메시지 존재 여부")
     boolean existNotRead;
 
-    public static ChatRoomDto of(ChatRoom chatRoom, ChatMessage chatMessage, boolean isMaster) {
+    public static ChatRoomDto of(ChatRoom chatRoom, RecentChatMessage recentChatMessage, boolean isMaster) {
 
         Member member = (isMaster) ? chatRoom.getMember() : chatRoom.getMaster();
         return ChatRoomDto.builder()
@@ -42,13 +42,13 @@ public class ChatRoomDto {
                                 .build()
                 )
                 .recentChatMessage(
-                        (chatMessage == null) ? null : ChatMessageDto.builder()
-                                .chatMessageId(chatMessage.getChatMessageId())
-                                .content(chatMessage.getContent())
-                                .createAt(chatMessage.getCreateAt())
+                        (recentChatMessage == null) ? null : ChatMessageDto.builder()
+                                .chatMessageId(recentChatMessage.getChatMessageId())
+                                .content(recentChatMessage.getContent())
+                                .createAt(recentChatMessage.getCreateAt())
                                 .build()
                 )
-                .existNotRead(!chatMessage.isRead())
+                .existNotRead(recentChatMessage != null && !recentChatMessage.isRead())
                 .build();
     }
 

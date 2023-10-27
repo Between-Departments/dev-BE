@@ -52,8 +52,9 @@ public class ChatController {
     @GetMapping("/rooms")
     @Operation(summary = "채팅방 목록 조회")
     @PreAuthorize("isAuthenticated()")
-    public List<ChatRoomDto> getChatRoomList(@AuthenticationPrincipal MemberDetails memberDetails) {
-        return chatService.getChatRoomList(memberDetails.getMemberId());
+    public SliceResponseDto<ChatRoomDto, Object[]> getChatRoomList(@AuthenticationPrincipal MemberDetails memberDetails,
+                                                                   @ParameterObject SliceRequestDto sliceRequestDto) {
+        return chatService.getChatRoomList(memberDetails.getMemberId(), sliceRequestDto);
     }
 
     @DeleteMapping("/rooms/{roomId}")

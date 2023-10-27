@@ -15,7 +15,7 @@ public interface ChatService {
 
     ChatRoomDto saveChatRoom(SaveChatRoomDto saveChatRoomDto);
 
-    List<ChatRoomDto> getChatRoomList(long memberId);
+    SliceResponseDto<ChatRoomDto, Object[]> getChatRoomList(long memberId, SliceRequestDto sliceRequestDto);
 
     void deleteChatRoom(long roomId, long memberId);
 
