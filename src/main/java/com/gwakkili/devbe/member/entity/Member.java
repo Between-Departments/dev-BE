@@ -51,11 +51,11 @@ public class Member extends BaseEntity {
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("(SELECT count(1) FROM reply r WHERE r.member_id = member_id)")
-    private Integer replyCount;
+    private int replyCount;
 
     @Basic(fetch = FetchType.LAZY)
     @Formula("(SELECT count(1) FROM post p WHERE p.member_id = member_id)")
-    private Integer postCount;
+    private int postCount;
 
     public void addRole(Role role) {
         this.roles.add(role);
