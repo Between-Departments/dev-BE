@@ -161,9 +161,12 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public PostDetailDto findPostDto(Long postId) {
+    public PostDetailDto findPostDto(Long postId, boolean doCountUp) {
         Post findPost = postRepository.findWithDetailByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
+
+        if(doCountUp) findPost.addViewCount();
+
         return PostDetailDto.of(findPost);
     }
 
