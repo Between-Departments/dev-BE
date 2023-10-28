@@ -42,13 +42,13 @@ public class ChatRoomDto {
                                 .build()
                 )
                 .recentChatMessage(
-                        (recentChatMessage == null) ? null : ChatMessageDto.builder()
+                        ChatMessageDto.builder()
                                 .chatMessageId(recentChatMessage.getChatMessageId())
                                 .content(recentChatMessage.getContent())
                                 .createAt(recentChatMessage.getCreateAt())
                                 .build()
                 )
-                .existNotRead(recentChatMessage != null && !recentChatMessage.isRead())
+                .existNotRead(!recentChatMessage.isRead())
                 .build();
     }
 

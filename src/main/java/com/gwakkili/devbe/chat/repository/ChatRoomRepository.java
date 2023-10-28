@@ -15,7 +15,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     boolean existsByMasterAndMember(Member master, Member member);
 
     @Query("select cr, rcm from ChatRoom cr " +
-            "left join RecentChatMessage rcm on rcm.chatRoomId = cr.chatRoomId " +
+            "join RecentChatMessage rcm on rcm.chatRoomId = cr.chatRoomId " +
             "join fetch cr.member " +
             "join fetch cr.master " +
             "join fetch cr.member.image " +
