@@ -28,7 +28,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         String refreshToken = jwtService.generateRefreshToken(memberDetails);
 
         ResponseCookie responseCookie = ResponseCookie.from("RefreshToken", refreshToken)
-                .domain(".dev-fe-between.vercel.app")
+                .domain("localhost:3000")
                 .path("/api/refresh")
                 .maxAge((int) jwtService.getRefreshTokenExpireTime() / 1000)
                 .httpOnly(true)
