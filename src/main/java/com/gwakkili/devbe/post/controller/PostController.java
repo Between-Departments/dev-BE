@@ -89,7 +89,7 @@ public class PostController {
         if (oldCookie != null){
             if(!oldCookie.getValue().contains("["+ postId.toString() +"]")){
                 oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
-                oldCookie.setDomain(req.getRemoteHost());
+                oldCookie.setDomain("http://localhost");
                 oldCookie.setPath("/");
                 oldCookie.setMaxAge(getExpiration());
                 res.addCookie(oldCookie);
@@ -99,7 +99,7 @@ public class PostController {
             }
         } else{
             Cookie newCookie = new Cookie("postView", "[" + postId + "]");
-            newCookie.setDomain(req.getRemoteHost());
+            newCookie.setDomain("http://localhost");
             newCookie.setPath("/");
             newCookie.setMaxAge(getExpiration());
             res.addCookie(newCookie);
