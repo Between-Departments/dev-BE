@@ -136,7 +136,7 @@ public class PostController {
     })
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
-    public SliceResponseDto<MyPostListDto, Post> getMyPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
+    public SliceResponseDto<MyPostListDto, Post> getMyPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ParameterObject PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.findMyPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
     }
 
@@ -146,7 +146,7 @@ public class PostController {
     })
     @GetMapping("/bookmark")
     @PreAuthorize("isAuthenticated()")
-    public SliceResponseDto<BookmarkPostListDto, Post> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
+    public SliceResponseDto<BookmarkPostListDto, Post> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ParameterObject PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.findBookmarkedPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
     }
 
@@ -181,7 +181,9 @@ public class PostController {
     @PatchMapping("/{postId}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public void update(@RequestBody PostUpdateDto postUpdateDto, @PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails) {
+    public void update(@RequestBody @Validated PostUpdateDto postUpdateDto,
+                       @PathVariable Long postId,
+                       @AuthenticationPrincipal MemberDetails memberDetails) {
         postService.updatePost(postUpdateDto, postId, memberDetails.getMemberId());
     }
 

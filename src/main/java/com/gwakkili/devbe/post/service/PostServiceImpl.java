@@ -100,7 +100,7 @@ public class PostServiceImpl implements PostService{
         }
 
         // ! 이미지 교체 로직 쿼리 갯수 확인 필요 -> imageUrls Lazy Loading 확인
-        findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(),postUpdateDto.getBoardType(), postUpdateDto.getTag(), postUpdateDto.getMajor(), postUpdateDto.isAnonymous(),postUpdateDto.getImageUrls());
+        findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(),postUpdateDto.getBoardType(), postUpdateDto.getTag(), String.valueOf(postUpdateDto.getMajorCategory()), postUpdateDto.isAnonymous(),postUpdateDto.getImageUrls());
     }
     @Override
     @Transactional
