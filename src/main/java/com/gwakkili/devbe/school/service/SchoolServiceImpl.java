@@ -1,13 +1,17 @@
 package com.gwakkili.devbe.school.service;
 
+import com.gwakkili.devbe.dto.ListResponseDto;
+import com.gwakkili.devbe.school.dto.SchoolDto;
 import com.gwakkili.devbe.school.entity.School;
 import com.gwakkili.devbe.school.repository.SchoolRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,10 +22,11 @@ public class SchoolServiceImpl implements SchoolService {
     private final SchoolRepository schoolRepository;
 
     @Override
-    public List<String> getNameList(String keyword) {
+    public ListResponseDto<SchoolDto, com.gwakkili.devbe.validation.School> getNameList(String keyword) {
 
-        List<School> schools = schoolRepository.findAllByNameContaining(keyword);
-        return schools.stream().map(School::getName).collect(Collectors.toList());
+        List<School> schoolList = schoolRepository.findAllByNameContaining(keyword, PageRequest.of(0, 100));
+        Function<School, SchoolDto> fn = (SchoolDto::of);
+        return new ListResponseDto(schoolList, fn);
     }
 
 

@@ -1,6 +1,9 @@
 package com.gwakkili.devbe.school.controller;
 
+import com.gwakkili.devbe.dto.ListResponseDto;
+import com.gwakkili.devbe.school.dto.SchoolDto;
 import com.gwakkili.devbe.school.service.SchoolService;
+import com.gwakkili.devbe.validation.School;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +24,7 @@ public class SchoolController {
 
     @GetMapping
     @Operation(summary = "대학교 이름목록 조회")
-    public List<String> getNameList(@Parameter(name = "keyword", description = "검색 키워드") String keyword) {
+    public ListResponseDto<SchoolDto, School> getNameList(@Parameter(name = "keyword", description = "검색 키워드") String keyword) {
         return schoolService.getNameList(keyword);
     }
 }
