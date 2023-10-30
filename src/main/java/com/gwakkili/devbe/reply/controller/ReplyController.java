@@ -55,9 +55,11 @@ public class ReplyController {
 
     @GetMapping("/posts/{postId}/replies")
     @Operation(summary = "댓글 목록 조회")
-    public SliceResponseDto<ReplyDto, Reply> getReplyList(@Parameter(in = ParameterIn.PATH, description = "게시글 번호") @PathVariable long postId,
-                                                          @ParameterObject SliceRequestDto sliceRequestDto) {
-        return replyService.getReplyList(postId, sliceRequestDto);
+    public SliceResponseDto getReplyList(@Parameter(in = ParameterIn.PATH, description = "게시글 번호") @PathVariable long postId,
+                                         @ParameterObject SliceRequestDto sliceRequestDto,
+                                         @AuthenticationPrincipal MemberDetails memberDetails) {
+        return (memberDetails == null) ? replyService.getReplyList(postId, sliceRequestDto) :
+                replyService.getReplyList(postId, memberDetails.getMemberId(), sliceRequestDto);
     }
 
     @GetMapping("/replies/my")

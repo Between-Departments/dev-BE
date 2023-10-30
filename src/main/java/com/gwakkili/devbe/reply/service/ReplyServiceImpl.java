@@ -62,7 +62,7 @@ public class ReplyServiceImpl implements ReplyService {
                 .build();
 
         Reply saveReply = replyRepository.save(reply);
-        return ReplyDto.of(saveReply);
+        return ReplyDto.of(saveReply, false);
     }
 
 
@@ -72,8 +72,17 @@ public class ReplyServiceImpl implements ReplyService {
 
         Post post = postRepository.getReferenceById(postId);
         Slice<Reply> replyList = replyRepository.findByPost(post, sliceResponseDto.getPageable());
-        Function<Reply, ReplyDto> fn = (ReplyDto::of);
+        Function<Reply, ReplyDto> fn = (reply -> ReplyDto.of(reply, false));
         return new SliceResponseDto(replyList, fn);
+    }
+
+    @Override
+    public SliceResponseDto<ReplyDto, Object[]> getReplyList(long postId, long memberId, SliceRequestDto sliceRequestDto) {
+        Post post = postRepository.getReferenceById(postId);
+        Member member = memberRepository.getReferenceById(memberId);
+        Slice<Object[]> replyList = replyRepository.findWithRecommendByPostAndMember(post, member, sliceRequestDto.getPageable());
+        Function<Object[], ReplyDto> fn = (objects -> ReplyDto.of((Reply) objects[0], (boolean) objects[1]));
+        return new SliceResponseDto<>(replyList, fn);
     }
 
     @Override
@@ -83,7 +92,7 @@ public class ReplyServiceImpl implements ReplyService {
         Member writer = memberRepository.getReferenceById(memberId);
         Slice<Reply> replyList = replyRepository.findByMember(writer, sliceResponseDto.getPageable());
         if (replyList.getNumberOfElements() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_REPLY);
-        Function<Reply, ReplyDto> fn = (ReplyDto::of);
+        Function<Reply, ReplyDto> fn = (reply -> ReplyDto.of(reply, false));
         return new SliceResponseDto(replyList, fn);
     }
 
@@ -109,7 +118,7 @@ public class ReplyServiceImpl implements ReplyService {
 
         reply.setContent(replyUpdateDto.getContent());
 
-        return ReplyDto.of(reply);
+        return ReplyDto.of(reply, false);
     }
 
     @Override

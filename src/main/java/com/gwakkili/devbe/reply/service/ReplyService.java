@@ -15,6 +15,8 @@ public interface ReplyService {
 
     SliceResponseDto<ReplyDto, Reply> getReplyList(long postId, SliceRequestDto sliceResponseDto);
 
+    SliceResponseDto<ReplyDto, Object[]> getReplyList(long postId, long memberId, SliceRequestDto sliceRequestDto);
+
     SliceResponseDto<ReplyDto, Reply> getMyReplyList(long memberId, SliceRequestDto sliceResponseDto);
 
     SliceResponseDto<ReportedReplyDto, Object[]> getReportedReplyList(SliceRequestDto sliceRequestDto);

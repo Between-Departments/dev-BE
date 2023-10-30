@@ -30,6 +30,9 @@ public class ReplyDto {
     @Schema(description = "추천 개수", example = "3")
     private int recommendCount;
 
+    @Schema(description = "추천 여부")
+    private boolean isRecommend;
+
     @Schema(description = "생성일")
     private LocalDateTime createAt;
 
@@ -48,7 +51,7 @@ public class ReplyDto {
         String imageUrl;
     }
 
-    public static ReplyDto of(Reply reply) {
+    public static ReplyDto of(Reply reply, boolean isRecommend) {
         return ReplyDto.builder()
                 .replyId(reply.getReplyId())
                 .postId(reply.getPost().getPostId())
