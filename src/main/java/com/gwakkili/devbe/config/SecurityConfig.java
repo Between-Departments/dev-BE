@@ -29,7 +29,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
-기@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = true)
 @EnableMethodSecurity
 public class SecurityConfig {
 
