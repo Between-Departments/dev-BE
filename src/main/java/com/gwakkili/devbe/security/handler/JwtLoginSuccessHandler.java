@@ -28,11 +28,10 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         String refreshToken = jwtService.generateRefreshToken(memberDetails);
 
         ResponseCookie responseCookie = ResponseCookie.from("RefreshToken", refreshToken)
-                .path("/api/refresh")
+                .path("/")
                 .maxAge((int) jwtService.getRefreshTokenExpireTime() / 1000)
                 .sameSite("None")
                 .secure(true)
-                .httpOnly(true)
                 .build();
 
         response.addHeader("Authorization", "Bearer " + accessToken);
