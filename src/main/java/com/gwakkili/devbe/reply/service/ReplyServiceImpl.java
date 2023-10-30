@@ -3,16 +3,19 @@ package com.gwakkili.devbe.reply.service;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
+import com.gwakkili.devbe.event.DeleteMemberEvent;
+import com.gwakkili.devbe.event.DeletePostEvent;
+import com.gwakkili.devbe.event.DeleteReplyEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.repository.PostRepository;
-import com.gwakkili.devbe.reply.dto.ReplyDto;
-import com.gwakkili.devbe.reply.dto.ReplySaveDto;
-import com.gwakkili.devbe.reply.dto.ReplyUpdateDto;
-import com.gwakkili.devbe.reply.dto.ReportedReplyDto;
+import com.gwakkili.devbe.reply.dto.response.ReplyDto;
+import com.gwakkili.devbe.reply.dto.request.ReplySaveDto;
+import com.gwakkili.devbe.reply.dto.request.ReplyUpdateDto;
+import com.gwakkili.devbe.reply.dto.response.ReportedReplyDto;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.entity.ReplyRecommend;
 import com.gwakkili.devbe.reply.repository.ReplyRecommendRepository;
@@ -20,11 +23,13 @@ import com.gwakkili.devbe.reply.repository.ReplyRepository;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.function.Function;
 
 @Service
@@ -122,6 +127,27 @@ public class ReplyServiceImpl implements ReplyService {
         replyRepository.delete(reply);
     }
 
+    @EventListener
+    public void deleteReply(DeleteMemberEvent deleteMemberEvent) {
+        List<Reply> replyList = replyRepository.findByMember(deleteMemberEvent.getMember());
+        publisher.publishEvent(new DeleteReplyEvent(replyList));
+        // 해당 회원의 다른 댓글 추천 내역 삭제
+        replyRecommendRepository.deleteByMember(deleteMemberEvent.getMember());
+        //해당 회원이 작성한 댓글의 추천 내역 삭제
+        replyRecommendRepository.deleteByReplyIn(replyList);
+        // 해당 회원이 작성한 댓글 삭제
+        replyRepository.deleteAllInBatch(replyList);
+    }
+
+    @EventListener
+    public void deleteReply(DeletePostEvent deletePostEvent) {
+        List<Reply> replyList = replyRepository.findByPostIn(deletePostEvent.getPostList());
+        publisher.publishEvent(new DeleteReplyEvent(replyList));
+        //댓글 추천 내역 삭제
+        replyRecommendRepository.deleteByReplyIn(replyList);
+        //댓글 삭제
+        replyRepository.deleteAllInBatch(replyList);
+    }
 
     @Override
     public void recommendReply(long memberId, long replyId) {

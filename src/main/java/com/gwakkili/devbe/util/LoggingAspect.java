@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Aspect
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class LoggingAspect {
 
     private final ObjectMapper objectMapper;

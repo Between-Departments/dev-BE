@@ -9,7 +9,6 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @PasswordConfirm(fieldName1 = "newPassword", fieldName2 = "newPasswordConfirm")
 @Schema

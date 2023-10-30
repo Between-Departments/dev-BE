@@ -21,6 +21,8 @@ public interface MemberService {
 
     void updateMajor(UpdateMajorDto updateMajorDto);
 
+    void delete(long memberId);
+
     void lock(Long id);
 
     void lock(DeleteByManagerEvent deleteByManagerEvent);

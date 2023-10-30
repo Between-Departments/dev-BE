@@ -11,6 +11,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mail.MailException;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -62,11 +63,19 @@ public class ControllerExceptionHandler {
 //    }
 
     @MessageExceptionHandler
-    @SendToUser("/api/sub/errors")
+    @SendToUser("/sub/errors")
     public ExceptionDto CustomMessageExceptionHandler(CustomException exception) {
-        ExceptionDto exceptionDto = new ExceptionDto(exception.getExceptionCode());
-        return exceptionDto;
+        log.error(exception.toString());
+        return new ExceptionDto(exception.getExceptionCode());
     }
+
+    @MessageExceptionHandler
+    @SendToUser("/sub/errors")
+    public ExceptionDto AccessDeniedMessageExceptionHandler(AccessDeniedException exception) {
+        log.error(exception.toString());
+        return new ExceptionDto(ExceptionCode.ACCESS_DENIED);
+    }
+
 
     //지원하지 않는 HTTP 메소드 호출시 발생
     @ExceptionHandler

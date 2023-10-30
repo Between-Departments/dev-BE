@@ -3,6 +3,7 @@ package com.gwakkili.devbe.member.service;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
+import com.gwakkili.devbe.event.DeleteMemberEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.image.entity.MemberImage;
@@ -13,6 +14,7 @@ import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -33,6 +36,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @Override
@@ -91,6 +96,15 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(updateMajorDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.setMajor(updateMajorDto.getMajor());
+    }
+
+    @Override
+    public void delete(long memberId) {
+        // 회원 탈퇴 이벤트 발행
+        memberRepository.findById(memberId).ifPresent(member -> {
+            eventPublisher.publishEvent(new DeleteMemberEvent(member));
+            memberRepository.delete(member);
+        });
     }
 
     @Override

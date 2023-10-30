@@ -2,6 +2,8 @@ package com.gwakkili.devbe.report.service;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.event.DeleteMemberEvent;
+import com.gwakkili.devbe.event.DeleteReplyEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
@@ -14,9 +16,11 @@ import com.gwakkili.devbe.report.dto.request.ReplyReportSaveDto;
 import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.function.Function;
 
@@ -30,6 +34,7 @@ public class ReplyReportServiceImpl implements ReplyReportService {
     private final ReplyRepository replyRepository;
 
     private final MemberRepository memberRepository;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -64,5 +69,15 @@ public class ReplyReportServiceImpl implements ReplyReportService {
     @Override
     public void deleteReplyReport(long reportId) {
         replyReportRepository.deleteById(reportId);
+    }
+
+    @EventListener
+    public void deleteReplyReport(DeleteReplyEvent deleteReplyEvent) {
+        replyReportRepository.deleteByReplyIn(deleteReplyEvent.getReplyList());
+    }
+
+    @EventListener
+    public void deleteReplyReport(DeleteMemberEvent deleteMemberEvent) {
+        replyReportRepository.deleteByReporter(deleteMemberEvent.getMember());
     }
 }

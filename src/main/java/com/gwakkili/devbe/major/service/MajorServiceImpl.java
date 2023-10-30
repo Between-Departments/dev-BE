@@ -21,4 +21,9 @@ public class MajorServiceImpl implements MajorService {
         return majorRepository.findAllByNameContaining(keyword).stream()
                 .map(Major::getName).collect(Collectors.toList());
     }
+
+    @Override
+    public boolean exist(String major) {
+        return majorRepository.existsByName(major);
+    }
 }

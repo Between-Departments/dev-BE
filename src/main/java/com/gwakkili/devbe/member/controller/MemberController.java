@@ -114,26 +114,12 @@ public class MemberController {
         memberService.updateMajor(updateMajorDto);
     }
 
-    @PatchMapping("/{memberId}/lock")
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
-    @Operation(summary = "회원 정지")
-    public void lockMember(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId) {
-        memberService.lock(memberId);
-    }
 
-    @GetMapping
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
-    @Operation(summary = "회원 목록 조회")
-    public SliceResponseDto<MemberDto, Member> getList(@ParameterObject MemberSliceRequestDto sliceRequestDto) {
-        return memberService.getList(sliceRequestDto);
-    }
-
-    @DeleteMapping("/{memberId}")
-    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/my")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "회원 탈퇴")
-    public void delete(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId,
-                       @AuthenticationPrincipal MemberDetails memberDetails) {
-
+    public void delete(@AuthenticationPrincipal MemberDetails memberDetails) {
+        memberService.delete(memberDetails.getMemberId());
     }
 }

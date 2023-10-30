@@ -8,7 +8,6 @@ import lombok.*;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Schema
 public class UpdateMajorDto {

@@ -5,4 +5,6 @@ import java.util.List;
 public interface SchoolService {
 
     List<String> getNameList(String keyword);
+
+    String getSchoolMail(String school);
 }

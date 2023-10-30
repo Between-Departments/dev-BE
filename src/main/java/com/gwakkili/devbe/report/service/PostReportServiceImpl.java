@@ -2,6 +2,9 @@ package com.gwakkili.devbe.report.service;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.event.DeleteMemberEvent;
+import com.gwakkili.devbe.event.DeletePostEvent;
+import com.gwakkili.devbe.event.DeleteReplyEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
@@ -14,9 +17,11 @@ import com.gwakkili.devbe.post.repository.PostRepository;
 import com.gwakkili.devbe.report.entity.PostReport;
 import com.gwakkili.devbe.report.repository.PostReportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -71,5 +76,15 @@ public class PostReportServiceImpl implements PostReportService{
     private Post find(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
+    }
+
+    @EventListener
+    public void deleteReplyReport(DeletePostEvent deletePostEvent) {
+        postReportRepository.deleteByPostIn(deletePostEvent.getPostList());
+    }
+
+    @EventListener
+    public void deleteReplyReport(DeleteMemberEvent deleteMemberEvent) {
+        postReportRepository.deleteByReporter(deleteMemberEvent.getMember());
     }
 }

@@ -11,17 +11,20 @@ import com.gwakkili.devbe.chat.repository.ChatMessageRepository;
 import com.gwakkili.devbe.chat.repository.ChatRoomRepository;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.event.DeleteMemberEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.DuplicateException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.function.Function;
 
 @Service
@@ -85,6 +88,15 @@ public class ChatServiceImpl implements ChatService {
         ChatRoom chatRoom = getChatRoom(roomId, memberId);
         chatMessageRepository.deleteByChatRoom(chatRoom);
         chatRoomRepository.delete(chatRoom);
+    }
+
+    @EventListener
+    public void deleteChatRoom(DeleteMemberEvent deleteMemberEvent) {
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByMember(deleteMemberEvent.getMember());
+        // 해당 회원이 속한 채팅방의 채팅메시지 삭제
+        chatMessageRepository.deleteByChatRoomIn(chatRoomList);
+        // 해당 회원이 속한 채팅방 삭제
+        chatRoomRepository.deleteAllInBatch(chatRoomList);
     }
 
     @Override

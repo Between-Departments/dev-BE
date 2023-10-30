@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.reply.dto;
+package com.gwakkili.devbe.reply.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gwakkili.devbe.member.entity.Member;

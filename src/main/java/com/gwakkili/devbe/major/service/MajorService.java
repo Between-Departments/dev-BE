@@ -6,4 +6,6 @@ public interface MajorService {
 
     List<String> getNameList(String keyword);
 
+    boolean exist(String major);
+
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,5 +22,11 @@ public class SchoolServiceImpl implements SchoolService {
 
         List<School> schools = schoolRepository.findAllByNameContaining(keyword);
         return schools.stream().map(School::getName).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public String getSchoolMail(String school) {
+        return schoolRepository.findByName(school).map(School::getMail).orElse(null);
     }
 }

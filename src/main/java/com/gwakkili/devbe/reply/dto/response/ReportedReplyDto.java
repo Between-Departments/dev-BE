@@ -1,4 +1,4 @@
-package com.gwakkili.devbe.reply.dto;
+package com.gwakkili.devbe.reply.dto.response;
 
 import com.gwakkili.devbe.dto.SimpleMemberDto;
 import com.gwakkili.devbe.reply.entity.Reply;

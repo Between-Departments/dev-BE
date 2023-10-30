@@ -4,6 +4,8 @@ import com.gwakkili.devbe.dto.ListResponseDto;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
+import com.gwakkili.devbe.event.DeleteMemberEvent;
+import com.gwakkili.devbe.event.DeletePostEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
@@ -22,7 +24,9 @@ import com.gwakkili.devbe.post.repository.PostQueryRepository;
 import com.gwakkili.devbe.post.repository.PostRecommendRepository;
 import com.gwakkili.devbe.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -38,6 +42,7 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class PostServiceImpl implements PostService{
 
     private final PostRepository postRepository;
@@ -46,6 +51,7 @@ public class PostServiceImpl implements PostService{
     private final PostRecommendRepository postRecommendRepository;
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
+
 
     @Override
     @Transactional
@@ -107,13 +113,30 @@ public class PostServiceImpl implements PostService{
     public void deletePost(Long postId, long memberId, Set<Member.Role> roles) {
         Post findPost = find(postId);
 
-        if(roles.contains(Member.Role.ROLE_MANAGER)){
+        if (roles.contains(Member.Role.ROLE_MANAGER)) {
             publisher.publishEvent(new DeleteByManagerEvent(findPost.getWriter().getMemberId()));
-        } else if (findPost.getWriter().getMemberId() != memberId){
+        } else if (findPost.getWriter().getMemberId() != memberId) {
             // ! 게시글을 삭제하려는 사용자가 글 작성자 본인 또는 ADMIN이 아닐 경우
             throw new CustomException(ExceptionCode.ACCESS_DENIED);
         }
         postRepository.delete(findPost);
+    }
+
+    @EventListener
+    public void deletePost(DeleteMemberEvent deleteMemberEvent) {
+        List<Post> postList = postRepository.findByWriter(deleteMemberEvent.getMember());
+        log.info("게시글 리스트: " + postList);
+        publisher.publishEvent(new DeletePostEvent(postList));
+        // 해당 회원이 다른 게시물에 한 북마크 제거
+        postBookmarkRepository.deleteByMember(deleteMemberEvent.getMember());
+        // 해당 회원이 작성한 게시물의 북마크 제거
+        postBookmarkRepository.deleteByPostIn(postList);
+        // 해당 회원이 다른 게시물에 한 추천 제거
+        postRecommendRepository.deleteByMember(deleteMemberEvent.getMember());
+        // 해당 회원이 작성한 게시물의 추천 제거
+        postRecommendRepository.deleteByPostIn(postList);
+        // 해당 회원이 작성한 게시물 삭제
+        postRepository.deleteAllInBatch(postList);
     }
 
     @Override

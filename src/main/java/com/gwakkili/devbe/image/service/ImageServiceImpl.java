@@ -2,15 +2,23 @@ package com.gwakkili.devbe.image.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.gwakkili.devbe.event.DeleteMemberEvent;
+import com.gwakkili.devbe.event.DeletePostEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
+import com.gwakkili.devbe.image.entity.PostImage;
+import com.gwakkili.devbe.image.repository.MemberImageRepository;
+import com.gwakkili.devbe.image.repository.PostImageRepository;
+import com.gwakkili.devbe.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,6 +43,29 @@ public class ImageServiceImpl implements ImageService {
     private String bucket;
 
     private final AmazonS3 amazonS3;
+
+    private final MemberImageRepository memberImageRepository;
+
+    private final PostImageRepository postImageRepository;
+
+    @EventListener
+    public void deleteMemberImage(DeleteMemberEvent deleteMemberEvent) {
+        memberImageRepository.
+                findByMember(deleteMemberEvent.getMember()).ifPresent(memberImage -> {
+                    //delete(memberImage.getUrl()); // s3 이미지 삭제
+                    memberImageRepository.delete(memberImage);
+                }
+        );
+    }
+
+    @EventListener
+    public void deletePostImage(DeletePostEvent deletePostEvent) {
+        List<Post> postList = deletePostEvent.getPostList();
+        List<PostImage> postImageList = postImageRepository.findByPostIn(postList);
+        List<String> imgUrlList = postImageList.stream().map(PostImage::getUrl).collect(Collectors.toList());
+        //deleteAll(imgUrlList);
+        postImageRepository.deleteAllInBatch(postImageList);
+    }
 
     @Override
     public List<String> upload(List<MultipartFile> multipartFiles) {
@@ -97,8 +129,6 @@ public class ImageServiceImpl implements ImageService {
 
     }
 
-
-
     @Override
     public void delete(String imgUrl) {
         String splitStr = ".com/";
@@ -107,5 +137,20 @@ public class ImageServiceImpl implements ImageService {
         String thumbnailPath = imagePath.replace("images/", "thumbnails/");
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, imagePath));
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, thumbnailPath));
+    }
+
+    public void deleteAll(List<String> imgUrlList) {
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
+        List<DeleteObjectsRequest.KeyVersion> keyList = new ArrayList<>();
+        for (String imgUrl : imgUrlList) {
+            String splitStr = ".com/";
+            String decodeUrl = URLDecoder.decode(imgUrl, StandardCharsets.UTF_8);
+            String imagePath = decodeUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
+            String thumbnailPath = imagePath.replace("images/", "thumbnails/");
+            keyList.add(new DeleteObjectsRequest.KeyVersion(imagePath));
+            keyList.add(new DeleteObjectsRequest.KeyVersion(thumbnailPath));
+        }
+        deleteObjectsRequest.setKeys(keyList);
+        amazonS3.deleteObjects(deleteObjectsRequest);
     }
 }

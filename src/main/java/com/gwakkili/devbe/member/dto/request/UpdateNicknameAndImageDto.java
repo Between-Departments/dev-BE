@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.URL;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Schema
 public class UpdateNicknameAndImageDto {

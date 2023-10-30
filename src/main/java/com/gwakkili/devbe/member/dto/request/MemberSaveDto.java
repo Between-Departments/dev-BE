@@ -14,14 +14,15 @@ import org.hibernate.validator.constraints.URL;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @PasswordConfirm(fieldName1 = "password", fieldName2 = "passwordConfirm")
+@MailMissMatch(fieldName1 = "school", fieldName2 = "mail")
 @Schema
 public class MemberSaveDto {
 
     @Email
     @MailDuplicate
     @MailAuth
-    @Schema(description = "메일", example = "test1@sun.ac.kr")
     @NotBlank
+    @Schema(description = "메일", example = "test1@sun.ac.kr")
     private String mail;
 
     @NotBlank

@@ -2,10 +2,10 @@ package com.gwakkili.devbe.reply.controller;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
-import com.gwakkili.devbe.reply.dto.ReplyDto;
-import com.gwakkili.devbe.reply.dto.ReplySaveDto;
-import com.gwakkili.devbe.reply.dto.ReplyUpdateDto;
-import com.gwakkili.devbe.reply.dto.ReportedReplyDto;
+import com.gwakkili.devbe.reply.dto.response.ReplyDto;
+import com.gwakkili.devbe.reply.dto.request.ReplySaveDto;
+import com.gwakkili.devbe.reply.dto.request.ReplyUpdateDto;
+import com.gwakkili.devbe.reply.dto.response.ReportedReplyDto;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.service.ReplyService;
 import com.gwakkili.devbe.security.dto.MemberDetails;
