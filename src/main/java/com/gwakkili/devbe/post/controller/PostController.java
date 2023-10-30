@@ -3,7 +3,10 @@ package com.gwakkili.devbe.post.controller;
 import com.gwakkili.devbe.dto.ListResponseDto;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
-import com.gwakkili.devbe.post.dto.request.*;
+import com.gwakkili.devbe.post.dto.request.FreePostSaveDto;
+import com.gwakkili.devbe.post.dto.request.NeedHelpPostSaveDto;
+import com.gwakkili.devbe.post.dto.request.PostSearchCondition;
+import com.gwakkili.devbe.post.dto.request.PostUpdateDto;
 import com.gwakkili.devbe.post.dto.response.*;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.service.PostService;
@@ -14,6 +17,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
@@ -22,6 +28,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 
 @Tag(name = "게시글", description = "게시글 API")
@@ -57,8 +67,48 @@ public class PostController {
     })
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{postId}")
-    public PostDetailDto getPost(@PathVariable Long postId){
-        return postService.findPostDto(postId);
+    public PostDetailDto getPost(@PathVariable Long postId, HttpServletRequest req, HttpServletResponse res){
+
+        boolean doViewCountUp = viewCountUp(postId, req, res);
+        return postService.findPostDto(postId, doViewCountUp);
+    }
+
+    private boolean viewCountUp(Long postId, HttpServletRequest req, HttpServletResponse res) {
+        Cookie oldCookie = null;
+
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null){
+            for (Cookie cookie : cookies) {
+                if(cookie.getName().equals("postView")){
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        // ! 조회 정보를 담은 쿠키에 해당 게시물의 아이디가 없는 경우
+        if (oldCookie != null){
+            if(!oldCookie.getValue().contains("["+ postId.toString() +"]")){
+                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(getExpiration());
+                res.addCookie(oldCookie);
+                return true;
+            } else{
+                return false;
+            }
+        } else{
+            Cookie newCookie = new Cookie("postView", "[" + postId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(getExpiration());
+            res.addCookie(newCookie);
+            return true;
+        }
+    }
+
+    private int getExpiration(){
+        LocalDateTime start = LocalDateTime.now();
+        LocalDateTime end = start.with(LocalTime.MAX);
+        return Long.valueOf(Duration.between(start, end).getSeconds()).intValue();
     }
 
     @Operation(method = "GET", summary = "게시글 목록 조회 (조회 조건 적용)")
@@ -86,7 +136,7 @@ public class PostController {
     })
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
-    public SliceResponseDto<MyPostListDto, Post> getMyPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
+    public SliceResponseDto<MyPostListDto, Post> getMyPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ParameterObject PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.findMyPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
     }
 
@@ -96,7 +146,7 @@ public class PostController {
     })
     @GetMapping("/bookmark")
     @PreAuthorize("isAuthenticated()")
-    public SliceResponseDto<BookmarkPostListDto, Post> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ModelAttribute PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
+    public SliceResponseDto<BookmarkPostListDto, Post> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ParameterObject PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.findBookmarkedPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
     }
 
@@ -131,7 +181,9 @@ public class PostController {
     @PatchMapping("/{postId}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public void update(@RequestBody PostUpdateDto postUpdateDto, @PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails) {
+    public void update(@RequestBody @Validated PostUpdateDto postUpdateDto,
+                       @PathVariable Long postId,
+                       @AuthenticationPrincipal MemberDetails memberDetails) {
         postService.updatePost(postUpdateDto, postId, memberDetails.getMemberId());
     }
 

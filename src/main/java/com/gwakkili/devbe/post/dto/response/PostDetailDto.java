@@ -21,6 +21,8 @@ public class PostDetailDto {
 
     private PostSimpleMemberDto writer;
 
+    private Post.BoardType boardType;
+
     private String title;
 
     private String content;
@@ -58,6 +60,7 @@ public class PostDetailDto {
         return PostDetailDto.builder()
                 .postId(post.getPostId())
                 .writer(new PostSimpleMemberDto(post.getWriter(), post.getIsAnonymous()))
+                .boardType(post.getBoardType())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .viewCount(post.getViewCount())

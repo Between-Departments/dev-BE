@@ -2,7 +2,6 @@ package com.gwakkili.devbe.security.handler;
 
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.security.service.JwtService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +30,9 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         ResponseCookie responseCookie = ResponseCookie.from("RefreshToken", refreshToken)
                 .path("/api/refresh")
                 .maxAge((int) jwtService.getRefreshTokenExpireTime() / 1000)
-                .httpOnly(true)
-                .secure(true)
                 .sameSite("None")
+                .secure(true)
+                .httpOnly(true)
                 .build();
 
         response.addHeader("Authorization", "Bearer " + accessToken);
