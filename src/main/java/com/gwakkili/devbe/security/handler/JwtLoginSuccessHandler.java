@@ -32,6 +32,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
                 .maxAge((int) jwtService.getRefreshTokenExpireTime() / 1000)
                 .sameSite("None")
                 .secure(true)
+                .httpOnly(true)
                 .build();
 
         response.addHeader("Authorization", "Bearer " + accessToken);
