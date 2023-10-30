@@ -31,9 +31,9 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
                 .domain("dev-fe-between.vercel.app")
                 .path("/api/refresh")
                 .maxAge((int) jwtService.getRefreshTokenExpireTime() / 1000)
-                .httpOnly(true)
-                .secure(true)
                 .sameSite("None")
+                .secure(true)
+                .httpOnly(true)
                 .build();
 
         response.addHeader("Authorization", "Bearer " + accessToken);
