@@ -1,5 +1,8 @@
 package com.gwakkili.devbe.major.controller;
 
+import com.gwakkili.devbe.dto.ListResponseDto;
+import com.gwakkili.devbe.major.dto.MajorDto;
+import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.major.service.MajorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,7 +24,7 @@ public class MajorController {
 
     @GetMapping
     @Operation(summary = "전공 이름목록 조회")
-    public List<String> getNameList(@Parameter(name = "keyword", description = "검색 키워드") String keyword) {
+    public ListResponseDto<MajorDto, Major> getNameList(@Parameter(name = "keyword", description = "검색 키워드") String keyword) {
         return majorService.getNameList(keyword);
     }
 }
