@@ -15,7 +15,7 @@ import java.util.Optional;
 @DataRedisTest
 @DisplayName("인증키 저장소 테스트")
 @MockBean(JpaMetamodelMappingContext.class)
-public class MailAuthCodeRepositoryTests {
+public class SchoolMailAuthCodeRepositoryTests {
 
     @Autowired
     private MailAuthCodeRepository mailAuthCodeRepository;

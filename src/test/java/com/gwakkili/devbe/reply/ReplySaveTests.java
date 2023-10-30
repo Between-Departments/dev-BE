@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.reply;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
-import com.gwakkili.devbe.reply.dto.ReplySaveDto;
+import com.gwakkili.devbe.reply.dto.request.ReplySaveDto;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

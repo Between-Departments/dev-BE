@@ -129,7 +129,6 @@ public class DummyDataProvider implements ApplicationRunner {
 
     // * 테스트용 사용자 -> 총 101명 (관리자 1명, 일반 사용자 100명)
     private void saveMember(){
-
         Member member = Member.builder()
                 .mail("test@test1.ac.kr")
                 .nickname("테스트멤버")
@@ -165,11 +164,11 @@ public class DummyDataProvider implements ApplicationRunner {
 
         IntStream.rangeClosed(1,100).forEach(i ->{
             Post freePost = Post.builder()
-                    .title("FreePostTitle"+ i)
-                    .content("FreePostContent"+i)
+                    .title("FreePostTitle" + i)
+                    .content("FreePostContent" + i)
                     .boardType(Post.BoardType.FREE)
                     .tag(Post.Tag.values()[new Random().nextInt(Post.Tag.values().length)])
-                    .writer(memberRepository.getReferenceById((long) i+1))
+                    .writer(memberRepository.getReferenceById((long) i))
                     .isAnonymous(false)
                     .build();
 
@@ -239,7 +238,7 @@ public class DummyDataProvider implements ApplicationRunner {
         List<Reply> replies = new ArrayList<>();
         IntStream.rangeClosed(1, 400).forEach(i -> {
             Reply reply = Reply.builder()
-                    .member(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
+                    .member(memberRepository.getReferenceById(new Random().nextLong(1, 101)))
                     .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
                     .content("testReplyContent" + i)
                     .build();

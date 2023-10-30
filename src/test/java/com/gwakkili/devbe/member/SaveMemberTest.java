@@ -57,7 +57,7 @@ public class SaveMemberTest extends DevBeApplicationTests {
                 .mail("test@test1.ac.kr")
                 .password("12341234")
                 .nickname("안녕하세요")
-                .school("없는대학교")
+                .school("테스트대학1")
                 .passwordConfirm("12341234!")
                 .major("없는학과")
                 .imageUrl("asdfsa")

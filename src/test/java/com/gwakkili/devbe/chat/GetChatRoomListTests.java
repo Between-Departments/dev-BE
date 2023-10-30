@@ -6,6 +6,8 @@ import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 
 import static org.hamcrest.Matchers.*;
@@ -27,14 +29,14 @@ public class GetChatRoomListTests extends DevBeApplicationTests {
         //when, then
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].chatRoomId").exists())
-                .andExpect(jsonPath("$[*].member.memberId").value(not(contains(1))))
+                .andExpect(jsonPath("dataList[*].chatRoomId").exists())
+                .andExpect(jsonPath("dataList[*].member.memberId").value(not(contains(1))))
                 .andDo(print());
     }
 
     @Test
     @DisplayName("실패: 채팅방을 찾을 수 없음")
-    @WithMockMember(memberId = 100)
+    @WithMockMember(memberId = 11)
     public void failByNotFoundChatRoom() throws Exception {
         mockMvc.perform(get(url))
                 .andExpect(status().isNotFound())

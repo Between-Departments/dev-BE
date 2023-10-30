@@ -2,7 +2,7 @@ package com.gwakkili.devbe.reply;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.exception.ExceptionCode;
-import com.gwakkili.devbe.reply.dto.ReplyUpdateDto;
+import com.gwakkili.devbe.reply.dto.request.ReplyUpdateDto;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

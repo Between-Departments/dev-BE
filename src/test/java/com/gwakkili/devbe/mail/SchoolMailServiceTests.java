@@ -26,7 +26,7 @@ import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("메일 서비스 테스트")
-public class MailServiceTests {
+public class SchoolMailServiceTests {
 
     @Mock
     private SchoolRepository schoolRepository;
