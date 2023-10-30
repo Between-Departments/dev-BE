@@ -19,7 +19,7 @@ public class CorsConfig {
         configuration.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT","PATCH"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("Authorization")); // Authorization 헤더 설정 풀기
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie")); // Authorization 헤더 설정 풀기
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
