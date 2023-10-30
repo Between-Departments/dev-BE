@@ -98,7 +98,7 @@ public class Post extends BaseEntity {
         this.major = major;
         this.isAnonymous = isAnonymous;
 
-        updateImages(imageUrls);
+        if(imageUrls != null) updateImages(imageUrls);
     }
 
 
