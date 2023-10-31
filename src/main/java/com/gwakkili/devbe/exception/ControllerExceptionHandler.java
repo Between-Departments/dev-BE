@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.exception;
 
 import com.gwakkili.devbe.exception.customExcption.CustomException;
+import com.gwakkili.devbe.exception.customExcption.JwtException;
 import com.gwakkili.devbe.exception.dto.ExceptionDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,12 @@ import org.springframework.mail.MailException;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -76,6 +83,27 @@ public class ControllerExceptionHandler {
         return new ExceptionDto(ExceptionCode.ACCESS_DENIED);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ExceptionDto> AuthenticationExceptionHandler(AuthenticationException exception) {
+        log.error(exception.toString());
+
+        ExceptionCode code;
+        if (exception instanceof BadCredentialsException || exception instanceof UsernameNotFoundException) {
+            code = ExceptionCode.BAD_CREDENTIAL;
+        } else if (exception instanceof AuthenticationCredentialsNotFoundException) {
+            code = ExceptionCode.AUTHENTICATION_DENIED;
+        } else if (exception instanceof LockedException) {
+            code = ExceptionCode.AUTHENTICATION_LOCKED;
+        } else if (exception instanceof AuthenticationServiceException) {
+            code = ExceptionCode.ILLEGAL_AUTHENTICATION_FORMAT;
+        } else if (exception instanceof JwtException) {
+            code = ((JwtException) exception).getExceptionCode();
+        } else {
+            code = ExceptionCode.AUTHENTICATION_FAILURE;
+        }
+        ExceptionDto exceptionDto = new ExceptionDto(code);
+        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
+    }
 
     //지원하지 않는 HTTP 메소드 호출시 발생
     @ExceptionHandler

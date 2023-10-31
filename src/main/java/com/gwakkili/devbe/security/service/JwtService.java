@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.security.service;
 
 import com.gwakkili.devbe.member.entity.Member;
+import com.gwakkili.devbe.security.dto.JwtTokenDto;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.security.entity.RefreshToken;
 import com.gwakkili.devbe.security.repository.RefreshTokenRepository;
@@ -8,7 +9,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,57 +55,50 @@ public class JwtService {
         return jwtHeader.replace("Bearer ", "");
     }
 
+    public String resolveAccessToken(String accessToken) {
+        if (accessToken == null || !accessToken.startsWith("Bearer")) return null;
+        return accessToken.replace("Bearer ", "");
+    }
+
     public String resolveAccessToken(StompHeaderAccessor headerAccessor) {
         String jwtHeader = headerAccessor.getFirstNativeHeader("Authorization");
         if (jwtHeader == null || !jwtHeader.startsWith("Bearer")) return null;
         return jwtHeader.replace("Bearer ", "");
     }
 
-    // refresh token을 request에서 추출
-    public String resolveRefreshToken(HttpServletRequest request) {
 
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) return null;
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("RefreshToken"))
-                return cookie.getValue();
-        }
-        return null;
-    }
-
-    // access token 생성
-    public String generateAccessToken(MemberDetails memberDetails){
+    public JwtTokenDto generateToken(MemberDetails memberDetails) {
         String roles = memberDetails.getRoles().stream()
                 .map(Member.Role::name)
                 .collect(Collectors.joining(","));
-
-        return Jwts.builder()
+        // accessToken 생성
+        String accessToken = Jwts.builder()
                 .claim("memberId", memberDetails.getMemberId())
-                .claim("mail", memberDetails.getUsername())
+                .claim("mail", memberDetails.getMail())
                 .claim("roles", roles)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    // refresh token 생성
-    public String generateRefreshToken(MemberDetails memberDetails){
 
         // refresh 토큰 생성
-        String token = Jwts.builder()
+        String refreshToken = Jwts.builder()
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_TIME))
-                .setSubject(memberDetails.getUsername())
+                .setSubject(memberDetails.getMail())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         // refresh 토큰 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .token(token)
+        saveRefreshToken(refreshToken, memberDetails);
+        return new JwtTokenDto(accessToken, refreshToken);
+    }
+
+    private void saveRefreshToken(String refreshToken, MemberDetails memberDetails) {
+        RefreshToken redisRefreshToken = RefreshToken.builder()
+                .token(refreshToken)
                 .mail(memberDetails.getMail())
                 .roles(memberDetails.getRoles())
                 .expiredTime(REFRESH_TOKEN_EXPIRE_TIME / 1000)
                 .build();
-        refreshTokenRepository.save(refreshToken);
-        return token;
+        refreshTokenRepository.save(redisRefreshToken);
     }
 
     public void deleteRefreshToken(MemberDetails memberDetails) {
@@ -115,7 +108,9 @@ public class JwtService {
     // // access 토큰에서 유저정보 추출
     public Authentication getAuthentication(String token) throws JwtException {
         //jwt token 복호화
-        Claims claims = getClaims(token);
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key).build().parseClaimsJws(token).getBody();
+        ;
         long memberId = ((Number) claims.get("memberId")).longValue();
         String mail = claims.get("mail").toString();
         Set<Member.Role> roles = Arrays.stream(claims.get("roles").toString().split(","))
@@ -124,15 +119,16 @@ public class JwtService {
         return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }
 
-    public Claims getClaims(String token){
-        return Jwts.parserBuilder()
+    public String getMail(String token) {
+        Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return claims.get("mail").toString();
     }
 
 
-    public RefreshToken getRefreshToken(String mail){
+    public RefreshToken getRefreshToken(String mail) {
         Optional<RefreshToken> result = refreshTokenRepository.findById(mail);
-        if(result.isEmpty()) return null;
+        if (result.isEmpty()) return null;
         return result.get();
     }
 
@@ -154,7 +150,4 @@ public class JwtService {
         return "INVALID";
     }
 
-    public int getRefreshTokenExpireTime() {
-        return (int) REFRESH_TOKEN_EXPIRE_TIME / 1000;
-    }
 }
