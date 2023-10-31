@@ -43,7 +43,7 @@ public class Post extends BaseEntity {
     private Tag tag;
 
     @BatchSize(size = 100)
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<PostImage> images = new ArrayList<>();
 
     // TODO 어떻게 처리할 것인가에 대한 방법 논의 필요
