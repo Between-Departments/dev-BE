@@ -3,7 +3,7 @@ package com.gwakkili.devbe.exception.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Data;
 
 import java.util.Map;
 
@@ -11,10 +11,7 @@ import java.util.Map;
  * Exception response 형식
  * 일관된 Exception Response를 응답하려고 사용
  */
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+@Data
 @Schema
 public class ExceptionDto {
 

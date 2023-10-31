@@ -3,7 +3,10 @@ package com.gwakkili.devbe.report.entity;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.post.entity.Post;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter

@@ -1,20 +1,15 @@
 package com.gwakkili.devbe.member.controller;
 
-import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.member.dto.request.*;
 import com.gwakkili.devbe.member.dto.response.MemberDetailDto;
-import com.gwakkili.devbe.member.dto.response.MemberDto;
-import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.service.MemberService;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -35,15 +30,15 @@ public class MemberController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "회원 가입")
-    public void save(@RequestBody @Validated MemberSaveDto memberSaveDto) {
-        memberService.save(memberSaveDto);
+    public void saveMember(@RequestBody @Validated MemberSaveDto memberSaveDto) {
+        memberService.saveMember(memberSaveDto);
     }
 
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "나의 회원정보 조회")
-    public MemberDetailDto find(@AuthenticationPrincipal MemberDetails memberDetails) {
-        return memberService.find(memberDetails.getMemberId());
+    public MemberDetailDto findMember(@AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.findMember(memberDetails.getMemberId());
     }
 
 
@@ -119,7 +114,7 @@ public class MemberController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "회원 탈퇴")
-    public void delete(@AuthenticationPrincipal MemberDetails memberDetails) {
-        memberService.delete(memberDetails.getMemberId());
+    public void deleteMember(@AuthenticationPrincipal MemberDetails memberDetails) {
+        memberService.deleteMember(memberDetails.getMemberId());
     }
 }

@@ -2,7 +2,6 @@ package com.gwakkili.devbe.report.repository;
 
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.report.entity.PostReport;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

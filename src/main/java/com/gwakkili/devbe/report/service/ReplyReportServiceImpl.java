@@ -11,8 +11,8 @@ import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.repository.ReplyRepository;
-import com.gwakkili.devbe.report.dto.response.ReplyReportDto;
 import com.gwakkili.devbe.report.dto.request.ReplyReportSaveDto;
+import com.gwakkili.devbe.report.dto.response.ReplyReportDto;
 import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.function.Function;
 

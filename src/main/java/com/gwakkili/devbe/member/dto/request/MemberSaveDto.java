@@ -1,17 +1,16 @@
 package com.gwakkili.devbe.member.dto.request;
 
 
-import com.gwakkili.devbe.validation.*;
+import com.gwakkili.devbe.validation.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @PasswordConfirm(fieldName1 = "password", fieldName2 = "passwordConfirm")
 @MailMissMatch(fieldName1 = "school", fieldName2 = "mail")
@@ -20,7 +19,7 @@ public class MemberSaveDto {
 
     @Email
     @MailDuplicate
-    @MailAuth
+    @MailNotAuth
     @NotBlank
     @Schema(description = "메일", example = "test1@sun.ac.kr")
     private String mail;

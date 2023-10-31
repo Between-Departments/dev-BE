@@ -1,8 +1,6 @@
 package com.gwakkili.devbe.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Slice;
 
@@ -11,8 +9,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
-@AllArgsConstructor
-@Builder
 @Schema
 public class SliceResponseDto<DTO, EN> {
 

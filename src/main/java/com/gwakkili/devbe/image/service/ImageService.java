@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface ImageService {
 
-    List<String> upload(List<MultipartFile> images) throws IOException;
+    List<String> uploadImage(List<MultipartFile> images) throws IOException;
 
-    void delete(String ImgName);
+    void deleteImage(String ImgUrl);
+
+    void deleteImageList(List<String> ImgUrlList);
 }

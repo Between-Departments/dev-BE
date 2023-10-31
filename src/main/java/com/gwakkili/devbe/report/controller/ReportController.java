@@ -2,10 +2,10 @@ package com.gwakkili.devbe.report.controller;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
-import com.gwakkili.devbe.report.dto.response.PostReportDto;
 import com.gwakkili.devbe.report.dto.request.PostReportSaveDto;
-import com.gwakkili.devbe.report.dto.response.ReplyReportDto;
 import com.gwakkili.devbe.report.dto.request.ReplyReportSaveDto;
+import com.gwakkili.devbe.report.dto.response.PostReportDto;
+import com.gwakkili.devbe.report.dto.response.ReplyReportDto;
 import com.gwakkili.devbe.report.entity.PostReport;
 import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.report.service.PostReportService;

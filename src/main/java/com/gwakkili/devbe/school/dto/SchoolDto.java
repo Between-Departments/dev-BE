@@ -2,11 +2,9 @@ package com.gwakkili.devbe.school.dto;
 
 import com.gwakkili.devbe.school.entity.School;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-@AllArgsConstructor
 @Data
 @Builder
 @Schema

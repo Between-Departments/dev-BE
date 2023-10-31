@@ -2,13 +2,13 @@ package com.gwakkili.devbe.image.entity;
 
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class MemberImage {
 
     @Id
@@ -20,6 +20,10 @@ public class MemberImage {
     private Member member;
 
     private String url;
+
+    public MemberImage(String url) {
+        this.url = url;
+    }
 
     public String getThumbnailUrl() {
         return url.replace("/images/", "/thumbnails/");

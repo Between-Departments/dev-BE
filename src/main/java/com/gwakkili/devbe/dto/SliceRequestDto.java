@@ -3,16 +3,14 @@ package com.gwakkili.devbe.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-@AllArgsConstructor
 @Data
 @Schema
+@AllArgsConstructor
 public class SliceRequestDto {
 
     @Schema(description = "페이지 번호", defaultValue = "1")

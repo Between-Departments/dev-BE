@@ -4,16 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.Arrays;
 
-@MappedSuperclass
 @Getter
-@NoArgsConstructor
+@MappedSuperclass
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Report extends BaseEntity {
 
@@ -27,8 +24,8 @@ public class Report extends BaseEntity {
     private String content;
 
 
-    @RequiredArgsConstructor
     @Getter
+    @RequiredArgsConstructor
     public enum Type {
 
         PROFANITY("욕설/비방 및 개인정보 노출"),

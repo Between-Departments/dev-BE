@@ -1,13 +1,14 @@
 package com.gwakkili.devbe.school.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class School {
 
     @Id
@@ -18,4 +19,10 @@ public class School {
     String name;
 
     String mail;
+
+    @Builder
+    public School(String name, String mail) {
+        this.name = name;
+        this.mail = mail;
+    }
 }

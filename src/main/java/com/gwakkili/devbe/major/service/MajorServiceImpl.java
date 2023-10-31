@@ -20,7 +20,7 @@ public class MajorServiceImpl implements MajorService {
     private final MajorRepository majorRepository;
 
     @Override
-    public ListResponseDto<MajorDto, Major> getNameList(String keyword) {
+    public ListResponseDto<MajorDto, Major> getMajorList(String keyword) {
         List<Major> majorList = majorRepository.findAllByNameContaining(keyword, PageRequest.of(0, 100));
         Function<Major, MajorDto> fn = (MajorDto::of);
         return new ListResponseDto<>(majorList, fn);

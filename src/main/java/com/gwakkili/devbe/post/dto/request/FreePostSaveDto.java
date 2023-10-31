@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.post.dto.request;
 
 import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.validation.Enum;
+import com.gwakkili.devbe.validation.annotation.Enum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

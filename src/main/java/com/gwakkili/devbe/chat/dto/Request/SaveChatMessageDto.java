@@ -2,10 +2,13 @@ package com.gwakkili.devbe.chat.dto.Request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Schema
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SaveChatMessageDto {
 
     @JsonIgnore

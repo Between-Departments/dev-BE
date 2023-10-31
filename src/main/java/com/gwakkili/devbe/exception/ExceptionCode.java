@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
  * http 상태코드로는 모든 exception을 나타낼 수 없기 떄문에 사용
  * http상태코드, 서버정의 코드, 메세지로 구성
  */
-@RequiredArgsConstructor
 @Getter
+@RequiredArgsConstructor
 public enum ExceptionCode {
 
     //일반 예외 코드

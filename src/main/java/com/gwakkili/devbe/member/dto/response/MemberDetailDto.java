@@ -2,15 +2,13 @@ package com.gwakkili.devbe.member.dto.response;
 
 import com.gwakkili.devbe.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Schema
 public class MemberDetailDto {
@@ -31,7 +29,7 @@ public class MemberDetailDto {
     private String major;
 
     @Schema(description = "권한", example = "ROLE_USER")
-    private Set<Member.Role> roles = new HashSet<>();
+    private Set<Member.Role> roles;
 
     @Schema(description = "프로필 이미지 url", example = "http://example.com/images/image.jpa")
     private String imageUrl;

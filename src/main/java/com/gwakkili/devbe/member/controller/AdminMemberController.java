@@ -27,19 +27,19 @@ public class AdminMemberController {
     @PatchMapping("/{memberId}/lock")
     @Operation(summary = "회원 정지")
     public void lockMember(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId) {
-        memberService.lock(memberId);
+        memberService.lockMember(memberId);
     }
 
     @GetMapping
     @Operation(summary = "회원 목록 조회")
-    public SliceResponseDto<MemberDto, Member> getList(@ParameterObject MemberSliceRequestDto sliceRequestDto) {
-        return memberService.getList(sliceRequestDto);
+    public SliceResponseDto<MemberDto, Member> getMemberList(@ParameterObject MemberSliceRequestDto sliceRequestDto) {
+        return memberService.getMemberList(sliceRequestDto);
     }
 
     @DeleteMapping("/{memberId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "회원 탈퇴")
-    public void delete(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId) {
-        memberService.delete(memberId);
+    public void deleteMember(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId) {
+        memberService.deleteMember(memberId);
     }
 }

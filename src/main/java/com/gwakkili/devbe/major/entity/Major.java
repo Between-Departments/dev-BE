@@ -8,9 +8,7 @@ import java.util.Arrays;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class Major {
 
     @Id
@@ -23,8 +21,15 @@ public class Major {
     @Column(unique = true)
     String name;
 
+    @Builder
+    public Major(Category category, String name) {
+        this.category = category;
+        this.name = name;
+    }
+
+    @Getter
     @RequiredArgsConstructor
-    public enum Category{
+    public enum Category {
         SOCIAL("인문/사회 계열"),
         ENGINEERING("공학 계열"),
         EDUCATION("교육 계열"),

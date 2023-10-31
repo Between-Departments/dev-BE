@@ -2,13 +2,14 @@ package com.gwakkili.devbe.image.entity;
 
 import com.gwakkili.devbe.post.entity.Post;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class PostImage {
 
     @Id
@@ -20,6 +21,12 @@ public class PostImage {
     private Post post;
 
     private String url;
+
+    @Builder
+    public PostImage(Post post, String url) {
+        this.post = post;
+        this.url = url;
+    }
 
     public String getThumbnailUrl() {
         return url.replace("/images/", "/thumbnails/");

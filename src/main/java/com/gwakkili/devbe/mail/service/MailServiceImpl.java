@@ -1,10 +1,10 @@
 package com.gwakkili.devbe.mail.service;
 
-import com.gwakkili.devbe.mail.dto.MailAuthCodeDto;
-import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
+import com.gwakkili.devbe.mail.dto.MailAuthCodeDto;
+import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
 import com.gwakkili.devbe.school.repository.SchoolRepository;
 import jakarta.mail.MessagingException;
@@ -43,7 +43,7 @@ public class MailServiceImpl implements MailService {
      * @throws UnsupportedEncodingException
      */
     @Override
-    public void send(String mail) throws MessagingException {
+    public void sendMail(String mail) throws MessagingException {
         if (!schoolRepository.existsByMail(mail.split("@")[1]))
             throw new UnsupportedException(ExceptionCode.UNSUPPORTED_MAIL);
 

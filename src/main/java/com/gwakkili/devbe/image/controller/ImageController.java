@@ -28,16 +28,16 @@ public class ImageController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "이미지 업로드")
     @ApiResponse(responseCode = "201", description = "이미지 url 리스트", useReturnTypeSchema = true)
-    public List<String> upload(@RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles) throws IOException {
+    public List<String> uploadImage(@RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles) throws IOException {
         log.info("이미지 업로드 요청");
-        return imageService.upload(multipartFiles);
+        return imageService.uploadImage(multipartFiles);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "이미지 삭제 요청")
-    public void delete(@Parameter(description = "이미지 url") @RequestParam("imageUrl") String imageUrl) {
-        imageService.delete(imageUrl);
+    public void deleteImage(@Parameter(description = "이미지 url") @RequestParam("imageUrl") String imageUrl) {
+        imageService.deleteImage(imageUrl);
     }
 
 }

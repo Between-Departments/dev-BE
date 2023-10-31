@@ -24,7 +24,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -52,8 +55,8 @@ public class ImageServiceImpl implements ImageService {
     public void deleteMemberImage(DeleteMemberEvent deleteMemberEvent) {
         memberImageRepository.
                 findByMember(deleteMemberEvent.getMember()).ifPresent(memberImage -> {
-                    //delete(memberImage.getUrl()); // s3 이미지 삭제
-                    memberImageRepository.delete(memberImage);
+            deleteImage(memberImage.getUrl()); // s3 이미지 삭제
+            memberImageRepository.delete(memberImage);
                 }
         );
     }
@@ -63,12 +66,12 @@ public class ImageServiceImpl implements ImageService {
         List<Post> postList = deletePostEvent.getPostList();
         List<PostImage> postImageList = postImageRepository.findByPostIn(postList);
         List<String> imgUrlList = postImageList.stream().map(PostImage::getUrl).collect(Collectors.toList());
-        //deleteAll(imgUrlList);
+        deleteImageList(imgUrlList);
         postImageRepository.deleteAllInBatch(postImageList);
     }
 
     @Override
-    public List<String> upload(List<MultipartFile> multipartFiles) {
+    public List<String> uploadImage(List<MultipartFile> multipartFiles) {
 
 
         List<String> imageUrlList = new ArrayList<>();
@@ -130,7 +133,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void delete(String imgUrl) {
+    public void deleteImage(String imgUrl) {
         String splitStr = ".com/";
         String decodeUrl = URLDecoder.decode(imgUrl, StandardCharsets.UTF_8);
         String imagePath = decodeUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
@@ -139,7 +142,8 @@ public class ImageServiceImpl implements ImageService {
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, thumbnailPath));
     }
 
-    public void deleteAll(List<String> imgUrlList) {
+    @Override
+    public void deleteImageList(List<String> imgUrlList) {
         DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
         List<DeleteObjectsRequest.KeyVersion> keyList = new ArrayList<>();
         for (String imgUrl : imgUrlList) {

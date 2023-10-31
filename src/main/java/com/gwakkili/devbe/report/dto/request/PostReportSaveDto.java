@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.report.dto.request;
 
 import com.gwakkili.devbe.report.entity.Report;
-import com.gwakkili.devbe.validation.Enum;
+import com.gwakkili.devbe.validation.annotation.Enum;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 

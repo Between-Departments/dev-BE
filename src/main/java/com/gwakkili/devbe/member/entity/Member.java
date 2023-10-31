@@ -11,9 +11,7 @@ import java.util.Set;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 public class Member extends BaseEntity {
 
     @Id
@@ -32,7 +30,6 @@ public class Member extends BaseEntity {
 
     private String major;
 
-    @Builder.Default
     @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "member_role", joinColumns = @JoinColumn(name = "member_id"))
@@ -56,6 +53,15 @@ public class Member extends BaseEntity {
     @Basic(fetch = FetchType.LAZY)
     @Formula("(SELECT count(1) FROM post p WHERE p.member_id = member_id)")
     private int postCount;
+
+    @Builder
+    public Member(String mail, String nickname, String password, String school, String major) {
+        this.mail = mail;
+        this.nickname = nickname;
+        this.password = password;
+        this.school = school;
+        this.major = major;
+    }
 
     public void addRole(Role role) {
         this.roles.add(role);

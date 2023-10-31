@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/majors")
@@ -24,7 +22,7 @@ public class MajorController {
 
     @GetMapping
     @Operation(summary = "전공 이름목록 조회")
-    public ListResponseDto<MajorDto, Major> getNameList(@Parameter(name = "keyword", description = "검색 키워드") String keyword) {
-        return majorService.getNameList(keyword);
+    public ListResponseDto<MajorDto, Major> getMajorList(@Parameter(name = "keyword", description = "검색 키워드") String keyword) {
+        return majorService.getMajorList(keyword);
     }
 }

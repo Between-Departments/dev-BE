@@ -2,11 +2,14 @@ package com.gwakkili.devbe.member.dto.request;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.domain.Sort;
 
-@Getter
-@Setter
+
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class MemberSliceRequestDto extends SliceRequestDto {
 
     @Schema(description = "검색 키워드", example = "sds@test.a")

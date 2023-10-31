@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -41,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
 
 
     @Override
-    public void save(MemberSaveDto memberSaveDto) {
+    public void saveMember(MemberSaveDto memberSaveDto) {
 
         Member member = Member.builder()
                 .mail(memberSaveDto.getMail())
@@ -50,7 +49,7 @@ public class MemberServiceImpl implements MemberService {
                 .major(memberSaveDto.getMajor())
                 .school(memberSaveDto.getSchool())
                 .build();
-        member.setImage(MemberImage.builder().url(memberSaveDto.getImageUrl()).build());
+        member.setImage(new MemberImage(memberSaveDto.getImageUrl()));
         member.addRole(Member.Role.ROLE_USER);
 
         memberRepository.save(member);
@@ -58,7 +57,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(readOnly = true)
-    public MemberDetailDto find(long memberId) {
+    public MemberDetailDto findMember(long memberId) {
         Member member = memberRepository.findWithCountById(memberId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         return MemberDetailDto.of(member);
@@ -80,7 +79,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(updateNicknameAndImageDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.setNickname(updateNicknameAndImageDto.getNickname());
-        member.setImage(MemberImage.builder().url(updateNicknameAndImageDto.getImageUrl()).build());
+        member.setImage(new MemberImage(updateNicknameAndImageDto.getImageUrl()));
     }
 
     @Override
@@ -99,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void delete(long memberId) {
+    public void deleteMember(long memberId) {
         // 회원 탈퇴 이벤트 발행
         memberRepository.findById(memberId).ifPresent(member -> {
             eventPublisher.publishEvent(new DeleteMemberEvent(member));
@@ -108,13 +107,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void lock(Long id) {
+    public void lockMember(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.setLocked(true);
     }
 
-    @Override
     @EventListener
     public void lock(DeleteByManagerEvent deleteByManagerEvent) {
         long memberId = deleteByManagerEvent.getMemberId();
@@ -124,10 +122,9 @@ public class MemberServiceImpl implements MemberService {
         if (member.getReportCount() >= 3) member.setLocked(true);
     }
 
-
     @Override
     @Transactional(readOnly = true)
-    public SliceResponseDto<MemberDto, Member> getList(SliceRequestDto sliceRequestDto) {
+    public SliceResponseDto<MemberDto, Member> getMemberList(SliceRequestDto sliceRequestDto) {
         MemberSliceRequestDto memberSliceRequestDto = (MemberSliceRequestDto) sliceRequestDto;
         String keyword = memberSliceRequestDto.getKeyword();
         Pageable pageable = memberSliceRequestDto.getPageable();

@@ -3,15 +3,14 @@ package com.gwakkili.devbe.member.service;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
-import com.gwakkili.devbe.event.DeleteByManagerEvent;
 import com.gwakkili.devbe.member.dto.request.*;
 import com.gwakkili.devbe.member.dto.response.MemberDetailDto;
 
 public interface MemberService {
 
-    void save(MemberSaveDto saveDto);
+    void saveMember(MemberSaveDto saveDto);
 
-    MemberDetailDto find(long memberId);
+    MemberDetailDto findMember(long memberId);
 
     void updatePassword(UpdatePasswordDto updatePasswordDto);
 
@@ -21,13 +20,11 @@ public interface MemberService {
 
     void updateMajor(UpdateMajorDto updateMajorDto);
 
-    void delete(long memberId);
+    void deleteMember(long memberId);
 
-    void lock(Long id);
+    void lockMember(Long id);
 
-    void lock(DeleteByManagerEvent deleteByManagerEvent);
-
-    SliceResponseDto getList(SliceRequestDto sliceRequestDto);
+    SliceResponseDto getMemberList(SliceRequestDto sliceRequestDto);
 
     boolean mailDuplicateCheck(String mail);
 

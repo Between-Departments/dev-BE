@@ -32,13 +32,7 @@ public class ChatRoomDto {
         Member member = (isMaster) ? chatRoom.getMember() : chatRoom.getMaster();
         return ChatRoomDto.builder()
                 .chatRoomId(chatRoom.getChatRoomId())
-                .member(
-                        SimpleMemberDto.builder()
-                                .memberId(member.getMemberId())
-                                .nickname(member.getNickname())
-                                .imageUrl(member.getImage().getThumbnailUrl())
-                                .build()
-                )
+                .member(new SimpleMemberDto(member, false))
                 .recentChatMessage(
                         ChatMessageDto.builder()
                                 .chatMessageId(recentChatMessage.getChatMessageId())
@@ -53,13 +47,7 @@ public class ChatRoomDto {
     public static ChatRoomDto of(ChatRoom chatRoom) {
         return ChatRoomDto.builder()
                 .chatRoomId(chatRoom.getChatRoomId())
-                .member(
-                        SimpleMemberDto.builder()
-                                .memberId(chatRoom.getMember().getMemberId())
-                                .nickname(chatRoom.getMember().getNickname())
-                                .imageUrl(chatRoom.getMember().getImage().getThumbnailUrl())
-                                .build()
-                )
+                .member(new SimpleMemberDto(chatRoom.getMember(), false))
                 .build();
     }
 }
