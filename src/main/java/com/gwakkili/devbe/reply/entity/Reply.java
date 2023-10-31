@@ -4,13 +4,15 @@ import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.post.entity.Post;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Formula;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class Reply extends BaseEntity {
 
     @Id
@@ -31,17 +33,18 @@ public class Reply extends BaseEntity {
     @Formula("(SELECT count(*) FROM reply_recommend rr WHERE rr.reply_id = reply_id)")
     private int recommendCount;
 
+    private boolean isAnonymous;
 
     public void setContent(String content) {
         this.content = content;
     }
 
     @Builder
-    public Reply(long replyId, Member member, Post post, String content) {
-        this.replyId = replyId;
+    public Reply(Member member, Post post, String content, boolean isAnonymous) {
         this.member = member;
         this.post = post;
         this.content = content;
+        this.isAnonymous = isAnonymous;
     }
 
 }

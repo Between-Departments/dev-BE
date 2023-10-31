@@ -2,9 +2,10 @@ package com.gwakkili.devbe.reply.controller;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
-import com.gwakkili.devbe.reply.dto.response.ReplyDto;
 import com.gwakkili.devbe.reply.dto.request.ReplySaveDto;
 import com.gwakkili.devbe.reply.dto.request.ReplyUpdateDto;
+import com.gwakkili.devbe.reply.dto.response.MyReplyDto;
+import com.gwakkili.devbe.reply.dto.response.ReplyDetailDto;
 import com.gwakkili.devbe.reply.dto.response.ReportedReplyDto;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.service.ReplyService;
@@ -37,11 +38,11 @@ public class ReplyController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "댓글 작성")
     @ResponseStatus(HttpStatus.CREATED)
-    public ReplyDto saveReply(@AuthenticationPrincipal MemberDetails memberDetails,
-                              @RequestBody @Validated ReplySaveDto replySaveDto) {
+    public ReplyDetailDto saveReply(@AuthenticationPrincipal MemberDetails memberDetails,
+                                    @RequestBody @Validated ReplySaveDto replySaveDto) {
 
         replySaveDto.setWriter(memberDetails.getMemberId());
-        ReplyDto replyDto = replyService.saveReply(replySaveDto);
+        ReplyDetailDto replyDto = replyService.saveReply(replySaveDto);
 
 //        if (!replyDto.isAnonymous()) {
 //            sseNotificationService.notify(replyDto.getPostWriterId(), new NewReplyEvent(replyDto.getContent()));
@@ -65,8 +66,8 @@ public class ReplyController {
     @GetMapping("/replies/my")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "나의 댓글 목록 조회")
-    public SliceResponseDto<ReplyDto, Reply> getReplyList(@AuthenticationPrincipal MemberDetails memberDetails,
-                                                          @ParameterObject SliceRequestDto sliceRequestDto) {
+    public SliceResponseDto<MyReplyDto, Reply> getMyReplyList(@AuthenticationPrincipal MemberDetails memberDetails,
+                                                              @ParameterObject SliceRequestDto sliceRequestDto) {
         return replyService.getMyReplyList(memberDetails.getMemberId(), sliceRequestDto);
     }
 
@@ -81,9 +82,9 @@ public class ReplyController {
     @PatchMapping("/replies/{replyId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "댓글 수정")
-    public ReplyDto UpdateReply(@Parameter(in = ParameterIn.PATH, description = "댓글 번호") @PathVariable long replyId,
-                                @AuthenticationPrincipal MemberDetails memberDetails,
-                                @RequestBody @Validated ReplyUpdateDto replyUpdateDto) {
+    public ReplyDetailDto UpdateReply(@Parameter(in = ParameterIn.PATH, description = "댓글 번호") @PathVariable long replyId,
+                                      @AuthenticationPrincipal MemberDetails memberDetails,
+                                      @RequestBody @Validated ReplyUpdateDto replyUpdateDto) {
 
         replyUpdateDto.setReplyId(replyId);
         replyUpdateDto.setMemberId(memberDetails.getMemberId());

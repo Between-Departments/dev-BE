@@ -3,13 +3,11 @@ package com.gwakkili.devbe.reply.dto.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
+@Schema
 public class ReplyUpdateDto {
 
     @JsonIgnore
@@ -22,4 +20,8 @@ public class ReplyUpdateDto {
     @NotBlank
     @Length(max = 500)
     private String content;
+
+    public ReplyUpdateDto(String content) {
+        this.content = content;
+    }
 }

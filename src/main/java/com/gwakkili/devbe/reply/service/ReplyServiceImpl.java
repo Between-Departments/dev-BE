@@ -12,9 +12,10 @@ import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.repository.PostRepository;
-import com.gwakkili.devbe.reply.dto.response.ReplyDto;
 import com.gwakkili.devbe.reply.dto.request.ReplySaveDto;
 import com.gwakkili.devbe.reply.dto.request.ReplyUpdateDto;
+import com.gwakkili.devbe.reply.dto.response.MyReplyDto;
+import com.gwakkili.devbe.reply.dto.response.ReplyDetailDto;
 import com.gwakkili.devbe.reply.dto.response.ReportedReplyDto;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.entity.ReplyRecommend;
@@ -48,7 +49,7 @@ public class ReplyServiceImpl implements ReplyService {
     private final ApplicationEventPublisher publisher;
 
     @Override
-    public ReplyDto saveReply(ReplySaveDto replySaveDto) {
+    public ReplyDetailDto saveReply(ReplySaveDto replySaveDto) {
 
         Member writer = memberRepository.findWithImageByMemberId(replySaveDto.getWriter())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
@@ -62,37 +63,42 @@ public class ReplyServiceImpl implements ReplyService {
                 .build();
 
         Reply saveReply = replyRepository.save(reply);
-        return ReplyDto.of(saveReply, false);
+        return ReplyDetailDto.of(saveReply, false, true);
     }
 
 
     @Override
     @Transactional(readOnly = true)
-    public SliceResponseDto<ReplyDto, Reply> getReplyList(long postId, SliceRequestDto sliceResponseDto) {
+    public SliceResponseDto<ReplyDetailDto, Reply> getReplyList(long postId, SliceRequestDto sliceResponseDto) {
 
         Post post = postRepository.getReferenceById(postId);
         Slice<Reply> replyList = replyRepository.findByPost(post, sliceResponseDto.getPageable());
-        Function<Reply, ReplyDto> fn = (reply -> ReplyDto.of(reply, false));
+        Function<Reply, ReplyDetailDto> fn = (reply -> ReplyDetailDto.of(reply, false, false));
         return new SliceResponseDto(replyList, fn);
     }
 
     @Override
-    public SliceResponseDto<ReplyDto, Object[]> getReplyList(long postId, long memberId, SliceRequestDto sliceRequestDto) {
+    public SliceResponseDto<ReplyDetailDto, Object[]> getReplyList(long postId, long memberId, SliceRequestDto sliceRequestDto) {
         Post post = postRepository.getReferenceById(postId);
         Member member = memberRepository.getReferenceById(memberId);
         Slice<Object[]> replyList = replyRepository.findWithRecommendByPostAndMember(post, member, sliceRequestDto.getPageable());
-        Function<Object[], ReplyDto> fn = (objects -> ReplyDto.of((Reply) objects[0], (boolean) objects[1]));
+        Function<Object[], ReplyDetailDto> fn = (objects -> {
+            Reply reply = (Reply) objects[0];
+            boolean isRecommend = (boolean) objects[1];
+            boolean isMine = reply.getMember().getMemberId() == memberId;
+            return ReplyDetailDto.of(reply, isRecommend, isMine);
+        });
         return new SliceResponseDto<>(replyList, fn);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public SliceResponseDto<ReplyDto, Reply> getMyReplyList(long memberId, SliceRequestDto sliceResponseDto) {
+    public SliceResponseDto<MyReplyDto, Reply> getMyReplyList(long memberId, SliceRequestDto sliceResponseDto) {
 
         Member writer = memberRepository.getReferenceById(memberId);
         Slice<Reply> replyList = replyRepository.findByMember(writer, sliceResponseDto.getPageable());
         if (replyList.getNumberOfElements() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_REPLY);
-        Function<Reply, ReplyDto> fn = (reply -> ReplyDto.of(reply, false));
+        Function<Reply, MyReplyDto> fn = (MyReplyDto::of);
         return new SliceResponseDto(replyList, fn);
     }
 
@@ -107,18 +113,21 @@ public class ReplyServiceImpl implements ReplyService {
 
 
     @Override
-    public ReplyDto updateReply(ReplyUpdateDto replyUpdateDto) {
+    public ReplyDetailDto updateReply(ReplyUpdateDto replyUpdateDto) {
 
-        Reply reply = replyRepository.findById(replyUpdateDto.getReplyId())
+        long replyId = replyUpdateDto.getReplyId();
+        Member member = memberRepository.getReferenceById(replyUpdateDto.getMemberId());
+        Object[] objects = replyRepository.findWithRecommendByIdAndMember(replyId, member)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_REPLY));
-
+        Reply reply = (Reply) objects[0];
+        boolean isRecommend = (boolean) objects[1];
         // 현재 요청한 사용자가 글쓴이가 아닐경우
         if (reply.getMember().getMemberId() != replyUpdateDto.getMemberId())
             throw new AccessDeniedException("접근 거부");
 
         reply.setContent(replyUpdateDto.getContent());
 
-        return ReplyDto.of(reply, false);
+        return ReplyDetailDto.of(reply, isRecommend, true);
     }
 
     @Override

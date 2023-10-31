@@ -1,18 +1,13 @@
 package com.gwakkili.devbe.reply.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gwakkili.devbe.member.entity.Member;
-import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.reply.entity.Reply;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @Schema
 public class ReplySaveDto {
 
@@ -27,4 +22,13 @@ public class ReplySaveDto {
     @NotBlank
     private String content;
 
+    @Schema(description = "게시글 익명 여부")
+    private boolean isAnonymous;
+
+    @Builder
+    public ReplySaveDto(long postId, String content, boolean isAnonymous) {
+        this.postId = postId;
+        this.content = content;
+        this.isAnonymous = isAnonymous;
+    }
 }

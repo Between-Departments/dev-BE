@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReplyRecommend {
 
     @Id
@@ -26,8 +26,7 @@ public class ReplyRecommend {
     private Reply reply;
 
     @Builder
-    public ReplyRecommend(long ReplyRecommendId, Member member, Reply reply) {
-        this.ReplyRecommendId = ReplyRecommendId;
+    public ReplyRecommend(Member member, Reply reply) {
         this.member = member;
         this.reply = reply;
     }
