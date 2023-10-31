@@ -27,13 +27,7 @@ public class ReportedReplyDto extends ReplyDto {
                 .postId(reply.getPost().getPostId())
                 .content(reply.getContent())
                 .reportCount((int) reportCount)
-                .writer(
-                        SimpleMemberDto.builder()
-                                .memberId(reply.getMember().getMemberId())
-                                .imageUrl(reply.getMember().getImage().getThumbnailUrl())
-                                .nickname(reply.getMember().getNickname())
-                                .build()
-                )
+                .writer(new SimpleMemberDto(reply.getMember(), false))
                 .build();
     }
 }

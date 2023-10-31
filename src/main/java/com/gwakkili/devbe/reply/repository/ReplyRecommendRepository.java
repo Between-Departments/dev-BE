@@ -21,4 +21,6 @@ public interface ReplyRecommendRepository extends JpaRepository<ReplyRecommend, 
     @Modifying
     @Query("delete from ReplyRecommend rr where rr.reply in :replyList")
     void deleteByReplyIn(List<Reply> replyList);
+
+    boolean existsByReplyAndMember(Reply reply, Member member);
 }

@@ -17,14 +17,12 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     @EntityGraph(attributePaths = "recommendCount")
     @Query("select r, case when rr is null then false else true end " +
             "from Reply r join fetch r.member m join fetch m.image " +
-            "left join ReplyRecommend rr on rr.reply = r and r.member = :member where r.post = :post")
+            "left join ReplyRecommend rr on rr.reply = r and rr.member = :member where r.post = :post")
     Slice<Object[]> findWithRecommendByPostAndMember(Post post, Member member, Pageable pageable);
 
     @EntityGraph(attributePaths = "recommendCount")
-    @Query("select r, case when rr is null then false else true end " +
-            "from Reply r join fetch r.member m join fetch m.image " +
-            "left join ReplyRecommend rr on rr.reply = r and r.member = :member where r.replyId = :replyId")
-    Optional<Object[]> findWithRecommendByIdAndMember(long replyId, Member member);
+    @Query("select r from Reply r join fetch r.member m join fetch m.image where r.replyId = :replyId")
+    Optional<Reply> findWithMemberById(long replyId);
 
     @EntityGraph(attributePaths = "recommendCount")
     @Query("select r from Reply r join fetch r.member m join fetch m.image where r.post = :post")

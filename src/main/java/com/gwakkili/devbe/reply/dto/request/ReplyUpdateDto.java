@@ -3,11 +3,14 @@ package com.gwakkili.devbe.reply.dto.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 @Data
 @Schema
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReplyUpdateDto {
 
     @JsonIgnore

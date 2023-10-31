@@ -117,10 +117,10 @@ public class ReplyServiceImpl implements ReplyService {
 
         long replyId = replyUpdateDto.getReplyId();
         Member member = memberRepository.getReferenceById(replyUpdateDto.getMemberId());
-        Object[] objects = replyRepository.findWithRecommendByIdAndMember(replyId, member)
+        Reply reply = replyRepository.findWithMemberById(replyId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_REPLY));
-        Reply reply = (Reply) objects[0];
-        boolean isRecommend = (boolean) objects[1];
+
+        boolean isRecommend = replyRecommendRepository.existsByReplyAndMember(reply, member);
         // 현재 요청한 사용자가 글쓴이가 아닐경우
         if (reply.getMember().getMemberId() != replyUpdateDto.getMemberId())
             throw new AccessDeniedException("접근 거부");
