@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.post.dto.request;
 
 import com.gwakkili.devbe.post.entity.Post;
-import com.gwakkili.devbe.validation.Enum;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class FreePostSaveDto extends PostSaveDto{
 
-    @Enum(message = "Invalid Tag!")
+    @NotNull
     private Post.Tag tag;
 
 }
