@@ -26,11 +26,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/chat")
 @Tag(name = "Chat", description = "채팅 api")
-@Slf4j
 public class ChatController {
 
     private final ChatService chatService;
@@ -76,7 +76,9 @@ public class ChatController {
 
     @MessageMapping("/chat/rooms/{roomId}/message")
     @SendTo("/sub/chat/rooms/{roomId}")
-    public ChatMessageDto sendChatMessage(@DestinationVariable long roomId, Authentication authentication, SaveChatMessageDto saveChatMessageDto) {
+    public ChatMessageDto sendChatMessage(@DestinationVariable long roomId,
+                                          Authentication authentication,
+                                          SaveChatMessageDto saveChatMessageDto) {
         log.info("{}번 채팅방에 메시지 전송", roomId);
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         int memberNumInRoom = userRegistry.findSubscriptions(s -> s.getDestination().matches("/sub/chat/rooms/" + roomId)).size();

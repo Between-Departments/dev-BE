@@ -1,20 +1,17 @@
 package com.gwakkili.devbe.chat.dto.Response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.chat.entity.ChatRoom;
 import com.gwakkili.devbe.chat.entity.RecentChatMessage;
 import com.gwakkili.devbe.dto.SimpleMemberDto;
 import com.gwakkili.devbe.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Schema
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ChatRoomDto {
 
     @Schema(description = "채팅방 번호", example = "1")
@@ -24,6 +21,7 @@ public class ChatRoomDto {
     private SimpleMemberDto member;
 
     @Schema(description = "최근 채팅 메시지")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private ChatMessageDto recentChatMessage;
 
     @Schema(description = "않읽은 메시지 존재 여부")

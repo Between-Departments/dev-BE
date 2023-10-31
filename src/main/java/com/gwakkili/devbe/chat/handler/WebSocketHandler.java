@@ -66,7 +66,7 @@ public class WebSocketHandler implements ChannelInterceptor {
     private void subscribeChatRoom(StompHeaderAccessor headerAccessor) {
 
         // 채팅방 구독 요청 인지 검사
-        String url = "/api/sub/chat/rooms/{roomId}";
+        String url = "/sub/chat/rooms/{roomId}";
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         String destination = headerAccessor.getDestination();
         if (destination == null) throw new DestinationResolutionException("");

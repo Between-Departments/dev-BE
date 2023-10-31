@@ -5,11 +5,8 @@ import com.gwakkili.devbe.chat.dto.Request.SaveChatRoomDto;
 import com.gwakkili.devbe.chat.dto.Response.ChatMessageDto;
 import com.gwakkili.devbe.chat.dto.Response.ChatRoomDto;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
-import com.gwakkili.devbe.chat.entity.ChatRoom;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
-
-import java.util.List;
 
 public interface ChatService {
 

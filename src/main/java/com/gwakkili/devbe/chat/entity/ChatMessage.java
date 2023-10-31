@@ -3,13 +3,14 @@ package com.gwakkili.devbe.chat.entity;
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@ToString
 public class ChatMessage extends BaseEntity {
 
     @Id
@@ -18,12 +19,10 @@ public class ChatMessage extends BaseEntity {
     private long chatMessageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
     @JoinColumn(name = "sender_id", nullable = false)
     private Member sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
     @JoinColumn(name = "chat_room_id", nullable = false)
     private ChatRoom chatRoom;
 

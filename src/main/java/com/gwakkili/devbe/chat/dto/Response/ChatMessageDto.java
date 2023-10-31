@@ -8,8 +8,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Schema
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
