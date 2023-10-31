@@ -20,13 +20,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -67,10 +67,12 @@ public class PostController {
     })
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{postId}")
-    public PostDetailDto getPost(@PathVariable Long postId, HttpServletRequest req, HttpServletResponse res){
+    public PostDetailDto getPost(@PathVariable Long postId,
+                                 @AuthenticationPrincipal MemberDetails memberDetails,
+                                 HttpServletRequest req, HttpServletResponse res){
 
         boolean doViewCountUp = viewCountUp(postId, req, res);
-        return postService.findPostDto(postId, doViewCountUp);
+        return postService.findPostDto(postId, memberDetails != null ? memberDetails.getMemberId() : null, doViewCountUp);
     }
 
     private boolean viewCountUp(Long postId, HttpServletRequest req, HttpServletResponse res) {
@@ -157,7 +159,7 @@ public class PostController {
     @PostMapping("/free")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
-    public PostDetailDto create(@RequestBody @Validated FreePostSaveDto postSaveDto,
+    public PostDetailDto create(@RequestBody @Valid FreePostSaveDto postSaveDto,
                                 @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.saveNewFreePost(postSaveDto,memberDetails.getMemberId());
     }
@@ -169,7 +171,7 @@ public class PostController {
     @PostMapping("/needhelp")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
-    public PostDetailDto create(@RequestBody @Validated NeedHelpPostSaveDto postSaveDto,
+    public PostDetailDto create(@RequestBody @Valid NeedHelpPostSaveDto postSaveDto,
                                 @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.saveNewNeedHelpPost(postSaveDto,memberDetails.getMemberId());
     }
@@ -181,7 +183,7 @@ public class PostController {
     @PatchMapping("/{postId}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
-    public void update(@RequestBody @Validated PostUpdateDto postUpdateDto,
+    public void update(@RequestBody @Valid PostUpdateDto postUpdateDto,
                        @PathVariable Long postId,
                        @AuthenticationPrincipal MemberDetails memberDetails) {
         postService.updatePost(postUpdateDto, postId, memberDetails.getMemberId());

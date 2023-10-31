@@ -2,6 +2,7 @@ package com.gwakkili.devbe.post.dto.response;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.post.entity.Post;
 import lombok.Getter;
 import lombok.ToString;
@@ -24,7 +25,7 @@ public abstract class AbstractPostListDto {
 
     private Post.BoardType boardType;
 
-    private String majorCategory;
+    private Major.Category majorCategory;
 
     private Post.Tag tag;
 

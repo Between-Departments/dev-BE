@@ -3,6 +3,7 @@ package com.gwakkili.devbe.post.entity;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.image.entity.PostImage;
+import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,13 +36,14 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
 
-    private String major;
+    @Enumerated(EnumType.STRING)
+    private Major.Category majorCategory;
 
     @Enumerated(EnumType.STRING)
     private Tag tag;
 
     @BatchSize(size = 100)
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> images = new ArrayList<>();
 
     // TODO 어떻게 처리할 것인가에 대한 방법 논의 필요
@@ -58,10 +60,10 @@ public class Post extends BaseEntity {
     private Boolean isAnonymous;
 
     @Builder
-    public Post(Member writer, String major, BoardType boardType, Tag tag, String title, String content, Boolean isAnonymous) {
+    public Post(Member writer, BoardType boardType, Major.Category majorCategory, Tag tag, String title, String content, Boolean isAnonymous) {
         this.writer = writer;
-        this.major = major;
         this.boardType = boardType;
+        this.majorCategory = majorCategory;
         this.tag = tag;
         this.title = title;
         this.content = content;
@@ -79,6 +81,7 @@ public class Post extends BaseEntity {
     public void setReplyCount(long replyCount) {
         this.replyCount = replyCount;
     }
+
     public void addImages(List<String> imageUrls) {
         for (String imageUrl : imageUrls) {
             PostImage newPostImage = PostImage.builder()
@@ -90,12 +93,11 @@ public class Post extends BaseEntity {
         }
     }
 
-    public void update(String title, String content, BoardType boardType, Tag tag, String major, boolean isAnonymous, List<String> imageUrls) {
+    public void update(String title, String content, Major.Category majorCategory, Tag tag, Boolean isAnonymous, List<String> imageUrls) {
         this.title = title;
         this.content = content;
-        this.boardType = boardType;
+        this.majorCategory = majorCategory;
         this.tag = tag;
-        this.major = major;
         this.isAnonymous = isAnonymous;
 
         if(imageUrls != null) updateImages(imageUrls);

@@ -29,7 +29,8 @@ public class Major {
         ENGINEERING("공학 계열"),
         EDUCATION("교육 계열"),
         PHYSICAL("예체능 계열"),
-        MEDICAL("의학 계열");
+        MEDICAL("의학 계열"),
+        ETC("기타");
 
         private final String description;
 

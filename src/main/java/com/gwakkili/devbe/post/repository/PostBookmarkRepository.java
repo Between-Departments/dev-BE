@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface PostBookmarkRepository extends JpaRepository<PostBookmark, Long> {
     Optional<PostBookmark> findByMemberAndPost(Member member, Post post);
 
+    Boolean existsByMemberAndPost(Member member, Post post);
+
     @Modifying
     @Query("delete from PostBookmark pb where pb.member = :member")
     void deleteByMember(Member member);

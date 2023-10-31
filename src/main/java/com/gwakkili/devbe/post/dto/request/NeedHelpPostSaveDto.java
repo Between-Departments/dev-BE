@@ -2,7 +2,7 @@ package com.gwakkili.devbe.post.dto.request;
 
 
 import com.gwakkili.devbe.major.entity.Major;
-import com.gwakkili.devbe.validation.Enum;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class NeedHelpPostSaveDto extends PostSaveDto{
 
-    @Enum(message = "Invalid MajorCategory!")
+    @NotNull
     private Major.Category majorCategory;
 
 }

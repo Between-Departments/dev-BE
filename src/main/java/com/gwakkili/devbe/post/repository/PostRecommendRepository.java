@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface PostRecommendRepository extends JpaRepository<PostRecommend, Long> {
     Optional<PostRecommend> findByMemberAndPost(Member member, Post post);
 
+    Boolean existsByMemberAndPost(Member member, Post post);
+
     @Modifying
     @Query("delete from PostRecommend pr where pr.member = :member")
     void deleteByMember(Member member);

@@ -3,6 +3,7 @@ package com.gwakkili.devbe.post.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gwakkili.devbe.dto.SimpleMemberDto;
 import com.gwakkili.devbe.image.entity.PostImage;
+import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.post.entity.Post;
 import lombok.Getter;
 import lombok.ToString;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BasicPostListDto extends AbstractPostListDto {
 
-
     private SimpleMemberDto writer;
 
     private boolean isAnonymous;
@@ -31,18 +31,19 @@ public class BasicPostListDto extends AbstractPostListDto {
                 .title(post.getTitle())
                 .content(post.getContent().length() > 40 ? post.getContent().substring(0,40) +"..." : post.getContent())
                 .boardType(post.getBoardType())
-                .majorCategory(Post.BoardType.NEED_HELP.equals(post.getBoardType()) ? post.getMajor() : null)
+                .majorCategory(Post.BoardType.NEED_HELP.equals(post.getBoardType()) ? post.getMajorCategory() : null)
+                .tag(Post.BoardType.FREE.equals(post.getBoardType())? post.getTag() : null)
+                .thumbnailImages(thumbnailImages)
                 .viewCount(post.getViewCount())
                 .recommendCount(post.getRecommendCount())
                 .replyCount(post.getReplyCount())
                 .createAt(post.getCreateAt())
                 .writer(Post.BoardType.NEED_HELP.equals(post.getBoardType()) ? null : new SimpleMemberDto(post.getWriter(), post.getIsAnonymous()))
-                .thumbnailImages(thumbnailImages)
                 .isAnonymous(post.getIsAnonymous())
                 .build();
     }
 
-    public static BasicPostListDto of(Long postId, String title, String majorCategory, LocalDateTime createAt) {
+    public static BasicPostListDto of(Long postId, String title, Major.Category majorCategory, LocalDateTime createAt) {
         return BasicPostListDto.builder()
                 .postId(postId)
                 .title(title)
