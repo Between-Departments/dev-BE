@@ -1,6 +1,7 @@
-package com.gwakkili.devbe.validation;
+package com.gwakkili.devbe.validation.validator;
 
 import com.gwakkili.devbe.major.repository.MajorRepository;
+import com.gwakkili.devbe.validation.annotation.Major;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;

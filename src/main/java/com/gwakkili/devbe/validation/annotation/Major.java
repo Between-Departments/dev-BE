@@ -1,6 +1,7 @@
-package com.gwakkili.devbe.validation;
+package com.gwakkili.devbe.validation.annotation;
 
 
+import com.gwakkili.devbe.validation.validator.MajorValidator;
 import jakarta.validation.Constraint;
 
 import java.lang.annotation.ElementType;

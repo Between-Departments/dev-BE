@@ -1,5 +1,6 @@
-package com.gwakkili.devbe.validation;
+package com.gwakkili.devbe.validation.annotation;
 
+import com.gwakkili.devbe.validation.validator.MailMissMatchValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -10,10 +11,10 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PasswordConfirmValidator.class)
-public @interface PasswordConfirm {
+@Constraint(validatedBy = MailMissMatchValidator.class)
+public @interface MailMissMatch {
 
-    String message() default "비밀번호와 비밀번호 확인이 일치하지 않습니다.";
+    String message() default "해당 학교의 메일이 아닙니다.";
 
     Class<?>[] groups() default {};
 

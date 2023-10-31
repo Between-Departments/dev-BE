@@ -1,5 +1,6 @@
-package com.gwakkili.devbe.validation;
+package com.gwakkili.devbe.validation.annotation;
 
+import com.gwakkili.devbe.validation.validator.NicknameDuplicateValidator;
 import jakarta.validation.Constraint;
 
 import java.lang.annotation.ElementType;

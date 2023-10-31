@@ -1,27 +1,21 @@
-package com.gwakkili.devbe.validation;
+package com.gwakkili.devbe.validation.validator;
 
-import com.gwakkili.devbe.school.service.SchoolService;
+import com.gwakkili.devbe.validation.annotation.PasswordConfirm;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 
-@Component
-@RequiredArgsConstructor
 @Slf4j
-public class MailMissMatchValidator implements ConstraintValidator<MailMissMatch, Object> {
+public class PasswordConfirmValidator implements ConstraintValidator<PasswordConfirm, Object> {
 
-    private final SchoolService schoolService;
-
+    private String message;
     private String fieldName1;
     private String fieldName2;
-    private String message;
 
     @Override
-    public void initialize(MailMissMatch constraintAnnotation) {
+    public void initialize(PasswordConfirm constraintAnnotation) {
         message = constraintAnnotation.message();
         fieldName1 = constraintAnnotation.fieldName1();
         fieldName2 = constraintAnnotation.fieldName2();
@@ -29,10 +23,10 @@ public class MailMissMatchValidator implements ConstraintValidator<MailMissMatch
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        String school = getFieldValue(value, fieldName1);
-        String mail = getFieldValue(value, fieldName2);
-        String schoolMail = schoolService.getSchoolMail(school);
-        if (schoolMail != null && !schoolMail.equals(mail.split("@")[1])) {
+
+        String password = getFieldValue(value, fieldName1);
+        String passwordConfirm = getFieldValue(value, fieldName2);
+        if (!password.equals(passwordConfirm)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(message)
                     .addPropertyNode(fieldName2)

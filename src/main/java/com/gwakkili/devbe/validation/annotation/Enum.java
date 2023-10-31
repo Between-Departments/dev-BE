@@ -1,5 +1,6 @@
-package com.gwakkili.devbe.validation;
+package com.gwakkili.devbe.validation.annotation;
 
+import com.gwakkili.devbe.validation.validator.EnumValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -8,18 +9,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.TYPE)
+@Constraint(validatedBy = EnumValidator.class)
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = MailMissMatchValidator.class)
-public @interface MailMissMatch {
+public @interface Enum {
 
-    String message() default "해당 학교의 메일이 아닙니다.";
+    String message() default "Invalid Enum Value!";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    String fieldName1();
-
-    String fieldName2();
 }

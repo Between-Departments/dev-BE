@@ -1,5 +1,6 @@
-package com.gwakkili.devbe.validation;
+package com.gwakkili.devbe.validation.validator;
 
+import com.gwakkili.devbe.validation.annotation.Enum;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
