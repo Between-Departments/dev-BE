@@ -62,7 +62,7 @@ public class JwtServiceTests extends DevBeApplicationTests {
                 .setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
 
         //then
-        Assertions.assertThat(claims.getSubject()).isEqualTo(memberDetails.getUsername());
+        Assertions.assertThat(claims.get("mail").toString()).isEqualTo(memberDetails.getUsername());
     }
 
     @Test

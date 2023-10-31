@@ -1,12 +1,10 @@
 package com.gwakkili.devbe.chat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.chat.dto.Request.SaveChatRoomDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +26,8 @@ public class SaveChatRoomTests extends DevBeApplicationTests {
     public void success() throws Exception {
         //given
         long memberId = 2;
-        SaveChatRoomDto saveChatRoomDto = SaveChatRoomDto.builder()
-                .memberId(memberId)
-                .build();
+        SaveChatRoomDto saveChatRoomDto = new SaveChatRoomDto(memberId);
+
         String content = objectMapper.writeValueAsString(saveChatRoomDto);
 
         //when, then
@@ -47,9 +44,8 @@ public class SaveChatRoomTests extends DevBeApplicationTests {
     public void failByDuplicateChatRoom() throws Exception {
         //given
         long memberId = 2;
-        SaveChatRoomDto saveChatRoomDto = SaveChatRoomDto.builder()
-                .memberId(memberId)
-                .build();
+        SaveChatRoomDto saveChatRoomDto = new SaveChatRoomDto(memberId);
+
         String content = objectMapper.writeValueAsString(saveChatRoomDto);
 
         //when, then
@@ -66,9 +62,8 @@ public class SaveChatRoomTests extends DevBeApplicationTests {
     public void failByNotFoundMember() throws Exception {
         //given
         long memberId = 1000;
-        SaveChatRoomDto saveChatRoomDto = SaveChatRoomDto.builder()
-                .memberId(memberId)
-                .build();
+        SaveChatRoomDto saveChatRoomDto = new SaveChatRoomDto(memberId);
+
         String content = objectMapper.writeValueAsString(saveChatRoomDto);
 
         //when, then

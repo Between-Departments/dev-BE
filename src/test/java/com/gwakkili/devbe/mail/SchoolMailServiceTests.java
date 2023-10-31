@@ -53,7 +53,7 @@ public class SchoolMailServiceTests {
             given(schoolRepository.existsByMail(anyString())).willReturn(true);
 
             //when, then
-            mailService.send(mail);
+            mailService.sendMail(mail);
         }
 
         @Test
@@ -64,7 +64,7 @@ public class SchoolMailServiceTests {
             given(schoolRepository.existsByMail(anyString())).willReturn(false);
 
             //when, then
-            Assertions.assertThatThrownBy(() -> mailService.send(mail)).isInstanceOf(UnsupportedException.class);
+            Assertions.assertThatThrownBy(() -> mailService.sendMail(mail)).isInstanceOf(UnsupportedException.class);
         }
     }
 

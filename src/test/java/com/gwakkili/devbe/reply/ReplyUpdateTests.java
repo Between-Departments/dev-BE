@@ -30,7 +30,7 @@ public class ReplyUpdateTests extends DevBeApplicationTests {
 
         //given
         long replyId = 1;
-        ReplyUpdateDto replyUpdateDto = ReplyUpdateDto.builder().content("update").build();
+        ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto("update");
         String content = objectMapper.writeValueAsString(replyUpdateDto);
 
         //when, then
@@ -45,7 +45,7 @@ public class ReplyUpdateTests extends DevBeApplicationTests {
     @WithMockMember(memberId = 5)
     public void failByAccessDenied() throws Exception {
         long replyId = 1;
-        ReplyUpdateDto replyUpdateDto = ReplyUpdateDto.builder().content("update").build();
+        ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto("update");
         String content = objectMapper.writeValueAsString(replyUpdateDto);
 
         //when, then
@@ -62,7 +62,7 @@ public class ReplyUpdateTests extends DevBeApplicationTests {
     public void failByInvalid() throws Exception {
         long replyId = 1;
         String str = IntStream.rangeClosed(1, 100).mapToObj(String::valueOf).collect(Collectors.joining());
-        ReplyUpdateDto replyUpdateDto = ReplyUpdateDto.builder().content(str).build();
+        ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto(str);
         String content = objectMapper.writeValueAsString(replyUpdateDto);
 
         //when, then

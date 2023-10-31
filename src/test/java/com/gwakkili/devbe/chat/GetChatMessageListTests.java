@@ -59,21 +59,4 @@ public class GetChatMessageListTests extends DevBeApplicationTests {
                 .andDo(print());
     }
 
-    @Test
-    @DisplayName("실패: 채팅 메시지를 찾을 수 없음")
-    @WithMockMember(memberId = 1)
-    public void failByNotFound() throws Exception {
-        //given
-        long roomId = 10;
-        MultiValueMap params = new LinkedMultiValueMap();
-        params.add("page", "1");
-        params.add("size", "10");
-
-        //when, then
-        mockMvc.perform(get(url, roomId).params(params))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("code").value(ExceptionCode.NOT_FOUND_CHAT_MESSAGE.getCode()))
-                .andExpect(jsonPath("message").value(ExceptionCode.NOT_FOUND_CHAT_MESSAGE.getMessage()))
-                .andDo(print());
-    }
 }

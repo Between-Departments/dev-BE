@@ -1,23 +1,18 @@
 package com.gwakkili.devbe.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gwakkili.devbe.DevBeApplicationTests;
-import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
-import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -41,15 +36,15 @@ public class MailPasswordAuthenticationTests extends DevBeApplicationTests {
 
         private String uri = "/api/login";
 
-        private Member makeMember(boolean locked){
-            return   Member.builder()
+        private Member makeMember(boolean locked) {
+            Member member = Member.builder()
                     .mail("member@test.com")
                     .nickname("member")
-                    .roles(Set.of(Member.Role.ROLE_USER))
                     .password(passwordEncoder.encode("1111"))
-                    .locked(locked)
                     .build();
-
+            member.addRole(Member.Role.ROLE_USER);
+            member.setLocked(locked);
+            return member;
         }
 
         @Test

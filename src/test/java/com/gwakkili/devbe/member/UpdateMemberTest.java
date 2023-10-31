@@ -77,10 +77,9 @@ public class UpdateMemberTest extends DevBeApplicationTests {
         @Test
         @DisplayName("변경 성공")
         public void success() throws Exception {
-            UpdateNicknameAndImageDto updateNicknameAndImageDto = UpdateNicknameAndImageDto.builder()
-                    .nickname("name2")
-                    .imageUrl("http://images/image1.jpg")
-                    .build();
+            UpdateNicknameAndImageDto updateNicknameAndImageDto =
+                    new UpdateNicknameAndImageDto("name2", "http://images/image1.jpg");
+
             String content = objectMapper.writeValueAsString(updateNicknameAndImageDto);
             mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
                     .andExpect(status().isOk())
@@ -91,10 +90,9 @@ public class UpdateMemberTest extends DevBeApplicationTests {
         @Test
         @DisplayName("변경 실퍠: 유효성 검사 실패")
         public void failByInvalidTest() throws Exception {
-            UpdateNicknameAndImageDto updateNicknameAndImageDto = UpdateNicknameAndImageDto.builder()
-                    .nickname("테스트멤버")
-                    .imageUrl("rrere")
-                    .build();
+            UpdateNicknameAndImageDto updateNicknameAndImageDto =
+                    new UpdateNicknameAndImageDto("테스트멤버", "rrere");
+
             String content = objectMapper.writeValueAsString(updateNicknameAndImageDto);
             mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
                     .andExpect(status().isBadRequest())
@@ -123,10 +121,8 @@ public class UpdateMemberTest extends DevBeApplicationTests {
         public void success() throws Exception {
             //given
             String newMail = "testUdate@test3.ac.kr";
-            UpdateSchoolDto updateSchoolDto = UpdateSchoolDto.builder()
-                    .newMail(newMail)
-                    .school("테스트대학3")
-                    .build();
+            UpdateSchoolDto updateSchoolDto = new UpdateSchoolDto(newMail, "테스트대학3");
+
             saveMailAuthCode(newMail);
             //when, then
             String content = objectMapper.writeValueAsString(updateSchoolDto);
@@ -139,10 +135,7 @@ public class UpdateMemberTest extends DevBeApplicationTests {
         @DisplayName("변경 실퍠: 유효성 검사 실패")
         public void failByInvalidTest() throws Exception {
             String newMail = "test3@test1.ac.kr";
-            UpdateSchoolDto updateSchoolDto = UpdateSchoolDto.builder()
-                    .newMail(newMail)
-                    .school("없는대학")
-                    .build();
+            UpdateSchoolDto updateSchoolDto = new UpdateSchoolDto(newMail, "없는대학");
             String content = objectMapper.writeValueAsString(updateSchoolDto);
             mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
                     .andExpect(status().isBadRequest())
@@ -160,7 +153,7 @@ public class UpdateMemberTest extends DevBeApplicationTests {
         @Test
         @DisplayName("변경 성공")
         public void success() throws Exception {
-            UpdateMajorDto updateMajorDto = UpdateMajorDto.builder().major("테스트학과1").build();
+            UpdateMajorDto updateMajorDto = new UpdateMajorDto("테스트학과1");
             String content = objectMapper.writeValueAsString(updateMajorDto);
             mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
                     .andExpect(status().isOk())
@@ -171,7 +164,7 @@ public class UpdateMemberTest extends DevBeApplicationTests {
         @DisplayName("변경 실퍠: 유효성 검사 실패")
         @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!")
         public void failByInvalidTest() throws Exception {
-            UpdateMajorDto updateMajorDto = UpdateMajorDto.builder().major("없는학과").build();
+            UpdateMajorDto updateMajorDto = new UpdateMajorDto("없는학과");
             String content = objectMapper.writeValueAsString(updateMajorDto);
             mockMvc.perform(patch(url).contentType(MediaType.APPLICATION_JSON).content(content))
                     .andExpect(status().isBadRequest())

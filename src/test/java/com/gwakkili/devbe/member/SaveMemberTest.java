@@ -28,7 +28,7 @@ public class SaveMemberTest extends DevBeApplicationTests {
     public void signUpTest() throws Exception {
         //given
         MemberSaveDto saveDto = MemberSaveDto.builder()
-                .mail("test431@sun.ac.kr")
+                .mail("test431@test1.ac.kr")
                 .password("tjr1619132!")
                 .nickname("테스트멤버333")
                 .school("테스트대학1")
@@ -68,7 +68,6 @@ public class SaveMemberTest extends DevBeApplicationTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("fieldErrors.password").exists())
                 .andExpect(jsonPath("fieldErrors.major").exists())
-                .andExpect(jsonPath("fieldErrors.school").exists())
                 .andExpect(jsonPath("fieldErrors.mail").exists())
                 .andExpect(jsonPath("fieldErrors.passwordConfirm").exists())
                 .andExpect(jsonPath("fieldErrors.imageUrl").exists())

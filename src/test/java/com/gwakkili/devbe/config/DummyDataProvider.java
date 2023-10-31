@@ -137,7 +137,7 @@ public class DummyDataProvider implements ApplicationRunner {
                 .school("테스트대학1")
                 .build();
         member.addRole(Member.Role.ROLE_MANAGER);
-        member.setImage(MemberImage.builder().url("http://test.com/images/memberImage.jpg").build());
+        member.setImage(new MemberImage("http://test.com/images/memberImage.jpg"));
         memberRepository.save(member);
 
         List<Member> members = new ArrayList<>();
@@ -150,7 +150,7 @@ public class DummyDataProvider implements ApplicationRunner {
                     .school("테스트대학" + new Random().nextInt(1, 10))
                     .build();
             member2.addRole(Member.Role.ROLE_USER);
-            member2.setImage(MemberImage.builder().url("http://test.com/images/memberImage" + i + ".jpg").build());
+            member2.setImage(new MemberImage("http://test.com/images/memberImage" + i + ".jpg"));
             members.add(member2);
         });
         memberRepository.saveAll(members);
@@ -338,17 +338,17 @@ public class DummyDataProvider implements ApplicationRunner {
     //* 테스트용 채팅방 -> 총 10개, 마지막 채팅방에는 메시지 X
     private void saveChatRoom() {
         List<ChatRoom> chatRooms = new ArrayList<>();
-        IntStream.rangeClosed(2, 11).forEach(i -> {
+        LongStream.rangeClosed(2, 11).forEach(i -> {
             ChatRoom chatRoom;
             if (i % 2 == 0) {
                 chatRoom = ChatRoom.builder()
-                        .master(Member.builder().memberId(1).build())
-                        .member(Member.builder().memberId(i).build())
+                        .master(memberRepository.getReferenceById(1L))
+                        .member(memberRepository.getReferenceById(i))
                         .build();
             } else {
                 chatRoom = ChatRoom.builder()
-                        .master(Member.builder().memberId(i).build())
-                        .member(Member.builder().memberId(1).build())
+                        .master(memberRepository.getReferenceById(i))
+                        .member(memberRepository.getReferenceById(1L))
                         .build();
             }
             chatRooms.add(chatRoom);
