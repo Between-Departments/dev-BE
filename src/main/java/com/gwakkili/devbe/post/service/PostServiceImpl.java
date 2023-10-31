@@ -268,7 +268,7 @@ public class PostServiceImpl implements PostService{
         LocalDateTime start = end.minusDays(1);
 
         List<Object[]> postList = postRepository.findDailyHot(start, end);
-        Function<Object[], BasicPostListDto> fn = (object -> BasicPostListDto.of((Long)object[0],(String) object[1],(Major.Category)object[2],((Timestamp) object[3]).toLocalDateTime()));
+        Function<Object[], BasicPostListDto> fn = (object -> BasicPostListDto.of((Long)object[0],(String) object[1],Major.Category.valueOf((String)object[2]),((Timestamp) object[3]).toLocalDateTime()));
         return new ListResponseDto<>(postList, fn);
     }
 }
