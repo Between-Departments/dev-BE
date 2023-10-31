@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.config;
 
-import com.gwakkili.devbe.chat.handler.WebSocketHandler;
 import com.gwakkili.devbe.chat.handler.WebSocketErrorHandler;
+import com.gwakkili.devbe.chat.handler.WebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;

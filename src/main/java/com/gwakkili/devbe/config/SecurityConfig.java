@@ -1,9 +1,10 @@
 package com.gwakkili.devbe.config;
+
+import com.gwakkili.devbe.security.filter.JwtAuthorizationFilter;
 import com.gwakkili.devbe.security.filter.JwtLogoutFilter;
+import com.gwakkili.devbe.security.filter.MailPasswordAuthenticationFilter;
 import com.gwakkili.devbe.security.filter.RefreshTokenAuthenticationFilter;
 import com.gwakkili.devbe.security.service.JwtService;
-import com.gwakkili.devbe.security.filter.MailPasswordAuthenticationFilter;
-import com.gwakkili.devbe.security.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
