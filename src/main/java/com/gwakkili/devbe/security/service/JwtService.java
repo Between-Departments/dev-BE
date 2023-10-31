@@ -1,7 +1,7 @@
 package com.gwakkili.devbe.security.service;
 
-import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.member.entity.Member;
+import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.security.entity.RefreshToken;
 import com.gwakkili.devbe.security.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
@@ -19,7 +19,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -151,7 +154,7 @@ public class JwtService {
         return "INVALID";
     }
 
-    public long getRefreshTokenExpireTime() {
-        return REFRESH_TOKEN_EXPIRE_TIME;
+    public int getRefreshTokenExpireTime() {
+        return (int) REFRESH_TOKEN_EXPIRE_TIME / 1000;
     }
 }

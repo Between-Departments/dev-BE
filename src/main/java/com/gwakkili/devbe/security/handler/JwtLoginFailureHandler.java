@@ -1,15 +1,15 @@
 package com.gwakkili.devbe.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwakkili.devbe.exception.ExceptionResponseBuilder;
-import com.gwakkili.devbe.exception.dto.ExceptionDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.exception.ExceptionResponseBuilder;
 import com.gwakkili.devbe.exception.customExcption.JwtException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;

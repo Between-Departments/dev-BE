@@ -1,10 +1,7 @@
 package com.gwakkili.devbe.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gwakkili.devbe.exception.ExceptionResponseBuilder;
-import com.gwakkili.devbe.exception.dto.ExceptionDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
-import com.gwakkili.devbe.exception.customExcption.JwtException;
+import com.gwakkili.devbe.exception.ExceptionResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +20,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException exception) throws IOException{
 
-        if(exception instanceof JwtException e){
-            exceptionResponseBuilder.setHttpResponse(response, e.getExceptionCode());
-        }else {
-            exceptionResponseBuilder.setHttpResponse(response, ExceptionCode.UNAUTHORIZED);
-        }
+        exceptionResponseBuilder.setHttpResponse(response, ExceptionCode.UNAUTHORIZED);
     }
 }

@@ -1,20 +1,18 @@
 package com.gwakkili.devbe.security.dto;
 
 import com.gwakkili.devbe.member.entity.Member;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class MemberDetails implements UserDetails {
 
@@ -26,7 +24,7 @@ public class MemberDetails implements UserDetails {
 
     private boolean locked;
 
-    private Set<Member.Role> roles = new HashSet<>();
+    private Set<Member.Role> roles;
 
     private LocalDateTime createAt;
 

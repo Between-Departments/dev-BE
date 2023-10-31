@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import java.io.IOException;
 
 @Slf4j
-// access token을 이용하여
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final JwtService jwtService;

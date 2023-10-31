@@ -29,7 +29,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         ResponseCookie responseCookie = ResponseCookie.from("RefreshToken", refreshToken)
                 .path("/")
-                .maxAge((int) jwtService.getRefreshTokenExpireTime() / 1000)
+                .maxAge(jwtService.getRefreshTokenExpireTime())
                 .sameSite("None")
                 .secure(true)
                 .httpOnly(true)
