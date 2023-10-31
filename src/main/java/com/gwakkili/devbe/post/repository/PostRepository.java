@@ -14,6 +14,10 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    @EntityGraph(attributePaths = {"images"})
+    @Override
+    Optional<Post> findById(Long postId);
+
     // * 단건 게시물 조회
     @EntityGraph(attributePaths = {"images", "recommendCount", "replyCount"})
     @Query("select p from Post p join fetch p.writer w join fetch w.image where p.postId =:postId")

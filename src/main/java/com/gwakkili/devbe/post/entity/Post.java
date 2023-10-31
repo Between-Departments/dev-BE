@@ -13,6 +13,7 @@ import org.hibernate.annotations.Formula;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -43,7 +44,7 @@ public class Post extends BaseEntity {
     private Tag tag;
 
     @BatchSize(size = 100)
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<PostImage> images = new ArrayList<>();
 
     // TODO 어떻게 처리할 것인가에 대한 방법 논의 필요
@@ -105,17 +106,14 @@ public class Post extends BaseEntity {
 
 
     private void updateImages(List<String> imageUrls) {
-        ArrayList<PostImage> updatedImages = new ArrayList<>();
+        this.images.clear();
 
-        for (String imageUrl : imageUrls) {
-            PostImage newPostImage = PostImage.builder()
-                    .post(this)
-                    .url(imageUrl)
-                    .build();
-            updatedImages.add(newPostImage);
-        }
+        List<PostImage> updateImages = imageUrls.stream().map(imageUrl -> PostImage.builder()
+                .post(this)
+                .url(imageUrl)
+                .build()).collect(Collectors.toList());
 
-        this.images = updatedImages;
+        this.images.addAll(updateImages);
     }
 
     @RequiredArgsConstructor
