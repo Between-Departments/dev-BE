@@ -91,9 +91,15 @@ public class PostController {
         // ! 조회 정보를 담은 쿠키에 해당 게시물의 아이디가 없는 경우
         if (oldCookie != null){
             if(!oldCookie.getValue().contains("["+ postId.toString() +"]")){
-                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
-                oldCookie.setMaxAge(Long.valueOf(getExpiration().getSeconds()).intValue());
-                res.addCookie(oldCookie);
+                ResponseCookie newCookie = ResponseCookie.from("postView",oldCookie.getValue() + "_[" + postId + "]")
+                        .path("/")
+                        .maxAge(getExpiration())
+                        .httpOnly(true)
+                        .secure(true)
+                        .sameSite("None")
+                        .build();
+
+                res.addHeader("Set-Cookie",newCookie.toString());
                 return true;
             } else{
                 return false;
