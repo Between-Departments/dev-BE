@@ -182,10 +182,10 @@ public class DummyDataProvider implements ApplicationRunner {
             posts.add(freePost);
 
             Post needHelpPost = Post.builder()
-                    .title("NeedHelpPostTitle"+ i)
-                    .content("NeedHelpPostContent"+i)
+                    .title("NeedHelpPostTitle" + i)
+                    .content("NeedHelpPostContent" + i)
                     .boardType(Post.BoardType.NEED_HELP)
-                    .major(String.valueOf(Major.Category.values()[new Random().nextInt(Major.Category.values().length)]))
+                    .majorCategory(Major.Category.values()[new Random().nextInt(Major.Category.values().length)])
                     .writer(memberRepository.getReferenceById((long) i+1))
                     .isAnonymous(false)
                     .build();
@@ -214,10 +214,10 @@ public class DummyDataProvider implements ApplicationRunner {
 
             } else{
                 Post anonymoustNeedHelpPost = Post.builder()
-                        .title("NeedHelpPostTitle"+ i)
-                        .content("NeedHelpPostContent"+i)
+                        .title("NeedHelpPostTitle" + i)
+                        .content("NeedHelpPostContent" + i)
                         .boardType(Post.BoardType.NEED_HELP)
-                        .major(String.valueOf(Major.Category.values()[new Random().nextInt(Major.Category.values().length)]))
+                        .majorCategory(Major.Category.values()[new Random().nextInt(Major.Category.values().length)])
                         .writer(memberRepository.getReferenceById((long) i+1))
                         .isAnonymous(true)
                         .build();
