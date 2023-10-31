@@ -9,6 +9,7 @@ import com.gwakkili.devbe.event.DeletePostEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
+import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
 import com.gwakkili.devbe.post.dto.request.FreePostSaveDto;
@@ -63,7 +64,7 @@ public class PostServiceImpl implements PostService{
                 .content(postSaveDto.getContent())
                 .writer(writer)
                 .boardType(Post.BoardType.FREE)
-                .major(null)
+                .majorCategory(null)
                 .tag(postSaveDto.getTag())
                 .isAnonymous(postSaveDto.getIsAnonymous())
                 .build();
@@ -84,7 +85,7 @@ public class PostServiceImpl implements PostService{
                 .content(postSaveDto.getContent())
                 .writer(writer)
                 .boardType(Post.BoardType.NEED_HELP)
-                .major(String.valueOf(postSaveDto.getMajorCategory()))
+                .majorCategory(postSaveDto.getMajorCategory())
                 .tag(null)
                 .isAnonymous(postSaveDto.getIsAnonymous())
                 .build();
@@ -106,7 +107,7 @@ public class PostServiceImpl implements PostService{
         }
 
         // ! 이미지 교체 로직 쿼리 갯수 확인 필요 -> imageUrls Lazy Loading 확인
-        findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(),postUpdateDto.getBoardType(), postUpdateDto.getTag(), String.valueOf(postUpdateDto.getMajorCategory()), postUpdateDto.isAnonymous(),postUpdateDto.getImageUrls());
+        findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getMajorCategory(), postUpdateDto.getTag(), postUpdateDto.isAnonymous(),postUpdateDto.getImageUrls());
     }
     @Override
     @Transactional
@@ -119,6 +120,11 @@ public class PostServiceImpl implements PostService{
             // ! 게시글을 삭제하려는 사용자가 글 작성자 본인 또는 ADMIN이 아닐 경우
             throw new CustomException(ExceptionCode.ACCESS_DENIED);
         }
+
+        // ! Post를 삭제하면 PostImage, PostRecommend, PostBookmark, PostReport, Reply도 삭제하게 해야함.
+        // ! Post 삭제에 의해 Reply가 삭제되면, ReplyReport, ReplyRecommend도 삭제되어야함.
+        // TODO @OnDelete로 지우기
+//        publisher.publishEvent(new PostDeleteEvent(findPost.getPostId()));
         postRepository.delete(findPost);
     }
 
@@ -184,13 +190,26 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public PostDetailDto findPostDto(Long postId, boolean doCountUp) {
+    public PostDetailDto findPostDto(Long postId, Long memberId, boolean doCountUp) {
         Post findPost = postRepository.findWithDetailByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
         if(doCountUp) findPost.addViewCount();
+        PostDetailDto postDetailDto = PostDetailDto.of(findPost);
 
-        return PostDetailDto.of(findPost);
+        Optional<Member> findMember = Optional.ofNullable(memberId).map(memberRepository::getReferenceById);
+
+        findMember.ifPresentOrElse(member -> {
+            postDetailDto.setRecommended(postRecommendRepository.existsByMemberAndPost(member, findPost));
+            postDetailDto.setBookmarked(postBookmarkRepository.existsByMemberAndPost(member,findPost));
+            postDetailDto.setMine(member.getMemberId() == findPost.getWriter().getMemberId());
+        },() -> {
+            postDetailDto.setRecommended(Boolean.FALSE);
+            postDetailDto.setBookmarked(Boolean.FALSE);
+            postDetailDto.setMine(Boolean.FALSE);
+        });
+
+        return postDetailDto;
     }
 
 
@@ -248,7 +267,7 @@ public class PostServiceImpl implements PostService{
         LocalDateTime start = end.minusDays(1);
 
         List<Object[]> postList = postRepository.findDailyHot(start, end);
-        Function<Object[], BasicPostListDto> fn = (object -> BasicPostListDto.of((Long)object[0],(String) object[1],(String)object[2],((Timestamp) object[3]).toLocalDateTime()));
+        Function<Object[], BasicPostListDto> fn = (object -> BasicPostListDto.of((Long)object[0],(String) object[1],(Major.Category)object[2],((Timestamp) object[3]).toLocalDateTime()));
         return new ListResponseDto<>(postList, fn);
     }
 }

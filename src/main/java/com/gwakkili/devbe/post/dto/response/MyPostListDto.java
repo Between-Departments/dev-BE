@@ -19,10 +19,12 @@ public class MyPostListDto extends AbstractPostListDto{
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .content(post.getContent().length() > 40 ? post.getContent().substring(0,40) +"..." : post.getContent())
-                .majorCategory(Post.BoardType.NEED_HELP.equals(post.getBoardType()) ? post.getMajor() : null)
+                .majorCategory(Post.BoardType.NEED_HELP.equals(post.getBoardType()) ? post.getMajorCategory() : null)
+                .tag(Post.BoardType.FREE.equals(post.getBoardType())? post.getTag() : null)
+                .thumbnailImages(thumbnailImages)
                 .viewCount(post.getViewCount())
                 .recommendCount(post.getRecommendCount())
-                .thumbnailImages(thumbnailImages)
+                .replyCount(post.getReplyCount())
                 .createAt(post.getCreateAt())
                 .build();
     }

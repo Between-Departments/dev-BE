@@ -84,7 +84,7 @@ public class PostQueryRepository {
     }
 
     private BooleanExpression majorCategoryEq(Major.Category majorCategory) {
-        return majorCategory == null ? null : post.major.eq(majorCategory.toString());
+        return majorCategory == null ? null : post.majorCategory.eq(majorCategory);
     }
 
     private BooleanExpression tagEq(Post.Tag tag) {
