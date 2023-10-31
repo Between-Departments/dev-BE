@@ -190,6 +190,7 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
+    @Transactional
     public PostDetailDto findPostDto(Long postId, Long memberId, boolean doCountUp) {
         Post findPost = postRepository.findWithDetailByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
