@@ -4,8 +4,6 @@ import com.gwakkili.devbe.dto.ListResponseDto;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
-import com.gwakkili.devbe.event.DeleteMemberEvent;
-import com.gwakkili.devbe.event.DeletePostEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
@@ -27,7 +25,6 @@ import com.gwakkili.devbe.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -118,28 +115,7 @@ public class PostServiceImpl implements PostService{
         } else if (findPost.getWriter().getMemberId() != memberId) {
             throw new CustomException(ExceptionCode.ACCESS_DENIED);
         }
-
-        publisher.publishEvent(new DeletePostEvent(List.of(findPost)));
-        postRecommendRepository.deleteByPostIn(List.of(findPost));
-        postBookmarkRepository.deleteByPostIn(List.of(findPost));
         postRepository.delete(findPost);
-    }
-
-    @EventListener
-    public void deletePost(DeleteMemberEvent deleteMemberEvent) {
-        List<Post> postList = postRepository.findByWriter(deleteMemberEvent.getMember());
-        log.info("게시글 리스트: " + postList);
-        publisher.publishEvent(new DeletePostEvent(postList));
-        // 해당 회원이 다른 게시물에 한 북마크 제거
-        postBookmarkRepository.deleteByMember(deleteMemberEvent.getMember());
-        // 해당 회원이 작성한 게시물의 북마크 제거
-        postBookmarkRepository.deleteByPostIn(postList);
-        // 해당 회원이 다른 게시물에 한 추천 제거
-        postRecommendRepository.deleteByMember(deleteMemberEvent.getMember());
-        // 해당 회원이 작성한 게시물의 추천 제거
-        postRecommendRepository.deleteByPostIn(postList);
-        // 해당 회원이 작성한 게시물 삭제
-        postRepository.deleteAllInBatch(postList);
     }
 
     @Override

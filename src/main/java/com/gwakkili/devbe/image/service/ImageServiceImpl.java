@@ -18,9 +18,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class ImageServiceImpl implements ImageService {
 
     @Value("${cloud.aws.s3.bucket}")
@@ -52,24 +54,20 @@ public class ImageServiceImpl implements ImageService {
 
     private final PostImageRepository postImageRepository;
 
-    @EventListener
-    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void deleteMemberImage(DeleteMemberEvent deleteMemberEvent) {
         memberImageRepository.
                 findByMember(deleteMemberEvent.getMember()).ifPresent(memberImage -> {
             deleteImage(memberImage.getUrl()); // s3 이미지 삭제
-            memberImageRepository.delete(memberImage);
         });
     }
 
-    @EventListener
-    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void deletePostImage(DeletePostEvent deletePostEvent) {
         List<Post> postList = deletePostEvent.getPostList();
         List<PostImage> postImageList = postImageRepository.findByPostIn(postList);
         List<String> imgUrlList = postImageList.stream().map(PostImage::getUrl).collect(Collectors.toList());
         deleteImageList(imgUrlList);
-        postImageRepository.deleteAllInBatch(postImageList);
     }
 
     @Override
