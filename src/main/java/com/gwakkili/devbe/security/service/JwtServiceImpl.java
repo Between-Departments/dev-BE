@@ -71,7 +71,7 @@ public class JwtServiceImpl implements JwtService {
                 .claim("memberId", memberDetails.getMemberId())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-        // refresh 토큰 저장
+
         return new JwtTokenDto(accessToken, refreshToken);
     }
 
