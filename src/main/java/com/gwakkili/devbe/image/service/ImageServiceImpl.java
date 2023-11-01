@@ -20,6 +20,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -52,6 +53,7 @@ public class ImageServiceImpl implements ImageService {
     private final PostImageRepository postImageRepository;
 
     @EventListener
+    @Transactional
     public void deleteMemberImage(DeleteMemberEvent deleteMemberEvent) {
         memberImageRepository.
                 findByMember(deleteMemberEvent.getMember()).ifPresent(memberImage -> {
@@ -61,6 +63,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @EventListener
+    @Transactional
     public void deletePostImage(DeletePostEvent deletePostEvent) {
         List<Post> postList = deletePostEvent.getPostList();
         List<PostImage> postImageList = postImageRepository.findByPostIn(postList);
