@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,9 @@ public class ReportController {
     })
     @PostMapping("/posts/{postId}/report")
     @ResponseStatus(HttpStatus.OK)
-    public void report(@RequestBody PostReportSaveDto postReportSaveDto, @PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
+    public void savePostReport(@PathVariable Long postId,
+                               @RequestBody @Valid PostReportSaveDto postReportSaveDto,
+                               @AuthenticationPrincipal MemberDetails memberDetails){
         postReportService.saveNewPostReport(postReportSaveDto, postId, memberDetails.getMemberId());
     }
 
@@ -71,7 +74,7 @@ public class ReportController {
     @Operation(summary = "댓글 신고")
     public void saveReplyReport(@Parameter(in = ParameterIn.PATH, description = "댓글 번호") @PathVariable long replyId,
                                 @AuthenticationPrincipal MemberDetails memberDetails,
-                                @RequestBody ReplyReportSaveDto replyReportSaveDto) {
+                                @RequestBody @Valid ReplyReportSaveDto replyReportSaveDto) {
         replyReportSaveDto.setReplyId(replyId);
         replyReportSaveDto.setMemberId(memberDetails.getMemberId());
         replyReportService.saveReplyReport(replyReportSaveDto);
