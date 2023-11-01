@@ -57,8 +57,7 @@ public class ImageServiceImpl implements ImageService {
                 findByMember(deleteMemberEvent.getMember()).ifPresent(memberImage -> {
             deleteImage(memberImage.getUrl()); // s3 이미지 삭제
             memberImageRepository.delete(memberImage);
-                }
-        );
+        });
     }
 
     @EventListener

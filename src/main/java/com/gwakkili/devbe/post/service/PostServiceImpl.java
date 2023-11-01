@@ -120,6 +120,8 @@ public class PostServiceImpl implements PostService{
         }
 
         publisher.publishEvent(new DeletePostEvent(List.of(findPost)));
+        postRecommendRepository.deleteByPostIn(List.of(findPost));
+        postBookmarkRepository.deleteByPostIn(List.of(findPost));
         postRepository.delete(findPost);
     }
 
