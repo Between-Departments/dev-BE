@@ -3,7 +3,6 @@ package com.gwakkili.devbe.member.service;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
-import com.gwakkili.devbe.event.DeleteMemberEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.image.entity.MemberImage;
@@ -99,11 +98,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void deleteMember(long memberId) {
-        // 회원 탈퇴 이벤트 발행
-        memberRepository.findById(memberId).ifPresent(member -> {
-            eventPublisher.publishEvent(new DeleteMemberEvent(member));
-            memberRepository.delete(member);
-        });
+        memberRepository.deleteById(memberId);
     }
 
     @Override

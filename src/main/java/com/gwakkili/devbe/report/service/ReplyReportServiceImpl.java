@@ -2,8 +2,6 @@ package com.gwakkili.devbe.report.service;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
-import com.gwakkili.devbe.event.DeleteMemberEvent;
-import com.gwakkili.devbe.event.DeleteReplyEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
@@ -16,7 +14,6 @@ import com.gwakkili.devbe.report.dto.response.ReplyReportDto;
 import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,13 +67,4 @@ public class ReplyReportServiceImpl implements ReplyReportService {
         replyReportRepository.deleteById(reportId);
     }
 
-    @EventListener
-    public void deleteReplyReport(DeleteReplyEvent deleteReplyEvent) {
-        replyReportRepository.deleteByReplyIn(deleteReplyEvent.getReplyList());
-    }
-
-    @EventListener
-    public void deleteReplyReport(DeleteMemberEvent deleteMemberEvent) {
-        replyReportRepository.deleteByReporter(deleteMemberEvent.getMember());
-    }
 }
