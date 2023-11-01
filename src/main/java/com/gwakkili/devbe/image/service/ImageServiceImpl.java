@@ -57,8 +57,7 @@ public class ImageServiceImpl implements ImageService {
                 findByMember(deleteMemberEvent.getMember()).ifPresent(memberImage -> {
             deleteImage(memberImage.getUrl()); // s3 이미지 삭제
             memberImageRepository.delete(memberImage);
-                }
-        );
+        });
     }
 
     @EventListener
@@ -144,7 +143,6 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void deleteImageList(List<String> imgUrlList) {
-        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket);
         List<DeleteObjectsRequest.KeyVersion> keyList = new ArrayList<>();
         for (String imgUrl : imgUrlList) {
             String splitStr = ".com/";
@@ -154,7 +152,6 @@ public class ImageServiceImpl implements ImageService {
             keyList.add(new DeleteObjectsRequest.KeyVersion(imagePath));
             keyList.add(new DeleteObjectsRequest.KeyVersion(thumbnailPath));
         }
-        deleteObjectsRequest.setKeys(keyList);
-        amazonS3.deleteObjects(deleteObjectsRequest);
+        amazonS3.deleteObjects(new DeleteObjectsRequest(bucket).withKeys(keyList).withQuiet(false));
     }
 }

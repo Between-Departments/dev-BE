@@ -14,6 +14,10 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    @EntityGraph(attributePaths = {"images"})
+    @Override
+    Optional<Post> findById(Long postId);
+
     // * 단건 게시물 조회
     @EntityGraph(attributePaths = {"images", "recommendCount", "replyCount"})
     @Query("select p from Post p join fetch p.writer w join fetch w.image where p.postId =:postId")
@@ -42,8 +46,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select p from Post p join fetch p.writer w join fetch w.image where p.createAt >= :start and p.createAt <= :end order by p.recommendCount desc limit 5")
     List<Post> findWeeklyHot(LocalDateTime start, LocalDateTime end);
 
-    @Query(value = "select post_id, title, major, create_at from " +
-            "(select *, ROW_NUMBER() over (partition by tmp1.major order by tmp1.recommendCount desc) as rnk " +
+    @Query(value = "select post_id, title, major_category, create_at from " +
+            "(select *, ROW_NUMBER() over (partition by tmp1.major_category order by tmp1.recommendCount desc) as rnk " +
             "from (select *, (select count(1) from post_recommend pr where pr.post_id = p.post_id) as recommendCount from post p where p.board_type = 'NEED_HELP' and p.create_at >= ? and p.create_at <= ?) as tmp1) as tmp2 " +
             "where tmp2.rnk = 1", nativeQuery = true)
     List<Object[]> findDailyHot(LocalDateTime start, LocalDateTime end);

@@ -9,10 +9,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockMultipartFile;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -41,7 +37,7 @@ public class deleteMemberTests extends DevBeApplicationTests {
     @Test
     public void success() throws Exception {
 
-        String url = "/api/members/1";
+        String url = "/api/members/my";
         mockMvc.perform(delete(url))
                 .andExpect(status().isNoContent())
                 .andDo(print());

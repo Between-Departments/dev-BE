@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -90,27 +91,37 @@ public class PostController {
         // ! 조회 정보를 담은 쿠키에 해당 게시물의 아이디가 없는 경우
         if (oldCookie != null){
             if(!oldCookie.getValue().contains("["+ postId.toString() +"]")){
-                oldCookie.setValue(oldCookie.getValue() + "_[" + postId + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(getExpiration());
-                res.addCookie(oldCookie);
+                ResponseCookie newCookie = ResponseCookie.from("postView",oldCookie.getValue() + "_[" + postId + "]")
+                        .path("/")
+                        .maxAge(getExpiration())
+                        .httpOnly(true)
+                        .secure(true)
+                        .sameSite("None")
+                        .build();
+
+                res.addHeader("Set-Cookie",newCookie.toString());
                 return true;
             } else{
                 return false;
             }
         } else{
-            Cookie newCookie = new Cookie("postView", "[" + postId + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(getExpiration());
-            res.addCookie(newCookie);
+            ResponseCookie newCookie = ResponseCookie.from("postView","[" + postId + "]")
+                    .path("/")
+                    .maxAge(getExpiration())
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .build();
+
+            res.addHeader("Set-Cookie",newCookie.toString());
             return true;
         }
     }
 
-    private int getExpiration(){
+    private Duration getExpiration(){
         LocalDateTime start = LocalDateTime.now();
         LocalDateTime end = start.with(LocalTime.MAX);
-        return Long.valueOf(Duration.between(start, end).getSeconds()).intValue();
+        return Duration.between(start, end);
     }
 
     @Operation(method = "GET", summary = "게시글 목록 조회 (조회 조건 적용)")
