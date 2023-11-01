@@ -1,9 +1,15 @@
 package com.gwakkili.devbe.chat.handler;
 
 import com.gwakkili.devbe.chat.service.ChatService;
+import com.gwakkili.devbe.exception.customExcption.IllegalJwtException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
+import com.gwakkili.devbe.exception.customExcption.NotFoundJwtException;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import com.gwakkili.devbe.security.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -49,18 +55,27 @@ public class WebSocketHandler implements ChannelInterceptor {
     private void authentication(StompHeaderAccessor headerAccessor) {
 
         // 헤더에서 access token 추출
-        String accessToken = jwtService.resolveAccessToken(headerAccessor);
+        String authorization = headerAccessor.getFirstNativeHeader("Authorization");
+        String accessToken = (authorization == null || !authorization.startsWith("Bearer")) ?
+                null : authorization.replace("Bearer ", "");
 
-        // 토큰 유효성 검사
-        switch (jwtService.validateToken(accessToken)) {
-            case "INVALID" -> throw new MessageDeliveryException("INVALID");
-            case "EXPIRE" -> throw new MessageDeliveryException("EXPIRE");
-            case "NOT_FOUND" -> throw new MessageDeliveryException("NOT_FOUND_TOKEN");
+
+        try {
+            // STOMP 헤더에 회원 정보 추가
+            Authentication authentication = jwtService.getAuthenticationByAccessToken(accessToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            headerAccessor.setUser(authentication);
+        } catch (SecurityException | MalformedJwtException e) {
+            throw new MessageDeliveryException("INVALID_TOKEN");
+        } catch (ExpiredJwtException e) {
+            throw new MessageDeliveryException("EXPIRED_TOKEN");
+        } catch (UnsupportedJwtException e) {
+            throw new MessageDeliveryException("UNSUPPORTED_TOKEN");
+        } catch (IllegalJwtException e) {
+            throw new MessageDeliveryException("ILLEGAL_TOKEN");
+        } catch (NotFoundJwtException e) {
+            throw new MessageDeliveryException("NOT_FOUND_TOKEN");
         }
-        // STOMP 헤더에 유정정보 추가
-        Authentication authentication = jwtService.getAuthentication(accessToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        headerAccessor.setUser(authentication);
     }
 
     private void subscribeChatRoom(StompHeaderAccessor headerAccessor) {
