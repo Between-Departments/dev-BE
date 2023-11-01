@@ -2,13 +2,12 @@ package com.gwakkili.devbe.security.service;
 
 import com.gwakkili.devbe.security.dto.JwtTokenDto;
 import com.gwakkili.devbe.security.dto.LoginDto;
-import com.gwakkili.devbe.security.dto.MemberDetails;
 
 public interface AuthenticationService {
 
     JwtTokenDto login(LoginDto loginDto);
 
-    void Logout(MemberDetails memberDetails);
+    void Logout(long memberId);
 
     JwtTokenDto refresh(JwtTokenDto jwtTokenDto);
 }
