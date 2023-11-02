@@ -8404,10 +8404,10 @@ values ('서울보건대학교', 'shjc.ac.kr'),
 
 
 
-INSERT INTO member (mail, nickname, password, locked, create_at, update_at)
-VALUES ('manager1', '관리자1', '$2a$10$Mdur.05gPngMVJi8v68CV./q7XdwNlFjA/kLVXvRbiKR2FIb480hS', false, NOW(), NOW()),
-       ('manager2', '관리자2', '$2a$10$Mdur.05gPngMVJi8v68CV./q7XdwNlFjA/kLVXvRbiKR2FIb480hS', false, NOW(), NOW()),
-       ('manager3', '관리자3', '$2a$10$Mdur.05gPngMVJi8v68CV./q7XdwNlFjA/kLVXvRbiKR2FIb480hS', false, NOW(), NOW());
+INSERT INTO member (mail, nickname, password, locked, create_at, update_at, report_count)
+VALUES ('manager1', '관리자1', '$2a$10$Mdur.05gPngMVJi8v68CV./q7XdwNlFjA/kLVXvRbiKR2FIb480hS', false, NOW(), NOW(), 0),
+       ('manager2', '관리자2', '$2a$10$Mdur.05gPngMVJi8v68CV./q7XdwNlFjA/kLVXvRbiKR2FIb480hS', false, NOW(), NOW(), 0),
+       ('manager3', '관리자3', '$2a$10$Mdur.05gPngMVJi8v68CV./q7XdwNlFjA/kLVXvRbiKR2FIb480hS', false, NOW(), NOW(), 0);
 
 INSERT INTO member_role (member_id, roles)
 VALUES (1, 'ROLE_MANAGER'),

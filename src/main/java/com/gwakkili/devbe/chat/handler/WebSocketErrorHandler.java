@@ -21,8 +21,10 @@ public class WebSocketErrorHandler extends StompSubProtocolErrorHandler {
     public Message<byte[]> handleClientMessageProcessingError(Message<byte[]> clientMessage, Throwable ex) {
 
         return switch (ex.getMessage()) {
-            case "INVALID" -> exceptionResponseBuilder.buildMessage(ExceptionCode.INVALID_TOKEN);
-            case "EXPIRE" -> exceptionResponseBuilder.buildMessage(ExceptionCode.EXPIRED_TOKEN);
+            case "INVALID_TOKEN" -> exceptionResponseBuilder.buildMessage(ExceptionCode.INVALID_TOKEN);
+            case "EXPIRED_TOKEN" -> exceptionResponseBuilder.buildMessage(ExceptionCode.EXPIRED_TOKEN);
+            case "UNSUPPORTED_TOKEN" -> exceptionResponseBuilder.buildMessage(ExceptionCode.UNSUPPORTED_TOKEN);
+            case "ILLEGAL_TOKEN" -> exceptionResponseBuilder.buildMessage(ExceptionCode.ILLEGAL_TOKEN);
             case "NOT_FOUND_TOKEN" -> exceptionResponseBuilder.buildMessage(ExceptionCode.NOT_FOUND_TOKEN);
             case "NOT_FOUND_CHAT_ROOM" -> exceptionResponseBuilder.buildMessage(ExceptionCode.NOT_FOUND_CHAT_ROOM);
             case "ACCESS_DENIED" -> exceptionResponseBuilder.buildMessage(ExceptionCode.ACCESS_DENIED);
@@ -30,4 +32,5 @@ public class WebSocketErrorHandler extends StompSubProtocolErrorHandler {
             default -> super.handleClientMessageProcessingError(clientMessage, ex);
         };
     }
+
 }

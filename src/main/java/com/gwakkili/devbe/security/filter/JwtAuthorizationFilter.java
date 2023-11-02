@@ -1,6 +1,7 @@
 package com.gwakkili.devbe.security.filter;
 
 import com.gwakkili.devbe.security.service.JwtService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,19 +26,21 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
-        String accessToken = jwtService.resolveAccessToken(request);
+        String authorization = request.getHeader("Authorization");
+        String accessToken = (authorization == null || !authorization.startsWith("Bearer")) ?
+                null : authorization.replace("Bearer ", "");
 
-        // access token 이 유효하지 않으면 무시
-        if (!jwtService.validateToken(accessToken).equals("VALID")) {
+        try {
+            Authentication authentication = jwtService.getAuthenticationByAccessToken(accessToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (JwtException exception) {
             chain.doFilter(request, response);
             return;
         }
 
-        // 유효한 사용자라면 authentication 을 만들고 SecurityContext 등록
-        Authentication authentication = jwtService.getAuthentication(accessToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
     }
 }

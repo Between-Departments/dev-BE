@@ -14,7 +14,10 @@ import java.util.Set;
 @Builder
 @RedisHash(value = "refreshToken")
 public class RefreshToken {
+
     @Id
+    private long memberId;
+
     private String mail;
 
     private Set<Member.Role> roles;

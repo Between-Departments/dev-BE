@@ -1,7 +1,14 @@
 package com.gwakkili.devbe.exception;
 
 import com.gwakkili.devbe.exception.customExcption.CustomException;
+import com.gwakkili.devbe.exception.customExcption.IllegalJwtException;
+import com.gwakkili.devbe.exception.customExcption.NotFoundJwtException;
 import com.gwakkili.devbe.exception.dto.ExceptionDto;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -12,6 +19,11 @@ import org.springframework.mail.MailException;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -53,15 +65,6 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
     }
 
-//    @ExceptionHandler
-//    public ResponseEntity<ExceptionDto> exceptionHandler(Exception exception) {
-//        log.error(exception.toString());
-//
-//        ExceptionCode code = ExceptionCode.SERVER_ERROR;
-//        ExceptionDto exceptionDto = new ExceptionDto(code);
-//        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
-//    }
-
     @MessageExceptionHandler
     @SendToUser("/sub/errors")
     public ExceptionDto CustomMessageExceptionHandler(CustomException exception) {
@@ -76,6 +79,44 @@ public class ControllerExceptionHandler {
         return new ExceptionDto(ExceptionCode.ACCESS_DENIED);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ExceptionDto> AuthenticationExceptionHandler(AuthenticationException exception) {
+        log.error(exception.toString());
+
+        ExceptionCode code;
+        if (exception instanceof BadCredentialsException || exception instanceof UsernameNotFoundException) {
+            code = ExceptionCode.BAD_CREDENTIAL;
+        } else if (exception instanceof AuthenticationCredentialsNotFoundException) {
+            code = ExceptionCode.AUTHENTICATION_DENIED;
+        } else if (exception instanceof LockedException) {
+            code = ExceptionCode.AUTHENTICATION_LOCKED;
+        } else {
+            code = ExceptionCode.AUTHENTICATION_FAILURE;
+        }
+        ExceptionDto exceptionDto = new ExceptionDto(code);
+        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionDto> JwtExceptionHandler(JwtException exception) {
+
+        ExceptionCode code;
+        if (exception instanceof SecurityException || exception instanceof MalformedJwtException) {
+            code = ExceptionCode.INVALID_TOKEN;
+        } else if (exception instanceof ExpiredJwtException) {
+            code = ExceptionCode.EXPIRED_TOKEN;
+        } else if (exception instanceof UnsupportedJwtException) {
+            code = ExceptionCode.UNSUPPORTED_TOKEN;
+        } else if (exception instanceof IllegalJwtException) {
+            code = ExceptionCode.ILLEGAL_TOKEN;
+        } else if (exception instanceof NotFoundJwtException) {
+            code = ExceptionCode.NOT_FOUND_TOKEN;
+        } else {
+            code = ExceptionCode.AUTHENTICATION_FAILURE;
+        }
+        ExceptionDto exceptionDto = new ExceptionDto(code);
+        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
+    }
 
     //지원하지 않는 HTTP 메소드 호출시 발생
     @ExceptionHandler
@@ -96,7 +137,7 @@ public class ControllerExceptionHandler {
     //입력이 잘못된 형식일떄 발생
     @ExceptionHandler
     protected ResponseEntity<ExceptionDto> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException exception) {
-        ExceptionCode code = ExceptionCode.INVALID_FORMAT;
+        ExceptionCode code = ExceptionCode.ILLEGAL_FORMAT;
         ExceptionDto exceptionDto = new ExceptionDto(code);
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
     }

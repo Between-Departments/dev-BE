@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
@@ -27,6 +29,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MailServiceImpl implements MailService {
 
     private final MailAuthCodeRepository mailAuthCodeRepository;
+
+    private final SpringTemplateEngine templateEngine;
 
     private final SchoolRepository schoolRepository;
 
@@ -47,21 +51,31 @@ public class MailServiceImpl implements MailService {
         if (!schoolRepository.existsByMail(mail.split("@")[1]))
             throw new UnsupportedException(ExceptionCode.UNSUPPORTED_MAIL);
 
-        String authCode = createCode();
+        String code = createCode();
 
         MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, mail);
-        message.setSubject("과끼리 인증 번호");
-        message.setText(authCode);
+        message.setSubject("HI-D 메일 인증번호");
+        message.setText(setContext(code), "utf-8", "html");
         message.setFrom(sender);
         mailSender.send(message);
 
         // AuthKey 저장
+        saveAuthCode(mail, code);
+    }
+
+    private void saveAuthCode(String mail, String code) {
         MailAuthCode mailAuthCode = MailAuthCode.builder()
                 .mail(mail)
-                .authCode(authCode)
+                .authCode(code)
                 .expiredTime(60 * 60 * 24).build();
         mailAuthCodeRepository.save(mailAuthCode);
+    }
+
+    private String setContext(String code) { // 타임리프 설정하는 코드
+        Context context = new Context();
+        context.setVariable("code", code); // Template에 전달할 데이터 설정
+        return templateEngine.process("mail", context); // mail.html
     }
 
     private String createCode() {
