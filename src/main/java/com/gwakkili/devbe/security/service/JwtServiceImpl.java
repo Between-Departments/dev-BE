@@ -116,7 +116,7 @@ public class JwtServiceImpl implements JwtService {
 
     public Authentication getAuthenticationByRefreshToken(String refreshToken) {
         Claims claims = getClaims(refreshToken);
-        long memberId = (long) claims.get("memberId");
+        long memberId = ((Number) claims.get("memberId")).longValue();
         RefreshToken redisRefreshToken = refreshTokenRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundJwtException("토큰을 찾을 수 없습니다"));
         if (!redisRefreshToken.getToken().equals(refreshToken)) throw new SecurityException("유효하지 않은 토큰 입니다.");
