@@ -55,7 +55,7 @@ public class MailServiceImpl implements MailService {
 
         MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, mail);
-        message.setSubject("과끼리 인증 번호");
+        message.setSubject("HI-D 메일 인증번호");
         message.setText(setContext(code), "utf-8", "html");
         message.setFrom(sender);
         mailSender.send(message);
