@@ -2,11 +2,15 @@ package com.gwakkili.devbe.member.entity;
 
 import com.gwakkili.devbe.entity.BaseEntity;
 import com.gwakkili.devbe.image.entity.MemberImage;
+import com.gwakkili.devbe.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -37,6 +41,10 @@ public class Member extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
     private MemberImage image;
+
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
+    private List<Post> posts = new ArrayList<>();
 
     private boolean locked;
 

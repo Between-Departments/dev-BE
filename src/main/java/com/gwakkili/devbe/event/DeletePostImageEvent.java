@@ -8,7 +8,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Data
-public class DeletePostEvent {
+public class DeletePostImageEvent {
 
     List<Post> postList;
 }

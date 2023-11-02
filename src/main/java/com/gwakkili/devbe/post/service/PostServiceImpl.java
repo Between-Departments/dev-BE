@@ -4,6 +4,7 @@ import com.gwakkili.devbe.dto.ListResponseDto;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
+import com.gwakkili.devbe.event.DeletePostImageEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
@@ -96,7 +97,8 @@ public class PostServiceImpl implements PostService{
     @Override
     @Transactional
     public void updatePost(PostUpdateDto postUpdateDto, Long postId, long memberId) {
-        Post findPost = find(postId);
+        Post findPost = postRepository.findWithImagesByPostId(postId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
         // ! 게시글을 수정하려는 사용자가 글 작성자 본인이 아닐 경우
         if (findPost.getWriter().getMemberId() != memberId){
@@ -105,16 +107,20 @@ public class PostServiceImpl implements PostService{
 
         findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getMajorCategory(), postUpdateDto.getTag(), postUpdateDto.isAnonymous(),postUpdateDto.getImageUrls());
     }
+
     @Override
     @Transactional
     public void deletePost(Long postId, long memberId, Set<Member.Role> roles) {
-        Post findPost = find(postId);
+        Post findPost = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
         if (roles.contains(Member.Role.ROLE_MANAGER)) {
             publisher.publishEvent(new DeleteByManagerEvent(findPost.getWriter().getMemberId()));
         } else if (findPost.getWriter().getMemberId() != memberId) {
             throw new CustomException(ExceptionCode.ACCESS_DENIED);
         }
+
+        publisher.publishEvent(new DeletePostImageEvent(List.of(findPost)));
         postRepository.delete(findPost);
     }
 
@@ -154,12 +160,6 @@ public class PostServiceImpl implements PostService{
 
                     postRecommendRepository.save(newPostRecommend);
                 });
-    }
-
-
-    private Post find(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
     }
 
     @Override

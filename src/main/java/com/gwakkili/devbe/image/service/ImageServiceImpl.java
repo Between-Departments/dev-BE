@@ -5,14 +5,15 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.gwakkili.devbe.event.DeleteMemberEvent;
-import com.gwakkili.devbe.event.DeletePostEvent;
+import com.gwakkili.devbe.event.DeleteMemberImageEvent;
+import com.gwakkili.devbe.event.DeletePostImageEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
+import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.image.entity.PostImage;
-import com.gwakkili.devbe.image.repository.MemberImageRepository;
 import com.gwakkili.devbe.image.repository.PostImageRepository;
+import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,24 +51,27 @@ public class ImageServiceImpl implements ImageService {
 
     private final AmazonS3 amazonS3;
 
-    private final MemberImageRepository memberImageRepository;
-
     private final PostImageRepository postImageRepository;
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void deleteMemberImage(DeleteMemberEvent deleteMemberEvent) {
-        memberImageRepository.
-                findByMember(deleteMemberEvent.getMember()).ifPresent(memberImage -> {
-            deleteImage(memberImage.getUrl()); // s3 이미지 삭제
-        });
+    public void deleteMemberImage(DeleteMemberImageEvent deleteMemberImageEvent) {
+        Member member = deleteMemberImageEvent.getMember();
+        MemberImage memberImage = member.getImage();
+
+        if(!memberImage.getUrl().equals(MemberImage.getDefaultImageUrl())){
+            deleteImage(memberImage.getUrl());
+        }
     }
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void deletePostImage(DeletePostEvent deletePostEvent) {
-        List<Post> postList = deletePostEvent.getPostList();
+    public void deletePostImage(DeletePostImageEvent deletePostImageEvent) {
+        List<Post> postList = deletePostImageEvent.getPostList();
         List<PostImage> postImageList = postImageRepository.findByPostIn(postList);
-        List<String> imgUrlList = postImageList.stream().map(PostImage::getUrl).collect(Collectors.toList());
-        deleteImageList(imgUrlList);
+
+        if (!postImageList.isEmpty()){
+            List<String> imgUrlList = postImageList.stream().map(PostImage::getUrl).collect(Collectors.toList());
+            deleteImageList(imgUrlList);
+        }
     }
 
     @Override

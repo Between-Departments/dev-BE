@@ -15,8 +15,7 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = {"images"})
-    @Override
-    Optional<Post> findById(Long postId);
+    Optional<Post> findWithImagesByPostId(long postId);
 
     // * 단건 게시물 조회
     @EntityGraph(attributePaths = {"images", "recommendCount", "replyCount"})

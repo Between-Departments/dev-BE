@@ -87,14 +87,12 @@ public class Post extends BaseEntity {
     }
 
     public void addImages(List<String> imageUrls) {
-        for (String imageUrl : imageUrls) {
-            PostImage newPostImage = PostImage.builder()
-                    .post(this)
-                    .url(imageUrl)
-                    .build();
+        List<PostImage> images = imageUrls.stream().map(imageUrl -> PostImage.builder()
+                .post(this)
+                .url(imageUrl)
+                .build()).collect(Collectors.toList());
 
-            this.getImages().add(newPostImage);
-        }
+        this.images.addAll(images);
     }
 
     public void update(String title, String content, Major.Category majorCategory, Tag tag, Boolean isAnonymous, List<String> imageUrls) {
@@ -110,13 +108,7 @@ public class Post extends BaseEntity {
 
     private void updateImages(List<String> imageUrls) {
         this.images.clear();
-
-        List<PostImage> updateImages = imageUrls.stream().map(imageUrl -> PostImage.builder()
-                .post(this)
-                .url(imageUrl)
-                .build()).collect(Collectors.toList());
-
-        this.images.addAll(updateImages);
+        addImages(imageUrls);
     }
 
     @RequiredArgsConstructor

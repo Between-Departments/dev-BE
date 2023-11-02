@@ -6,7 +6,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class DeleteMemberEvent {
+public class DeleteMemberImageEvent {
 
     private Member member;
 

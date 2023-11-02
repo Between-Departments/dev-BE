@@ -3,6 +3,8 @@ package com.gwakkili.devbe.member.service;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
+import com.gwakkili.devbe.event.DeleteMemberImageEvent;
+import com.gwakkili.devbe.event.DeletePostImageEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.image.entity.MemberImage;
@@ -14,13 +16,14 @@ import com.gwakkili.devbe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.StringUtils;
 
 import java.util.function.Function;
@@ -98,7 +101,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void deleteMember(long memberId) {
-        memberRepository.deleteById(memberId);
+        Member member = memberRepository.findWithImageAndPostsByMemberId(memberId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+
+        eventPublisher.publishEvent(new DeleteMemberImageEvent(member));
+        if (!member.getPosts().isEmpty()) eventPublisher.publishEvent(new DeletePostImageEvent(member.getPosts()));
+
+        memberRepository.delete(member);
     }
 
     @Override
@@ -108,7 +117,7 @@ public class MemberServiceImpl implements MemberService {
         member.setLocked(true);
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void lock(DeleteByManagerEvent deleteByManagerEvent) {
         long memberId = deleteByManagerEvent.getMemberId();
         Member member = memberRepository.findById(memberId)
