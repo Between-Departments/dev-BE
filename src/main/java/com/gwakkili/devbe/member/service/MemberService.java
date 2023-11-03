@@ -20,7 +20,7 @@ public interface MemberService {
 
     void updateMajor(UpdateMajorDto updateMajorDto);
 
-    void deleteMember(long memberId);
+    void deleteMember(long memberId, String password);
 
     void lockMember(Long id);
 

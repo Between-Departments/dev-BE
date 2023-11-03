@@ -1,15 +1,20 @@
 package com.gwakkili.devbe.member.controller;
 
+import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.member.dto.request.*;
 import com.gwakkili.devbe.member.dto.response.MemberDetailDto;
+import com.gwakkili.devbe.member.dto.response.MemberDto;
+import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.service.MemberService;
 import com.gwakkili.devbe.security.dto.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -61,8 +66,8 @@ public class MemberController {
     @PostMapping("/password/confirm")
     @Operation(summary = "비밀번호 확인")
     @PreAuthorize("isAuthenticated()")
-    public void passwordConfirm(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody String password) {
-        if (memberService.passwordConfirm(memberDetails.getMail(), password))
+    public void passwordConfirm(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody PasswordDto passwordDto) {
+        if (memberService.passwordConfirm(memberDetails.getMail(), passwordDto.getPassword()))
             throw new CustomException(ExceptionCode.INVALID_PASSWORD);
     }
 
@@ -114,7 +119,29 @@ public class MemberController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "회원 탈퇴")
-    public void deleteMember(@AuthenticationPrincipal MemberDetails memberDetails) {
-        memberService.deleteMember(memberDetails.getMemberId());
+    public void deleteMember(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody PasswordDto passwordDto) {
+        memberService.deleteMember(memberDetails.getMemberId(), passwordDto.getPassword());
+    }
+
+    @PatchMapping("/{memberId}/lock")
+    @Operation(summary = "회원 정지(어드민 전용)")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    public void lockMember(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId) {
+        memberService.lockMember(memberId);
+    }
+
+    @GetMapping
+    @Operation(summary = "회원 목록 조회(어드민 전용)")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    public SliceResponseDto<MemberDto, Member> getMemberList(@ParameterObject MemberSliceRequestDto sliceRequestDto) {
+        return memberService.getMemberList(sliceRequestDto);
+    }
+
+    @DeleteMapping("/{memberId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "회원 탈퇴(어드민 전용)")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    public void deleteMember(@Parameter(name = "memberId", description = "회원 번호", in = ParameterIn.PATH) @PathVariable Long memberId) {
+        memberService.deleteMember(memberId, null);
     }
 }

@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -100,9 +101,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void deleteMember(long memberId) {
+    public void deleteMember(long memberId, String password) {
         Member member = memberRepository.findWithImageAndPostsByMemberId(memberId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+
+        if (StringUtils.hasText(password)) {
+            if (!passwordEncoder.matches(password, member.getPassword()))
+                throw new AccessDeniedException("접근 거부");
+        }
 
         eventPublisher.publishEvent(new DeleteMemberImageEvent(member));
         if (!member.getPosts().isEmpty()) eventPublisher.publishEvent(new DeletePostImageEvent(member.getPosts()));
