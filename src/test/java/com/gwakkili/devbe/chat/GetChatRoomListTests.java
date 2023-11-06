@@ -1,16 +1,13 @@
 package com.gwakkili.devbe.chat;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
-import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.http.MediaType;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,12 +20,13 @@ public class GetChatRoomListTests extends DevBeApplicationTests {
 
     @Test
     @DisplayName("성공")
-    @WithMockMember(memberId = 1)
+    @WithMockMember
     public void success() throws Exception {
 
         //when, then
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("size").value(9))
                 .andExpect(jsonPath("dataList[*].chatRoomId").exists())
                 .andExpect(jsonPath("dataList[*].member.memberId").value(not(contains(1))))
                 .andDo(print());

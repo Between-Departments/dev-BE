@@ -45,4 +45,19 @@ public class DeleteCharRoomTests extends DevBeApplicationTests {
                 .andExpect(jsonPath("message").value(ExceptionCode.ACCESS_DENIED.getMessage()))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("실패: 존재하지 않는 채팅방 삭제")
+    @WithMockMember
+    public void failByNotFound() throws Exception {
+        //given
+        long roomId = 100;
+
+        //when, then
+        mockMvc.perform(delete(url, roomId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("code").value(ExceptionCode.NOT_FOUND_CHAT_ROOM.getCode()))
+                .andExpect(jsonPath("message").value(ExceptionCode.NOT_FOUND_CHAT_ROOM.getMessage()))
+                .andDo(print());
+    }
 }
