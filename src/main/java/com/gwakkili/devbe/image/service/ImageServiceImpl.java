@@ -11,17 +11,13 @@ import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
 import com.gwakkili.devbe.image.entity.MemberImage;
-import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.image.repository.PostImageRepository;
-import com.gwakkili.devbe.member.entity.Member;
-import com.gwakkili.devbe.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +34,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -53,31 +48,23 @@ public class ImageServiceImpl implements ImageService {
 
     private final PostImageRepository postImageRepository;
 
-    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    @TransactionalEventListener
     public void deleteMemberImage(DeleteMemberImageEvent deleteMemberImageEvent) {
-        Member member = deleteMemberImageEvent.getMember();
-        MemberImage memberImage = member.getImage();
+        String imageUrl = deleteMemberImageEvent.getImageUrl();
 
-        if(!memberImage.getUrl().equals(MemberImage.getDefaultImageUrl())){
-            deleteImage(memberImage.getUrl());
+        if(!MemberImage.getDefaultImageUrl().equals(imageUrl)){
+            deleteImage(imageUrl);
         }
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    @TransactionalEventListener
     public void deletePostImage(DeletePostImageEvent deletePostImageEvent) {
-        List<Post> postList = deletePostImageEvent.getPostList();
-        List<PostImage> postImageList = postImageRepository.findByPostIn(postList);
-
-        if (!postImageList.isEmpty()){
-            List<String> imgUrlList = postImageList.stream().map(PostImage::getUrl).collect(Collectors.toList());
-            deleteImageList(imgUrlList);
-        }
+        List<String> imageUrls = deletePostImageEvent.getImageUrls();
+        deleteImageList(imageUrls);
     }
 
     @Override
     public List<String> uploadImage(List<MultipartFile> multipartFiles) {
-
-
         List<String> imageUrlList = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.getContentType().startsWith("image"))

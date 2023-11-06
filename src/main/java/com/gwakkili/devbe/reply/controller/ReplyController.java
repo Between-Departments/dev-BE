@@ -44,12 +44,6 @@ public class ReplyController {
         replySaveDto.setWriter(memberDetails.getMemberId());
         ReplyDetailDto replyDto = replyService.saveReply(replySaveDto);
 
-//        if (!replyDto.isAnonymous()) {
-//            sseNotificationService.notify(replyDto.getPostWriterId(), new NewReplyEvent(replyDto.getContent()));
-//            stompNotificationService.notify(replyDto);
-//
-//        }
-
         return replyDto;
     }
 

@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class ReplyDetailDto extends ReplyDto {
 
-    private long postWriterId;
-
     private SimpleMemberDto writer;
 
     @Schema(description = "추천 개수", example = "3")
@@ -43,7 +41,6 @@ public class ReplyDetailDto extends ReplyDto {
         return ReplyDetailDto.builder()
                 .replyId(reply.getReplyId())
                 .postId(reply.getPost().getPostId())
-                .postWriterId(reply.getPost().getWriter().getMemberId())
                 .writer(new SimpleMemberDto(reply.getMember(), reply.isAnonymous()))
                 .content(reply.getContent())
                 .recommendCount(reply.getRecommendCount())

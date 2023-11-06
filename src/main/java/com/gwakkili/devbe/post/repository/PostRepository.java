@@ -14,6 +14,9 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    @EntityGraph(attributePaths = {"writer"})
+    Optional<Post> findWithWriterByPostId(long postId);
+
     @EntityGraph(attributePaths = {"images"})
     Optional<Post> findWithImagesByPostId(long postId);
 
