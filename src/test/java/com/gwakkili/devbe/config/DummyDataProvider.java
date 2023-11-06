@@ -137,7 +137,7 @@ public class DummyDataProvider implements ApplicationRunner {
                 .school("테스트대학1")
                 .build();
         member.addRole(Member.Role.ROLE_MANAGER);
-        member.setImage(new MemberImage("http://test.com/images/memberImage.jpg"));
+        member.setImage(new MemberImage("http://127.0.0.1:8001/test-bucket/images/memberImage.jpg"));
         memberRepository.save(member);
 
         List<Member> members = new ArrayList<>();
@@ -150,7 +150,7 @@ public class DummyDataProvider implements ApplicationRunner {
                     .school("테스트대학" + new Random().nextInt(1, 10))
                     .build();
             member2.addRole(Member.Role.ROLE_USER);
-            member2.setImage(new MemberImage("http://test.com/images/memberImage" + i + ".jpg"));
+            member2.setImage(new MemberImage("http://127.0.0.1:8001/test-bucket/images/memberImage" + i + ".jpg"));
             members.add(member2);
         });
         memberRepository.saveAll(members);
@@ -175,7 +175,7 @@ public class DummyDataProvider implements ApplicationRunner {
             List<String> imageUrls = new ArrayList<>();
 
             for(int j=1; j<4; j++){
-                imageUrls.add("http://test.com/images/postImage" + j + "_FreePost" + i +".jpg");
+                imageUrls.add("http://127.0.0.1:8001/test-bucket/images/postImage" + j + "_FreePost" + i + ".jpg");
             }
             freePost.addImages(imageUrls);
 
@@ -193,7 +193,7 @@ public class DummyDataProvider implements ApplicationRunner {
             List<String> imageUrls1 = new ArrayList<>();
 
             for(int j=1; j<4; j++){
-                imageUrls1.add("http://test.com/images/postImage" + j + "_NeedHelpPost" + i +".jpg");
+                imageUrls1.add("http://127.0.0.1:8001/test-bucket/images/postImage" + j + "_NeedHelpPost" + i + ".jpg");
             }
             needHelpPost.addImages(imageUrls1);
 
@@ -231,72 +231,64 @@ public class DummyDataProvider implements ApplicationRunner {
         postRepository.saveAll(posts);
     }
 
-    // * 테스트용 댓글 -> 총 400개 (댓글단 게시물, 댓글 작성자 랜덤)
-    // * 테스트용 익명댓글 -> 총 200개 (댓글단 게시물, 댓글 작성자 랜덤)
+    // * 테스트용 댓글 -> 익명 200개, 일반 200개, 총 400개 (20개의 게시물, 20명의 작성자)
     private void saveReply() {
-
         List<Reply> replies = new ArrayList<>();
-        IntStream.rangeClosed(1, 400).forEach(i -> {
-            Reply reply = Reply.builder()
-                    .member(memberRepository.getReferenceById(new Random().nextLong(1, 101)))
-                    .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
-                    .content("testReplyContent" + i)
-                    .build();
-            replies.add(reply);
-
-
-            if (i%2==0){
-                Reply anonymousReply = Reply.builder()
-                        .member(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
-                        .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
-                        .content("testReplyContent" + i)
+        LongStream.rangeClosed(1, 20).forEach(i -> {
+            LongStream.rangeClosed(1, 20).forEach(j -> {
+                Reply reply = Reply.builder()
+                        .member(memberRepository.getReferenceById(i))
+                        .post(postRepository.getReferenceById(i))
+                        .content(i + "번 게시글의 " + j + "번 댓글")
+                        .isAnonymous(j % 2 == 0)
                         .build();
-
-                replies.add(anonymousReply);
-            }
+                replies.add(reply);
+            });
         });
-
         replyRepository.saveAll(replies);
     }
 
-    // * 테스트용 게시물 신고 -> 총 50개 (신고할 게시물, 신고자 랜덤)
-    private void savePostReport(){
+    // * 테스트용 게시물 신고 -> 총 400개 (20개의 게시글의 20개의 신고, 신고자 랜덤)
+    private void savePostReport() {
         List<PostReport> postReports = new ArrayList<>();
-        IntStream.rangeClosed(1, 50).forEach(i -> {
-            PostReport postReport = PostReport.builder()
-                    .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
-                    .reporter(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
-                    .content("Post 신고내용" + i)
-                    .type(Report.Type.values()[new Random().nextInt(Report.Type.values().length)])
-                    .build();
+        LongStream.rangeClosed(1, 20).forEach(i -> {
+            LongStream.rangeClosed(1, 20).forEach(j -> {
+                PostReport postReport = PostReport.builder()
+                        .post(postRepository.getReferenceById(i))
+                        .reporter(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
+                        .content(i + "번 게시글의 " + j + "번 신고")
+                        .type(Report.Type.values()[new Random().nextInt(Report.Type.values().length)])
+                        .build();
+                postReports.add(postReport);
+            });
 
-            postReports.add(postReport);
         });
-
         postReportRepository.saveAll(postReports);
     }
 
 
-    // * 테스트용 댓글 신고 -> 총 100개 (신고할 게시물, 신고자 랜덤)
+    // * 테스트용 댓글 신고 -> 총 400개 (20개의 댓글에 20개의 신고, 신고자 랜덤)
     private void saveReplyReport() {
         List<ReplyReport> replyReports = new ArrayList<>();
-        IntStream.rangeClosed(1, 100).forEach(i -> {
-            ReplyReport replyReport = ReplyReport.builder()
-                    .reply(replyRepository.getReferenceById(new Random().nextLong(1, 400)))
-                    .reporter(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
-                    .content("Reply 신고내용" + i)
-                    .type(Report.Type.values()[new Random().nextInt(Report.Type.values().length)])
-                    .build();
-            replyReports.add(replyReport);
+        LongStream.rangeClosed(1, 20).forEach(i -> {
+            LongStream.rangeClosed(1, 20).forEach(j -> {
+                ReplyReport replyReport = ReplyReport.builder()
+                        .reply(replyRepository.getReferenceById(i))
+                        .reporter(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
+                        .content(i + "번 댓글의 " + j + "번 신고")
+                        .type(Report.Type.values()[new Random().nextInt(Report.Type.values().length)])
+                        .build();
+                replyReports.add(replyReport);
+            });
         });
 
         replyReportRepository.saveAll(replyReports);
     }
 
-    // * 테스트용 게시물 추천 -> 총 100개 (추천할 게시물, 추천자 랜덤)
+    // * 테스트용 게시물 추천 -> 총 200개 (추천할 게시물, 추천자 랜덤)
     private void savePostRecommend() {
         List<PostRecommend> postRecommends = new ArrayList<>();
-        IntStream.rangeClosed(1, 100).forEach(i -> {
+        IntStream.rangeClosed(1, 200).forEach(i -> {
             PostRecommend postRecommend = PostRecommend.builder()
                     .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
                     .member(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
@@ -307,10 +299,10 @@ public class DummyDataProvider implements ApplicationRunner {
         postRecommendRepository.saveAll(postRecommends);
     }
 
-    // * 테스트용 댓글 추천 -> 총 100개 (추천할 댓글, 추천자 랜덤)
+    // * 테스트용 댓글 추천 -> 총 400개 (추천할 댓글, 추천자 랜덤)
     private void saveReplyRecommend() {
         List<ReplyRecommend> replyRecommends = new ArrayList<>();
-        IntStream.rangeClosed(1, 100).forEach(i -> {
+        IntStream.rangeClosed(1, 400).forEach(i -> {
             ReplyRecommend replyRecommend = ReplyRecommend.builder()
                     .reply(replyRepository.getReferenceById(new Random().nextLong(1, 400)))
                     .member(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
@@ -321,10 +313,10 @@ public class DummyDataProvider implements ApplicationRunner {
         replyRecommendRepository.saveAll(replyRecommends);
     }
 
-    // * 테스트용 게시물 북마크 -> 총 100개 (북마크할 게시물, 북마크하는 사용자 랜덤)
+    // * 테스트용 게시물 북마크 -> 총 200개 (북마크할 게시물, 북마크하는 사용자 랜덤)
     private void savePostBookmark() {
         List<PostBookmark> postBookmarks = new ArrayList<>();
-        IntStream.rangeClosed(1, 100).forEach(i -> {
+        IntStream.rangeClosed(1, 200).forEach(i -> {
             PostBookmark postBookmark = PostBookmark.builder()
                     .post(postRepository.getReferenceById(new Random().nextLong(1, 200)))
                     .member(memberRepository.getReferenceById(new Random().nextLong(2, 101)))
@@ -356,7 +348,7 @@ public class DummyDataProvider implements ApplicationRunner {
         chatRoomRepository.saveAll(chatRooms);
     }
 
-    //* 테스트용 채팅 메시지 -> 채팅 방당 30개
+    //* 테스트용 채팅 메시지 -> 총 300개채팅 방당 30개
     private void saveChatMessage() {
         List<ChatMessage> chatMessages = new ArrayList<>();
         LongStream.rangeClosed(2, 10).forEach(i -> {

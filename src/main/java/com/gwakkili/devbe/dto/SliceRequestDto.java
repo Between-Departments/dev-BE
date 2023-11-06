@@ -19,16 +19,17 @@ public class SliceRequestDto {
     @Schema(description = "페이지 크기", defaultValue = "10")
     protected int size;
 
-    @Schema(description = "정렬 기준", example = "recommendCount")
+    @Schema(description = "정렬 기준", defaultValue = "createAt")
     private String sortBy;
 
-    @Schema(description = "정렬 방향", example = "DESC")
+    @Schema(description = "정렬 방향", defaultValue = "DESC")
     private Sort.Direction direction;
 
     public SliceRequestDto() {
         this.page = 1;
         this.size = 10;
         this.direction = Sort.Direction.DESC;
+        this.sortBy = "createAt";
     }
 
 
@@ -38,8 +39,4 @@ public class SliceRequestDto {
                 PageRequest.of(page - 1, size, direction, sortBy);
     }
 
-    @JsonIgnore
-    public Pageable getPageableDefaultSorting() {
-        return PageRequest.of(page -1, size, Sort.Direction.DESC, "createAt");
-    }
 }

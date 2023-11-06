@@ -5,6 +5,8 @@ import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -19,25 +21,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("채팅 메세지 목록 조회 테스트")
 public class GetChatMessageListTests extends DevBeApplicationTests {
 
-    private String url = "/api/chat/rooms/{roomId}/messages";
+    private final String url = "/api/chat/rooms/{roomId}/messages";
 
-    @Test
     @DisplayName("성공")
     @WithMockMember
-    public void success() throws Exception {
+    @ParameterizedTest
+    @CsvSource(value = {"1:10", "2:10", "3:10", "4:0"}, delimiter = ':')
+    public void success(String page, int length) throws Exception {
         //given
         long roomId = 1;
-        MultiValueMap params = new LinkedMultiValueMap();
-        params.add("page", "1");
+        String masterNickname = "테스트멤버";
+        String memberNickname = "테스트멤버1";
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("page", page);
         params.add("size", "10");
 
         //when, then
         mockMvc.perform(get(url, roomId).params(params))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("dataList.length()").value(10))
+                .andExpect(jsonPath("dataList.length()").value(length))
                 .andExpect(jsonPath("dataList[*].chatRoomId").value(everyItem(equalTo(roomId))))
-                .andExpect(jsonPath("dataList[*].sender").value(everyItem(in(List.of("테스트멤버", "테스트멤버1")))))
-                .andExpect(jsonPath("dataList[*].content").exists())
+                .andExpect(jsonPath("dataList[*].sender").value(everyItem(in(List.of(masterNickname, memberNickname)))))
                 .andDo(print());
     }
 
@@ -47,7 +51,7 @@ public class GetChatMessageListTests extends DevBeApplicationTests {
     public void failByAccessDined() throws Exception {
         //given
         long roomId = 1;
-        MultiValueMap params = new LinkedMultiValueMap();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("page", "1");
         params.add("size", "10");
 
@@ -58,5 +62,6 @@ public class GetChatMessageListTests extends DevBeApplicationTests {
                 .andExpect(jsonPath("message").value(ExceptionCode.ACCESS_DENIED.getMessage()))
                 .andDo(print());
     }
+
 
 }
