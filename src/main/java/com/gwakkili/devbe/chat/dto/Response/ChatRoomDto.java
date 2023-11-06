@@ -25,7 +25,7 @@ public class ChatRoomDto {
     private ChatMessageDto recentChatMessage;
 
     @Schema(description = "않읽은 메시지 존재 여부")
-    boolean existNotRead;
+    private boolean existNotRead;
 
     public static ChatRoomDto of(ChatRoom chatRoom, RecentChatMessage recentChatMessage, boolean isMaster) {
 

@@ -198,7 +198,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition) {
-        Pageable pageable = sliceRequestDto.getPageableDefaultSorting();
+        Pageable pageable = sliceRequestDto.getPageable();
         Member findMember = memberRepository.getReferenceById(memberId);
 
         Slice<Post> slice = postRepository.findByWriterAndBoardType(pageable, findMember, postSearchCondition.getBoardType());

@@ -17,10 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,15 +73,11 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "비밀번호 변경")
     public void updatePassword(@AuthenticationPrincipal MemberDetails memberDetails,
-                               @RequestBody @Validated UpdatePasswordDto updatePasswordDto,
-                               BindingResult bindingResult) throws BindException {
-        try {
-            updatePasswordDto.setMemberId(memberDetails.getMemberId());
-            memberService.updatePassword(updatePasswordDto);
-        } catch (BadCredentialsException e) {
-            bindingResult.rejectValue("password", "", e.getMessage());
-            throw new BindException(bindingResult);
-        }
+                               @RequestBody @Validated UpdatePasswordDto updatePasswordDto) throws BindException {
+
+        updatePasswordDto.setMemberId(memberDetails.getMemberId());
+        memberService.updatePassword(updatePasswordDto);
+
     }
 
     @PatchMapping("/my/image")

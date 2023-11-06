@@ -6,6 +6,7 @@ import com.gwakkili.devbe.event.DeleteByManagerEvent;
 import com.gwakkili.devbe.event.DeleteMemberImageEvent;
 import com.gwakkili.devbe.event.DeletePostImageEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.member.dto.request.*;
@@ -18,8 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         if (!passwordEncoder.matches(updatePasswordDto.getPassword(), member.getPassword()))
-            throw new BadCredentialsException("현재 비밀번호와 일치하지 않습니다.");
+            throw new CustomException(ExceptionCode.INVALID_PASSWORD);
 
         member.setPassword(passwordEncoder.encode(updatePasswordDto.getNewPassword()));
     }
@@ -107,7 +106,7 @@ public class MemberServiceImpl implements MemberService {
 
         if (StringUtils.hasText(password)) {
             if (!passwordEncoder.matches(password, member.getPassword()))
-                throw new AccessDeniedException("접근 거부");
+                throw new CustomException(ExceptionCode.INVALID_PASSWORD);
         }
 
         eventPublisher.publishEvent(new DeleteMemberImageEvent(member));

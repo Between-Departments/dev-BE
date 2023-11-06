@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -45,8 +44,7 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.name()))
-                .collect(Collectors.toList());
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).toList();
     }
 
     @Override
