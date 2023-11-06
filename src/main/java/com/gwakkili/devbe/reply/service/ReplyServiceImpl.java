@@ -7,6 +7,7 @@ import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
+import com.gwakkili.devbe.event.NewReplyEvent;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.repository.PostRepository;
 import com.gwakkili.devbe.reply.dto.request.ReplySaveDto;
@@ -49,7 +50,8 @@ public class ReplyServiceImpl implements ReplyService {
         Member writer = memberRepository.findWithImageByMemberId(replySaveDto.getWriter())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
-        Post post = postRepository.getReferenceById(replySaveDto.getPostId());
+        Post post = postRepository.findWithWriterByPostId(replySaveDto.getPostId())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
         Reply reply = Reply.builder()
                 .post(post)
@@ -58,6 +60,8 @@ public class ReplyServiceImpl implements ReplyService {
                 .build();
 
         Reply saveReply = replyRepository.save(reply);
+        publisher.publishEvent(new NewReplyEvent(post.getWriter(), reply.getContent(), post.getPostId(), reply.getReplyId()));
+
         return ReplyDetailDto.of(saveReply, false, true);
     }
 
@@ -112,7 +116,7 @@ public class ReplyServiceImpl implements ReplyService {
 
         long replyId = replyUpdateDto.getReplyId();
         Member member = memberRepository.getReferenceById(replyUpdateDto.getMemberId());
-        Reply reply = replyRepository.findWithMemberById(replyId)
+        Reply reply = replyRepository.findWithMemberAndMemberImageById(replyId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_REPLY));
 
         boolean isRecommend = replyRecommendRepository.existsByReplyAndMember(reply, member);

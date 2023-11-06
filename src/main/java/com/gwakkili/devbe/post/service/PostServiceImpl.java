@@ -8,6 +8,8 @@ import com.gwakkili.devbe.event.DeletePostImageEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
+import com.gwakkili.devbe.image.entity.PostImage;
+import com.gwakkili.devbe.image.repository.PostImageRepository;
 import com.gwakkili.devbe.major.entity.Major;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
@@ -37,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +51,7 @@ public class PostServiceImpl implements PostService{
     private final PostQueryRepository postQueryRepository;
     private final PostBookmarkRepository postBookmarkRepository;
     private final PostRecommendRepository postRecommendRepository;
+    private final PostImageRepository postImageRepository;
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
 
@@ -105,13 +109,16 @@ public class PostServiceImpl implements PostService{
             throw new CustomException(ExceptionCode.ACCESS_DENIED);
         }
 
+        List<PostImage> images = findPost.getImages();
+        if (!images.isEmpty()) postImageRepository.deleteAllInBatch(images);
+
         findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getMajorCategory(), postUpdateDto.getTag(), postUpdateDto.isAnonymous(),postUpdateDto.getImageUrls());
     }
 
     @Override
     @Transactional
     public void deletePost(Long postId, long memberId, Set<Member.Role> roles) {
-        Post findPost = postRepository.findById(postId)
+        Post findPost = postRepository.findWithImagesByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
         if (roles.contains(Member.Role.ROLE_MANAGER)) {
@@ -120,7 +127,14 @@ public class PostServiceImpl implements PostService{
             throw new CustomException(ExceptionCode.ACCESS_DENIED);
         }
 
-        publisher.publishEvent(new DeletePostImageEvent(List.of(findPost)));
+        List<PostImage> images = findPost.getImages();
+
+        if(!images.isEmpty()){
+            List<String> imageUrls = images.stream()
+                    .map(PostImage::getUrl).collect(Collectors.toList());
+            publisher.publishEvent(new DeletePostImageEvent(imageUrls));
+        }
+
         postRepository.delete(findPost);
     }
 

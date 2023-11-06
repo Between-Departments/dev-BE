@@ -7,6 +7,7 @@ import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
+import com.gwakkili.devbe.event.NewReplyReportEvent;
 import com.gwakkili.devbe.reply.entity.Reply;
 import com.gwakkili.devbe.reply.repository.ReplyRepository;
 import com.gwakkili.devbe.report.dto.request.ReplyReportSaveDto;
@@ -14,6 +15,7 @@ import com.gwakkili.devbe.report.dto.response.ReplyReportDto;
 import com.gwakkili.devbe.report.entity.ReplyReport;
 import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,8 @@ public class ReplyReportServiceImpl implements ReplyReportService {
 
     private final MemberRepository memberRepository;
 
+    private final ApplicationEventPublisher publisher;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -44,8 +48,9 @@ public class ReplyReportServiceImpl implements ReplyReportService {
 
     @Override
     public void saveReplyReport(ReplyReportSaveDto replyReportSaveDto) {
+        Reply reply = replyRepository.findWithMemberByReplyId(replyReportSaveDto.getReplyId())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_REPLY));
 
-        Reply reply = replyRepository.getReferenceById(replyReportSaveDto.getReplyId());
         Member reporter = memberRepository.getReferenceById(replyReportSaveDto.getMemberId());
 
         if (replyReportRepository.existsByReporterAndReply(reporter, reply)) {
@@ -59,6 +64,7 @@ public class ReplyReportServiceImpl implements ReplyReportService {
                     .build();
 
             replyReportRepository.save(replyReport);
+            publisher.publishEvent(new NewReplyReportEvent(reply.getMember(), replyReport.getType().getDescription(), reply.getPost().getPostId(),reply.getReplyId()));
         }
     }
 

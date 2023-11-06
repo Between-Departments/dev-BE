@@ -17,10 +17,10 @@ import java.util.List;
 @NoArgsConstructor
 public abstract class PostSaveDto {
 
-    @Length(min = 3, max = 30)
+    @Length(min = 2, max = 30)
     private String title;
 
-    @Length(min = 5, max = 1000)
+    @Length(min = 10, max = 1000)
     private String content;
 
     @Size(max = 3)

@@ -7,6 +7,7 @@ import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
+import com.gwakkili.devbe.event.NewPostReportEvent;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.repository.PostRepository;
 import com.gwakkili.devbe.report.dto.request.PostReportSaveDto;
@@ -14,6 +15,7 @@ import com.gwakkili.devbe.report.dto.response.PostReportDto;
 import com.gwakkili.devbe.report.entity.PostReport;
 import com.gwakkili.devbe.report.repository.PostReportRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ public class PostReportServiceImpl implements PostReportService{
     private final PostReportRepository postReportRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher publisher;
 
     @Override
     public SliceResponseDto<PostReportDto, PostReport> findPostReportList(long postId, SliceRequestDto sliceRequestDto) {
@@ -43,7 +46,8 @@ public class PostReportServiceImpl implements PostReportService{
     @Transactional
     public void saveNewPostReport(PostReportSaveDto postReportSaveDto, Long postId, long memberId) {
         Member reporter = memberRepository.getReferenceById(memberId);
-        Post findPost = find(postId);
+        Post findPost = postRepository.findWithWriterByPostId(postId)
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
         Optional<PostReport> findPostReport = postReportRepository.findByReporterAndPost(reporter, findPost);
 
@@ -58,6 +62,8 @@ public class PostReportServiceImpl implements PostReportService{
                             .build();
 
                     postReportRepository.save(newPostReport);
+                    publisher.publishEvent(new NewPostReportEvent(findPost.getWriter(), newPostReport.getType().getDescription(), findPost.getPostId(), null));
+
                 });
     }
 
@@ -66,11 +72,4 @@ public class PostReportServiceImpl implements PostReportService{
     public void deletePostReport(long reportId) {
         postReportRepository.deleteById(reportId);
     }
-
-
-    private Post find(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
-    }
-
 }

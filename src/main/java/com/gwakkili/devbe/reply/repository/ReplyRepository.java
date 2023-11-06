@@ -22,7 +22,10 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
     @EntityGraph(attributePaths = "recommendCount")
     @Query("select r from Reply r join fetch r.member m join fetch m.image where r.replyId = :replyId")
-    Optional<Reply> findWithMemberById(long replyId);
+    Optional<Reply> findWithMemberAndMemberImageById(long replyId);
+
+    @EntityGraph(attributePaths = "member")
+    Optional<Reply> findWithMemberByReplyId(long replyId);
 
     @EntityGraph(attributePaths = "recommendCount")
     @Query("select r from Reply r join fetch r.member m join fetch m.image where r.post = :post")

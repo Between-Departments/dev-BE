@@ -9,11 +9,14 @@ import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.image.entity.MemberImage;
+import com.gwakkili.devbe.image.entity.PostImage;
+import com.gwakkili.devbe.image.repository.PostImageRepository;
 import com.gwakkili.devbe.member.dto.request.*;
 import com.gwakkili.devbe.member.dto.response.MemberDetailDto;
 import com.gwakkili.devbe.member.dto.response.MemberDto;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
+import com.gwakkili.devbe.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,7 +29,9 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,6 +40,8 @@ import java.util.function.Function;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    
+    private final PostImageRepository postImageRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -104,13 +111,17 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findWithImageAndPostsByMemberId(memberId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
-        if (StringUtils.hasText(password)) {
-            if (!passwordEncoder.matches(password, member.getPassword()))
-                throw new CustomException(ExceptionCode.INVALID_PASSWORD);
-        }
 
-        eventPublisher.publishEvent(new DeleteMemberImageEvent(member));
-        if (!member.getPosts().isEmpty()) eventPublisher.publishEvent(new DeletePostImageEvent(member.getPosts()));
+        eventPublisher.publishEvent(new DeleteMemberImageEvent(member.getImage().getUrl()));
+
+        List<Post> posts = member.getPosts();
+        if (!posts.isEmpty()){
+            List<PostImage> postImages = postImageRepository.findByPostIn(posts);
+            if (!postImages.isEmpty()){
+                List<String> imageUrls = postImages.stream().map(PostImage::getUrl).collect(Collectors.toList());
+                eventPublisher.publishEvent(new DeletePostImageEvent(imageUrls));
+            }
+        }
 
         memberRepository.delete(member);
     }

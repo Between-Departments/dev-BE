@@ -102,13 +102,7 @@ public class Post extends BaseEntity {
         this.tag = tag;
         this.isAnonymous = isAnonymous;
 
-        if(imageUrls != null) updateImages(imageUrls);
-    }
-
-
-    private void updateImages(List<String> imageUrls) {
-        this.images.clear();
-        addImages(imageUrls);
+        if(imageUrls != null) addImages(imageUrls);
     }
 
     @RequiredArgsConstructor
