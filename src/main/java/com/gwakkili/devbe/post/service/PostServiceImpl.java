@@ -74,7 +74,7 @@ public class PostServiceImpl implements PostService{
         if(postSaveDto.getImageUrls() != null) newPost.addImages(postSaveDto.getImageUrls());
 
         Post savePost = postRepository.save(newPost);
-        return PostDetailDto.of(savePost);
+        return PostDetailDto.of(savePost,Boolean.TRUE,Boolean.FALSE,Boolean.FALSE);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class PostServiceImpl implements PostService{
         if(postSaveDto.getImageUrls() != null) newPost.addImages(postSaveDto.getImageUrls());
 
         Post savePost = postRepository.save(newPost);
-        return PostDetailDto.of(savePost);
+        return PostDetailDto.of(savePost,Boolean.TRUE,Boolean.FALSE,Boolean.FALSE);
     }
 
     @Override

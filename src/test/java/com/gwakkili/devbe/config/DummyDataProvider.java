@@ -137,7 +137,7 @@ public class DummyDataProvider implements ApplicationRunner {
                 .school("테스트대학1")
                 .build();
         member.addRole(Member.Role.ROLE_MANAGER);
-        member.setImage(new MemberImage("http://test.com/images/memberImage.jpg"));
+        member.setImage(new MemberImage("http://127.0.0.1:8001/test-bucket/images/memberImage.jpg"));
         memberRepository.save(member);
 
         List<Member> members = new ArrayList<>();
@@ -150,7 +150,7 @@ public class DummyDataProvider implements ApplicationRunner {
                     .school("테스트대학" + new Random().nextInt(1, 10))
                     .build();
             member2.addRole(Member.Role.ROLE_USER);
-            member2.setImage(new MemberImage("http://test.com/images/memberImage" + i + ".jpg"));
+            member2.setImage(new MemberImage("http://127.0.0.1:8001/test-bucket/images/memberImage_" + i + ".jpg"));
             members.add(member2);
         });
         memberRepository.saveAll(members);
