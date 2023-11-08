@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @Builder
@@ -22,9 +20,6 @@ public class MemberDto {
 
     @Schema(description = "닉네임", example = "닉네임이다")
     private String nickname;
-
-    @Schema(description = "권한", example = "ROLE_USER")
-    private Set<Member.Role> roles = new HashSet<>();
 
     @Schema(description = "프로필 이미지 url", example = "http://example.com/images/image.jpa")
     private String imageUrl;
