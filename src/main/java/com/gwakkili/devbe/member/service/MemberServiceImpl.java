@@ -110,14 +110,15 @@ public class MemberServiceImpl implements MemberService {
     public void deleteMember(long memberId, String password) {
         Member member = memberRepository.findWithImageAndPostsByMemberId(memberId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
-
+        if (!passwordEncoder.matches(password, member.getPassword()))
+            throw new CustomException(ExceptionCode.INVALID_PASSWORD);
 
         eventPublisher.publishEvent(new DeleteMemberImageEvent(member.getImage().getUrl()));
 
         List<Post> posts = member.getPosts();
-        if (!posts.isEmpty()){
+        if (!posts.isEmpty()) {
             List<PostImage> postImages = postImageRepository.findByPostIn(posts);
-            if (!postImages.isEmpty()){
+            if (!postImages.isEmpty()) {
                 List<String> imageUrls = postImages.stream().map(PostImage::getUrl).collect(Collectors.toList());
                 eventPublisher.publishEvent(new DeletePostImageEvent(imageUrls));
             }
@@ -152,7 +153,7 @@ public class MemberServiceImpl implements MemberService {
 
         if (StringUtils.hasText(memberSliceRequestDto.getKeyword())) {
             slice = memberRepository.findAllByMailContaining(keyword, pageable);
-        } else slice = memberRepository.findAll(pageable);
+        } else slice = memberRepository.findAllWithImage(pageable);
 
         Function<Member, MemberDto> fn = (MemberDto::of);
         return new SliceResponseDto<>(slice, fn);
