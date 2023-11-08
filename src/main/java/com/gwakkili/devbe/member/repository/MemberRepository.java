@@ -17,6 +17,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @EntityGraph(attributePaths = "roles")
     Slice<Member> findAllByMailContaining(String mail, Pageable pageable);
 
+    @EntityGraph(attributePaths = "image")
+    @Query("select m from Member m ")
+    Slice<Member> findAllWithImage(Pageable pageable);
+
     boolean existsByMail(String mail);
 
     boolean existsByNickname(String nickname);
@@ -24,7 +28,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @EntityGraph(attributePaths = {"image"})
     Optional<Member> findWithImageByMemberId(long memberId);
 
-    @EntityGraph(attributePaths = {"image","posts"})
+    @EntityGraph(attributePaths = {"image", "posts"})
     Optional<Member> findWithImageAndPostsByMemberId(long memberId);
 
     @EntityGraph(attributePaths = {"bookmarkCount", "postCount", "replyCount", "image", "roles"})
