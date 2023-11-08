@@ -96,7 +96,6 @@ public class ReplyServiceImpl implements ReplyService {
 
         Member writer = memberRepository.getReferenceById(memberId);
         Slice<Reply> replyList = replyRepository.findByMember(writer, sliceResponseDto.getPageable());
-        if (replyList.getNumberOfElements() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_REPLY);
         Function<Reply, MyReplyDto> fn = (MyReplyDto::of);
         return new SliceResponseDto(replyList, fn);
     }
@@ -105,7 +104,6 @@ public class ReplyServiceImpl implements ReplyService {
     @Transactional(readOnly = true)
     public SliceResponseDto<ReportedReplyDto, Object[]> getReportedReplyList(SliceRequestDto sliceRequestDto) {
         Slice<Object[]> replyList = replyRepository.findReported(sliceRequestDto.getPageable());
-        if (replyList.getNumberOfElements() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_REPLY);
         Function<Object[], ReportedReplyDto> fn = (object -> ReportedReplyDto.of((Reply) object[0], (long) object[1]));
         return new SliceResponseDto(replyList, fn);
     }
