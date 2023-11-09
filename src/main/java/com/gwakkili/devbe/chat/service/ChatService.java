@@ -10,15 +10,15 @@ import com.gwakkili.devbe.dto.SliceResponseDto;
 
 public interface ChatService {
 
-    ChatRoomDto saveChatRoom(SaveChatRoomDto saveChatRoomDto);
+    void saveChatRoom(SaveChatRoomDto saveChatRoomDto);
 
     SliceResponseDto<ChatRoomDto, Object[]> getChatRoomList(long memberId, SliceRequestDto sliceRequestDto);
 
     void deleteChatRoom(long roomId, long memberId);
 
-    ChatMessageDto saveChatMessage(SaveChatMessageDto saveChatMessageDto, int MemberNumInRoom);
+    Object[] saveChatMessage(SaveChatMessageDto saveChatMessageDto, int MemberNumInRoom);
 
-    void updateChatMessageIsRead(long roomId, long memberId);
+    void enterChatRoom(long roomId, long memberId);
 
     SliceResponseDto<ChatMessageDto, ChatMessage> getChatMessageList(long roomId, long memberId, SliceRequestDto sliceRequestDto);
 }

@@ -95,7 +95,7 @@ public class WebSocketHandler implements ChannelInterceptor {
 
         //채팅방 입장 및 예외 처리
         try {
-            chatService.updateChatMessageIsRead(roomId, memberDetails.getMemberId());
+            chatService.enterChatRoom(roomId, memberDetails.getMemberId());
         } catch (AccessDeniedException e) {
             throw new MessageDeliveryException("ACCESS_DENIED");
         } catch (NotFoundException e) {

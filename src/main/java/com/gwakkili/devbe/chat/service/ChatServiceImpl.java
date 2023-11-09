@@ -4,6 +4,7 @@ import com.gwakkili.devbe.chat.dto.Request.SaveChatMessageDto;
 import com.gwakkili.devbe.chat.dto.Request.SaveChatRoomDto;
 import com.gwakkili.devbe.chat.dto.Response.ChatMessageDto;
 import com.gwakkili.devbe.chat.dto.Response.ChatRoomDto;
+import com.gwakkili.devbe.chat.dto.Response.ChatNotificationDto;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.chat.entity.ChatRoom;
 import com.gwakkili.devbe.chat.entity.RecentChatMessage;
@@ -35,8 +36,9 @@ public class ChatServiceImpl implements ChatService {
 
     private final MemberRepository memberRepository;
 
+
     @Override
-    public ChatRoomDto saveChatRoom(SaveChatRoomDto saveChatRoomDto) {
+    public void saveChatRoom(SaveChatRoomDto saveChatRoomDto) {
 
         Member master = memberRepository.getReferenceById(saveChatRoomDto.getMasterId());
         Member member = memberRepository.findWithImageByMemberId(saveChatRoomDto.getMemberId())
@@ -49,9 +51,8 @@ public class ChatServiceImpl implements ChatService {
                 .master(master)
                 .member(member)
                 .build();
-        ChatRoom saveChatRoom = chatRoomRepository.save(chatRoom);
+        chatRoomRepository.save(chatRoom);
 
-        return ChatRoomDto.of(saveChatRoom);
     }
 
     @Override
@@ -70,7 +71,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     private ChatRoom getChatRoom(long roomId, long memberId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+        ChatRoom chatRoom = chatRoomRepository.findWithMasterAndMemberById(roomId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_CHAT_ROOM));
 
         if (chatRoom.getMaster().getMemberId() != memberId && chatRoom.getMember().getMemberId() != memberId)
@@ -88,24 +89,28 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Override
-    public void updateChatMessageIsRead(long roomId, long memberId) {
+    public void enterChatRoom(long roomId, long memberId) {
         ChatRoom chatRoom = getChatRoom(roomId, memberId);
         Member member = memberRepository.getReferenceById(memberId);
         chatMessageRepository.updateIsReadByRoomAndMember(chatRoom, member);
     }
 
     @Override
-    public ChatMessageDto saveChatMessage(SaveChatMessageDto saveChatMessageDto, int memberNumInRoom) {
+    public Object[] saveChatMessage(SaveChatMessageDto saveChatMessageDto, int memberNumInRoom) {
         ChatRoom chatRoom = getChatRoom(saveChatMessageDto.getChatRoomId(), saveChatMessageDto.getSenderId());
-        Member sender = memberRepository.getReferenceById(saveChatMessageDto.getSenderId());
+        Member sender = memberRepository.findById(saveChatMessageDto.getSenderId())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .sender(sender)
                 .content(saveChatMessageDto.getContent())
                 .isRead(memberNumInRoom == 2)
                 .build();
+        String receiver = (sender.getMail().equals(chatRoom.getMaster().getMail())) ?
+                chatRoom.getMember().getMail() : chatRoom.getMaster().getMail();
+
         ChatMessage saveChatMessage = chatMessageRepository.save(chatMessage);
-        return ChatMessageDto.of(saveChatMessage);
+        return new Object[]{ChatMessageDto.of(saveChatMessage), ChatNotificationDto.of(chatMessage, receiver)};
     }
 
     @Override

@@ -36,18 +36,15 @@ public class ChatRoomDto {
                 .recentChatMessage(
                         ChatMessageDto.builder()
                                 .chatMessageId(recentChatMessage.getChatMessageId())
-                                .content(recentChatMessage.getContent())
+                                .content(
+                                        recentChatMessage.getContent().length() > 40 ?
+                                                recentChatMessage.getContent().substring(0, 40) + "..." :
+                                                recentChatMessage.getContent()
+                                )
                                 .createAt(recentChatMessage.getCreateAt())
                                 .build()
                 )
                 .existNotRead(!recentChatMessage.isRead())
-                .build();
-    }
-
-    public static ChatRoomDto of(ChatRoom chatRoom) {
-        return ChatRoomDto.builder()
-                .chatRoomId(chatRoom.getChatRoomId())
-                .member(new SimpleMemberDto(chatRoom.getMember(), false))
                 .build();
     }
 }

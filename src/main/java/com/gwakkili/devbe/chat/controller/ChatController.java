@@ -3,6 +3,7 @@ package com.gwakkili.devbe.chat.controller;
 import com.gwakkili.devbe.chat.dto.Request.SaveChatMessageDto;
 import com.gwakkili.devbe.chat.dto.Request.SaveChatRoomDto;
 import com.gwakkili.devbe.chat.dto.Response.ChatMessageDto;
+import com.gwakkili.devbe.chat.dto.Response.ChatNotificationDto;
 import com.gwakkili.devbe.chat.dto.Response.ChatRoomDto;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.chat.service.ChatService;
@@ -19,7 +20,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -37,14 +38,16 @@ public class ChatController {
 
     private final SimpUserRegistry userRegistry;
 
+    private final SimpMessageSendingOperations messagingTemplate;
+
     @PostMapping("/rooms")
     @Operation(summary = "채팅방 생성")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
-    public ChatRoomDto saveChatRoom(@AuthenticationPrincipal MemberDetails memberDetails,
-                                    @RequestBody SaveChatRoomDto saveChatRoomDto) {
+    public void saveChatRoom(@AuthenticationPrincipal MemberDetails memberDetails,
+                             @RequestBody SaveChatRoomDto saveChatRoomDto) {
         saveChatRoomDto.setMasterId(memberDetails.getMemberId());
-        return chatService.saveChatRoom(saveChatRoomDto);
+        chatService.saveChatRoom(saveChatRoomDto);
     }
 
     @GetMapping("/rooms")
@@ -75,15 +78,25 @@ public class ChatController {
 
 
     @MessageMapping("/chat/rooms/{roomId}/message")
-    @SendTo("/sub/chat/rooms/{roomId}")
-    public ChatMessageDto sendChatMessage(@DestinationVariable long roomId,
-                                          Authentication authentication,
-                                          SaveChatMessageDto saveChatMessageDto) {
+    public void sendChatMessage(@DestinationVariable long roomId,
+                                Authentication authentication,
+                                SaveChatMessageDto saveChatMessageDto) {
         log.info("{}번 채팅방에 메시지 전송", roomId);
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         int memberNumInRoom = userRegistry.findSubscriptions(s -> s.getDestination().matches("/sub/chat/rooms/" + roomId)).size();
         saveChatMessageDto.setChatRoomId(roomId);
         saveChatMessageDto.setSenderId(memberDetails.getMemberId());
-        return chatService.saveChatMessage(saveChatMessageDto, memberNumInRoom);
+
+        Object[] objects = chatService.saveChatMessage(saveChatMessageDto, memberNumInRoom);
+        ChatMessageDto chatMessageDto = (ChatMessageDto) objects[0];
+        ChatNotificationDto simpleChatMessageDto = (ChatNotificationDto) objects[1];
+        // 채팅방에 메시지 전송
+        messagingTemplate.convertAndSend("/sub/chat/rooms/" + roomId, chatMessageDto);
+        // 채팅방에 속해 있지 않은 상대에게 알림 전송
+        if (memberNumInRoom != 2) {
+            messagingTemplate.convertAndSendToUser(simpleChatMessageDto.getReceiver(),
+                    "/sub/notification", simpleChatMessageDto);
+        }
+
     }
 }
