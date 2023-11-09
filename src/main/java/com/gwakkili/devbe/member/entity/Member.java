@@ -100,7 +100,7 @@ public class Member extends BaseEntity {
     }
 
     public void addReportCount() {
-        this.replyCount++;
+        this.reportCount++;
     }
 
     public void setImage(MemberImage image) {

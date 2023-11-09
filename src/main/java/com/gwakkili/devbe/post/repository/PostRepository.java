@@ -36,10 +36,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "group by p.postId")
     Slice<Object[]> findReported(Pageable pageable);
 
-
     // * 북마크한 게시물 목록
     @EntityGraph(attributePaths = {"recommendCount", "replyCount"})
     @Query("select p from Post p " +
+            "join fetch p.writer w join fetch w.image " +
             "inner join PostBookmark pb on pb.post.postId = p.postId and pb.member =:member " +
             "where p.boardType =:boardType")
     Slice<Post> findBookmarked(Pageable pageable, Member member, Post.BoardType boardType);

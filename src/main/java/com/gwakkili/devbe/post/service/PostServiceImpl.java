@@ -112,7 +112,7 @@ public class PostServiceImpl implements PostService{
         List<PostImage> images = findPost.getImages();
         if (!images.isEmpty()) postImageRepository.deleteAllInBatch(images);
 
-        findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getMajorCategory(), postUpdateDto.getTag(), postUpdateDto.isAnonymous(),postUpdateDto.getImageUrls());
+        findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getMajorCategory(), postUpdateDto.getTag(), postUpdateDto.getIsAnonymous(),postUpdateDto.getImageUrls());
     }
 
     @Override

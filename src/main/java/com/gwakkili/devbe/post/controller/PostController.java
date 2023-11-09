@@ -38,7 +38,7 @@ import java.time.LocalTime;
 @Tag(name = "게시글", description = "게시글 API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/posts")
+@RequestMapping("/api/posts")
 public class PostController {
 
     private final PostService postService;
@@ -206,7 +206,7 @@ public class PostController {
     })
     @DeleteMapping("/{postId}")
     @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
         postService.deletePost(postId,memberDetails.getMemberId(), memberDetails.getRoles());
     }

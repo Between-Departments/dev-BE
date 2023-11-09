@@ -32,5 +32,5 @@ public class PostUpdateDto {
     private Post.Tag tag;
 
     @NotNull
-    private boolean isAnonymous;
+    private Boolean isAnonymous;
 }

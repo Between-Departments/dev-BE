@@ -53,6 +53,7 @@ public class PostSaveTests extends DevBeApplicationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("title").value(freePostSaveDto.getTitle()))
                 .andExpect(jsonPath("content").value(freePostSaveDto.getContent()))
+                .andExpect(jsonPath("boardType").value(Post.BoardType.FREE.name()))
                 .andExpect(jsonPath("tag").value(freePostSaveDto.getTag().name()))
                 .andExpect(jsonPath("images").isArray())
                 .andExpect(jsonPath("images",hasSize(3)))
@@ -80,6 +81,7 @@ public class PostSaveTests extends DevBeApplicationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("title").value(needHelpPostSaveDto.getTitle()))
                 .andExpect(jsonPath("content").value(needHelpPostSaveDto.getContent()))
+                .andExpect(jsonPath("boardType").value(Post.BoardType.NEED_HELP.name()))
                 .andExpect(jsonPath("majorCategory").value(needHelpPostSaveDto.getMajorCategory().name()))
                 .andExpect(jsonPath("images").doesNotExist())
                 .andExpect(jsonPath("isAnonymous").value(needHelpPostSaveDto.getIsAnonymous()))
@@ -101,7 +103,7 @@ public class PostSaveTests extends DevBeApplicationTests {
 
         String titleLowerBound = RandomStringUtils.random(1, true, true);
         String titleUpperBound = RandomStringUtils.random(31, true, true);
-        String contentLowerBound =RandomStringUtils.random(9, true, true);
+        String contentLowerBound =RandomStringUtils.random(1, true, true);
         String contentUpperBound =RandomStringUtils.random(1001, true, true);
 
         FreePostSaveDto titleLowerBoundPost = FreePostSaveDto.builder()
