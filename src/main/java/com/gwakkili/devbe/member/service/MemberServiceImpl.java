@@ -10,6 +10,7 @@ import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.image.entity.PostImage;
+import com.gwakkili.devbe.image.repository.MemberImageRepository;
 import com.gwakkili.devbe.image.repository.PostImageRepository;
 import com.gwakkili.devbe.member.dto.request.*;
 import com.gwakkili.devbe.member.dto.response.MemberDetailDto;
@@ -40,7 +41,9 @@ import java.util.stream.Collectors;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-    
+
+    private final MemberImageRepository memberImageRepository;
+
     private final PostImageRepository postImageRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -87,10 +90,10 @@ public class MemberServiceImpl implements MemberService {
     public void updateNicknameAndImage(UpdateNicknameAndImageDto updateNicknameAndImageDto) {
         Member member = memberRepository.findById(updateNicknameAndImageDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+        memberImageRepository.deleteByMember(member);
         member.setNickname(updateNicknameAndImageDto.getNickname());
         member.setImage(new MemberImage(updateNicknameAndImageDto.getImageUrl()));
     }
-
     @Override
     public void updateSchool(UpdateSchoolDto updateSchoolDto) {
         Member member = memberRepository.findById(updateSchoolDto.getMemberId())
