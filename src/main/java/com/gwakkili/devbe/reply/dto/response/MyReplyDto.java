@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class MyReplyDto extends ReplyDto {
 
+    @Schema(description = "게시글 제목")
+    private String title;
+
     @Schema(description = "생성일")
     private LocalDateTime createAt;
 
@@ -23,6 +26,7 @@ public class MyReplyDto extends ReplyDto {
         return MyReplyDto.builder()
                 .replyId(reply.getReplyId())
                 .postId(reply.getPost().getPostId())
+                .title(reply.getPost().getTitle())
                 .createAt(reply.getCreateAt())
                 .updateAt(reply.getUpdateAt())
                 .content(reply.getContent())

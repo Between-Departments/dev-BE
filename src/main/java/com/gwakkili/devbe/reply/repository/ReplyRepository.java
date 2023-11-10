@@ -31,7 +31,7 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     @Query("select r from Reply r join fetch r.member m join fetch m.image where r.post = :post")
     Slice<Reply> findByPost(Post post, Pageable pageable);
 
-    @EntityGraph(attributePaths = "recommendCount")
+    @EntityGraph(attributePaths = {"recommendCount", "post"})
     @Query("select r from Reply r join fetch r.member m join fetch m.image where r.member = :member")
     Slice<Reply> findByMember(Member member, Pageable pageable);
 
