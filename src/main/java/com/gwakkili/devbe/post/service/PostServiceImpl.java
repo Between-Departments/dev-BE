@@ -74,7 +74,7 @@ public class PostServiceImpl implements PostService{
         if(postSaveDto.getImageUrls() != null) newPost.addImages(postSaveDto.getImageUrls());
 
         Post savePost = postRepository.save(newPost);
-        return PostDetailDto.of(savePost);
+        return PostDetailDto.of(savePost,Boolean.TRUE,Boolean.FALSE,Boolean.FALSE);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class PostServiceImpl implements PostService{
         if(postSaveDto.getImageUrls() != null) newPost.addImages(postSaveDto.getImageUrls());
 
         Post savePost = postRepository.save(newPost);
-        return PostDetailDto.of(savePost);
+        return PostDetailDto.of(savePost,Boolean.TRUE,Boolean.FALSE,Boolean.FALSE);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class PostServiceImpl implements PostService{
         List<PostImage> images = findPost.getImages();
         if (!images.isEmpty()) postImageRepository.deleteAllInBatch(images);
 
-        findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getMajorCategory(), postUpdateDto.getTag(), postUpdateDto.isAnonymous(),postUpdateDto.getImageUrls());
+        findPost.update(postUpdateDto.getTitle(), postUpdateDto.getContent(), postUpdateDto.getMajorCategory(), postUpdateDto.getTag(), postUpdateDto.getIsAnonymous(),postUpdateDto.getImageUrls());
     }
 
     @Override

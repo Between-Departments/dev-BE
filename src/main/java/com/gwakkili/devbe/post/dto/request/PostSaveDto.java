@@ -20,7 +20,7 @@ public abstract class PostSaveDto {
     @Length(min = 2, max = 30)
     private String title;
 
-    @Length(min = 10, max = 1000)
+    @Length(min = 2, max = 1000)
     private String content;
 
     @Size(max = 3)

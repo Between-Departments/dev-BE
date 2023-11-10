@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface ReplyReportRepository extends JpaRepository<ReplyReport, Long> {
 
-    @EntityGraph("reporter")
+    @EntityGraph(attributePaths = {"reporter"})
     Slice<ReplyReport> findByReply(Reply reply, Pageable pageable);
 
     boolean existsByReporterAndReply(Member reporter, Reply reply);
