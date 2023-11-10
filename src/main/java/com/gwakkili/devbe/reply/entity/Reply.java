@@ -31,6 +31,7 @@ public class Reply extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
+    @Column(length = 500)
     private String content;
 
     @Basic(fetch = FetchType.LAZY)
