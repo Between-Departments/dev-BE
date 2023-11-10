@@ -77,7 +77,7 @@ public class ChatController {
     }
 
 
-    @MessageMapping("/chat/rooms/{roomId}/message")
+    @MessageMapping("/chat/rooms/{roomId}/messages")
     public void sendChatMessage(@DestinationVariable long roomId,
                                 Authentication authentication,
                                 SaveChatMessageDto saveChatMessageDto) {
@@ -93,10 +93,7 @@ public class ChatController {
         // 채팅방에 메시지 전송
         messagingTemplate.convertAndSend("/sub/chat/rooms/" + roomId, chatMessageDto);
         // 채팅방에 속해 있지 않은 상대에게 알림 전송
-        if (memberNumInRoom != 2) {
-            messagingTemplate.convertAndSendToUser(simpleChatMessageDto.getReceiver(),
-                    "/sub/notification", simpleChatMessageDto);
-        }
+        messagingTemplate.convertAndSendToUser(simpleChatMessageDto.getReceiver(), "/sub/notification", simpleChatMessageDto);
 
     }
 }
