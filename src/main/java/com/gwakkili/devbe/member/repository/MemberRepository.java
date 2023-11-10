@@ -14,7 +14,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @EntityGraph(attributePaths = "roles")
     Optional<Member> findByMail(String mail);
 
-    @EntityGraph(attributePaths = "roles, image")
+    @EntityGraph(attributePaths = {"roles", "image"})
     @Query("select m from Member m where m.mail like concat('%', :keyword, '%') or m.nickname like concat('%', :keyword, '%')")
     Slice<Member> findAllByKeyword(String keyword, Pageable pageable);
 
