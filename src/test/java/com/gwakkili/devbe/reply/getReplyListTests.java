@@ -2,11 +2,13 @@ package com.gwakkili.devbe.reply;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.member.dto.request.MemberSliceRequestDto;
 import com.gwakkili.devbe.util.WithMockMember;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,6 +30,7 @@ public class getReplyListTests extends DevBeApplicationTests {
         public void success() throws Exception {
             //given
             int postId = 1;
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 
             //when, then
             mockMvc.perform(get(url, postId))
@@ -42,7 +45,7 @@ public class getReplyListTests extends DevBeApplicationTests {
         public void fail() throws Exception {
             //given
             int postId = 1000;
-
+            MemberSliceRequestDto memberSliceRequestDto = new MemberSliceRequestDto();
             //when, then
             mockMvc.perform(get(url, postId))
                     .andExpect(status().isNotFound())

@@ -2,26 +2,17 @@ package com.gwakkili.devbe.image;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.gwakkili.devbe.DevBeApplicationTests;
-import com.gwakkili.devbe.config.S3MockConfig;
 import io.findify.s3mock.S3Mock;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ImageTests extends DevBeApplicationTests {
 
@@ -59,5 +50,11 @@ public class ImageTests extends DevBeApplicationTests {
                 .file(image1).file(image2))
                 .andExpect(status().isCreated())
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("이미지 삭제 테스트")
+    public void imageDeleteTest() throws Exception {
+        //given
     }
 }

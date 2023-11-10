@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.config;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.chat.entity.ChatRoom;
 import com.gwakkili.devbe.chat.repository.ChatMessageRepository;
@@ -26,9 +27,10 @@ import com.gwakkili.devbe.report.repository.PostReportRepository;
 import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import com.gwakkili.devbe.school.entity.School;
 import com.gwakkili.devbe.school.repository.SchoolRepository;
+import io.findify.s3mock.S3Mock;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,7 +43,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 @TestComponent
-public class DummyDataProvider implements ApplicationRunner {
+public class DummyDataProvider {
 
     private SchoolRepository schoolRepository;
 
@@ -69,6 +71,12 @@ public class DummyDataProvider implements ApplicationRunner {
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    private S3Mock s3Mock;
+
+    private AmazonS3 amazonS3;
+
+    private static final String BUCKET_NAME = "test-bucket";
+
     public DummyDataProvider() {
     }
 
@@ -84,7 +92,9 @@ public class DummyDataProvider implements ApplicationRunner {
                              PostRecommendRepository postRecommendRepository,
                              ReplyRecommendRepository replyRecommendRepository,
                              ChatRoomRepository chatRoomRepository,
-                             ChatMessageRepository chatMessageRepository) {
+                             ChatMessageRepository chatMessageRepository,
+                             S3Mock s3Mock,
+                             AmazonS3 amazonS3) {
         this.schoolRepository = schoolRepository;
         this.majorRepository = majorRepository;
         this.memberRepository = memberRepository;
@@ -97,6 +107,8 @@ public class DummyDataProvider implements ApplicationRunner {
         this.replyRecommendRepository = replyRecommendRepository;
         this.chatRoomRepository = chatRoomRepository;
         this.chatMessageRepository = chatMessageRepository;
+        this.s3Mock = s3Mock;
+        this.amazonS3 = amazonS3;
     }
 
 
@@ -128,7 +140,7 @@ public class DummyDataProvider implements ApplicationRunner {
 
 
     // * 테스트용 사용자 -> 총 101명 (관리자 1명, 일반 사용자 100명)
-    private void saveMember(){
+    private void saveMember() {
         Member member = Member.builder()
                 .mail("test@test1.ac.kr")
                 .nickname("테스트멤버")
@@ -137,20 +149,26 @@ public class DummyDataProvider implements ApplicationRunner {
                 .school("테스트대학1")
                 .build();
         member.addRole(Member.Role.ROLE_MANAGER);
-        member.setImage(new MemberImage("http://127.0.0.1:8001/test-bucket/images/memberImage.jpg"));
+        amazonS3.putObject(BUCKET_NAME, "images/memberImage.jpg", "memberImage");
+        amazonS3.putObject(BUCKET_NAME, "thumbnails/memberImage.jpg", "memberThumbnail");
+        member.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/memberImage.jpg").toString()));
+
         memberRepository.save(member);
 
         List<Member> members = new ArrayList<>();
-        IntStream.rangeClosed(1, 100).forEach(i->{
+        IntStream.rangeClosed(1, 100).forEach(i -> {
             Member member2 = Member.builder()
-                    .mail("test"+i+"@test" + new Random().nextInt(1, 10) + ".ac.kr")
+                    .mail("test" + i + "@test" + new Random().nextInt(1, 10) + ".ac.kr")
                     .nickname("테스트멤버" + i)
                     .password(passwordEncoder.encode("a12341234!"))
                     .major("테스트학과" + new Random().nextInt(1, 30))
                     .school("테스트대학" + new Random().nextInt(1, 10))
                     .build();
             member2.addRole(Member.Role.ROLE_USER);
-            member2.setImage(new MemberImage("http://127.0.0.1:8001/test-bucket/images/memberImage_" + i + ".jpg"));
+            amazonS3.putObject(BUCKET_NAME, "images/memberImage" + i + ".jpg", "memberImage" + i);
+            amazonS3.putObject(BUCKET_NAME, "thumbnails/memberImage" + i + ".jpg", "memberThumbnail" + i);
+            member2.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/memberImage" + i + ".jpg").toString()));
+
             members.add(member2);
         });
         memberRepository.saveAll(members);
@@ -176,8 +194,10 @@ public class DummyDataProvider implements ApplicationRunner {
 
             List<String> imageUrls = new ArrayList<>();
 
-            for(int j=1; j<4; j++){
-                imageUrls.add("http://127.0.0.1:8001/test-bucket/images/FreePost" + i + "_Image" + j +".jpg");
+            for(int j=1; j<4; j++) {
+                amazonS3.putObject(BUCKET_NAME, "images/postImage" + j + "_FreePost" + i + ".jpg", "postImage" + j + "_FreePost" + i + "image");
+                amazonS3.putObject(BUCKET_NAME, "thumbnails/postImage" + j + "_FreePost" + i + ".jpg", "postImage" + j + "_FreePost" + i + "thumbnail");
+                imageUrls.add(amazonS3.getUrl(BUCKET_NAME, "images/postImage" + j + "_FreePost" + i + ".jpg").toString());
             }
             freePost.addImages(imageUrls);
 
@@ -194,8 +214,10 @@ public class DummyDataProvider implements ApplicationRunner {
 
             List<String> imageUrls1 = new ArrayList<>();
 
-            for(int j=1; j<4; j++){
-                imageUrls1.add("http://127.0.0.1:8001/test-bucket/images/NeedHelpPost" + i + "_Image" + j +".jpg");
+            for(int j=1; j<4; j++) {
+                amazonS3.putObject(BUCKET_NAME, "images/postImage" + j + "_NeedHelpPost" + i + ".jpg", "postImage" + j + "_FreePost" + i);
+                amazonS3.putObject(BUCKET_NAME, "thumbnails/postImage" + j + "_NeedHelpPost" + i + ".jpg", "postImage" + j + "_FreePost" + i);
+                imageUrls.add(amazonS3.getUrl(BUCKET_NAME, "images/postImage" + j + "_NeedHelpPost" + i + ".jpg").toString());
             }
             needHelpPost.addImages(imageUrls1);
 
@@ -232,6 +254,7 @@ public class DummyDataProvider implements ApplicationRunner {
         postRepository.saveAll(posts);
     }
 
+
     // * 테스트용 댓글 -> 익명 200개, 일반 200개, 총 400개 (20개의 게시물(게시물 아이디 1~20), 20명의 작성자(사용자 아이디 1~20))
     private void saveReply() {
         List<Reply> replies = new ArrayList<>();
@@ -266,7 +289,6 @@ public class DummyDataProvider implements ApplicationRunner {
         });
         postReportRepository.saveAll(postReports);
     }
-
 
     // * 테스트용 댓글 신고 -> 총 400개 (20개의 댓글(댓글 아이디 1~20)에 20개의 신고, 신고자 아이디 1~20)
     private void saveReplyReport() {
@@ -314,7 +336,6 @@ public class DummyDataProvider implements ApplicationRunner {
                         .build();
                 replyRecommends.add(replyRecommend);
             });
-
         });
 
         replyRecommendRepository.saveAll(replyRecommends);
@@ -357,7 +378,7 @@ public class DummyDataProvider implements ApplicationRunner {
         chatRoomRepository.saveAll(chatRooms);
     }
 
-    //* 테스트용 채팅 메시지 -> 채팅 방당 30개
+    //* 테스트용 채팅 메시지 -> 총 300개채팅 방당 30개
     private void saveChatMessage() {
         List<ChatMessage> chatMessages = new ArrayList<>();
         LongStream.rangeClosed(2, 10).forEach(i -> {
@@ -375,9 +396,11 @@ public class DummyDataProvider implements ApplicationRunner {
     }
 
 
-    @Override
+    @PostConstruct
     @Transactional
-    public void run(ApplicationArguments args) throws Exception {
+    public void initialize() throws Exception {
+        s3Mock.start();
+        amazonS3.createBucket(BUCKET_NAME);
         saveSchool();
         saveMajor();
         saveMember();
@@ -390,5 +413,11 @@ public class DummyDataProvider implements ApplicationRunner {
         savePostBookmark();
         saveChatRoom();
         saveChatMessage();
+    }
+
+    @PreDestroy
+    public void close() {
+        amazonS3.shutdown();
+        s3Mock.stop();
     }
 }

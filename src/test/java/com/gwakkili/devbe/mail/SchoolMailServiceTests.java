@@ -77,7 +77,7 @@ public class SchoolMailServiceTests {
             //given
             String mail = "test@test.com";
             String code = "123456";
-            MailAuthCodeDto mailAuthCodeDto = MailAuthCodeDto.builder().mail(mail).code(code).build();
+            MailAuthCodeDto mailAuthCodeDto = new MailAuthCodeDto(mail, code);
             given(mailAuthCodeRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(code).build()));
             //when, then
             Assertions.assertThat(mailService.checkAuthCode(mailAuthCodeDto)).isTrue();
@@ -89,7 +89,7 @@ public class SchoolMailServiceTests {
             //given
             String mail = "test@test.com";
             String code = "123456";
-            MailAuthCodeDto mailAuthCodeDto = MailAuthCodeDto.builder().mail(mail).code(code).build();
+            MailAuthCodeDto mailAuthCodeDto = new MailAuthCodeDto(mail, code);
             String diffAuthKey = "567891";
             given(mailAuthCodeRepository.findById(mail)).willReturn(Optional.of(MailAuthCode.builder().authCode(diffAuthKey).build()));
             //when then
@@ -102,7 +102,7 @@ public class SchoolMailServiceTests {
             //given
             String mail = "test@test.com";
             String code = "123456";
-            MailAuthCodeDto mailAuthCodeDto = MailAuthCodeDto.builder().mail(mail).code(code).build();
+            MailAuthCodeDto mailAuthCodeDto = new MailAuthCodeDto(mail, code);
             given(mailAuthCodeRepository.findById(mail)).willReturn(Optional.empty());
             //when then
             Assertions.assertThatThrownBy(() -> mailService.checkAuthCode(mailAuthCodeDto)).isInstanceOf(NotFoundException.class);
