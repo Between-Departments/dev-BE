@@ -113,7 +113,7 @@ public class MemberServiceImpl implements MemberService {
     public void deleteMember(long memberId, String password) {
         Member member = memberRepository.findWithImageAndPostsByMemberId(memberId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
-        if (!passwordEncoder.matches(password, member.getPassword()))
+        if (password != null && !passwordEncoder.matches(password, member.getPassword()))
             throw new CustomException(ExceptionCode.INVALID_PASSWORD);
 
         eventPublisher.publishEvent(new DeleteMemberImageEvent(member.getImage().getUrl()));
@@ -155,7 +155,7 @@ public class MemberServiceImpl implements MemberService {
         Slice<Member> slice;
 
         if (StringUtils.hasText(memberSliceRequestDto.getKeyword())) {
-            slice = memberRepository.findAllByMailContaining(keyword, pageable);
+            slice = memberRepository.findAllByKeyword(keyword, pageable);
         } else slice = memberRepository.findAllWithImage(pageable);
 
         Function<Member, MemberDto> fn = (MemberDto::of);
