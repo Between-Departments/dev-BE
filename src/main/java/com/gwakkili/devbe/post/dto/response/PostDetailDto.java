@@ -85,6 +85,29 @@ public class PostDetailDto {
                 .build();
     }
 
+    public static PostDetailDto of(Post post, Boolean isMine, Boolean isRecommended, Boolean isBookmarked){
+        List<String> images = post.getImages().stream().map(PostImage::getUrl).collect(Collectors.toList());
+
+        return PostDetailDto.builder()
+                .postId(post.getPostId())
+                .writer(new PostSimpleMemberDto(post.getWriter(), post.getIsAnonymous()))
+                .boardType(post.getBoardType())
+                .majorCategory(post.getMajorCategory())
+                .tag(post.getTag())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .images(images)
+                .viewCount(post.getViewCount())
+                .recommendCount(post.getRecommendCount())
+                .replyCount(post.getReplyCount())
+                .createAt(post.getCreateAt())
+                .isAnonymous(post.getIsAnonymous())
+                .isMine(isMine)
+                .isRecommended(isRecommended)
+                .isBookmarked(isBookmarked)
+                .build();
+    }
+
     public void setMine(Boolean mine) {
         isMine = mine;
     }
