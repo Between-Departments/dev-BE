@@ -34,9 +34,9 @@ public class ReportController {
     private final PostReportService postReportService;
     private final ReplyReportService replyReportService;
 
+    @Operation(summary = "게시물 신고 목록 조회 (ADMIN 전용)")
     @GetMapping("/posts/{postId}/report")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    @Operation(summary = "게시물 신고 목록 조회 (ADMIN 전용)")
     public SliceResponseDto<PostReportDto, PostReport> getPostReportList(@PathVariable long postId,
                                                                          @ParameterObject SliceRequestDto sliceRequestDto) {
         return postReportService.findPostReportList(postId, sliceRequestDto);
@@ -47,6 +47,7 @@ public class ReportController {
             @ApiResponse(responseCode = "200", description = "특정 게시글 신고 성공")
     })
     @PostMapping("/posts/{postId}/report")
+    @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public void savePostReport(@PathVariable Long postId,
                                @RequestBody @Valid PostReportSaveDto postReportSaveDto,

@@ -2,6 +2,7 @@ package com.gwakkili.devbe.report.dto.request;
 
 import com.gwakkili.devbe.report.entity.Report;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
@@ -13,4 +14,10 @@ public class PostReportSaveDto {
 
     @Length(min = 5, max = 300)
     private String content;
+
+    @Builder
+    public PostReportSaveDto(Report.Type type, String content) {
+        this.type = type;
+        this.content = content;
+    }
 }
