@@ -2,6 +2,7 @@ package com.gwakkili.devbe.reply.service;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.reply.dto.request.ReplySaveDto;
 import com.gwakkili.devbe.reply.dto.request.ReplyUpdateDto;
 import com.gwakkili.devbe.reply.dto.response.MyReplyDto;
@@ -18,7 +19,7 @@ public interface ReplyService {
 
     SliceResponseDto<ReplyDetailDto, Object[]> getReplyList(long postId, long memberId, SliceRequestDto sliceRequestDto);
 
-    SliceResponseDto<MyReplyDto, Reply> getMyReplyList(long memberId, SliceRequestDto sliceResponseDto);
+    SliceResponseDto<MyReplyDto, Reply> getMyReplyList(long memberId, SliceRequestDto sliceResponseDto, Post.BoardType boardType);
 
     SliceResponseDto<ReportedReplyDto, Object[]> getReportedReplyList(SliceRequestDto sliceRequestDto);
 

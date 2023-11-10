@@ -92,10 +92,10 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     @Transactional(readOnly = true)
-    public SliceResponseDto<MyReplyDto, Reply> getMyReplyList(long memberId, SliceRequestDto sliceResponseDto) {
+    public SliceResponseDto<MyReplyDto, Reply> getMyReplyList(long memberId, SliceRequestDto sliceResponseDto, Post.BoardType boardType) {
 
         Member writer = memberRepository.getReferenceById(memberId);
-        Slice<Reply> replyList = replyRepository.findByMember(writer, sliceResponseDto.getPageable());
+        Slice<Reply> replyList = replyRepository.findByMember(writer, boardType, sliceResponseDto.getPageable());
         Function<Reply, MyReplyDto> fn = (MyReplyDto::of);
         return new SliceResponseDto(replyList, fn);
     }

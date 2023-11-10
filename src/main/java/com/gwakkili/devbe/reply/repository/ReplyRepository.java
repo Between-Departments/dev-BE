@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
@@ -31,15 +30,12 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     @Query("select r from Reply r join fetch r.member m join fetch m.image where r.post = :post")
     Slice<Reply> findByPost(Post post, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"recommendCount", "post"})
-    @Query("select r from Reply r join fetch r.member m join fetch m.image where r.member = :member")
-    Slice<Reply> findByMember(Member member, Pageable pageable);
+    @Query("select r from Reply r join fetch r.member m join fetch m.image join fetch r.post p where r.member = :member and p.boardType = :boardType")
+    Slice<Reply> findByMember(Member member, Post.BoardType boardType, Pageable pageable);
 
     @Query("select r ,count(rr) from Reply r join fetch r.member m join fetch m.image " +
             "inner join ReplyReport rr on rr.reply = r group by r")
     Slice<Object[]> findReported(Pageable pageable);
 
-    List<Reply> findByMember(Member member);
 
-    List<Reply> findByPostIn(List<Post> postList);
 }

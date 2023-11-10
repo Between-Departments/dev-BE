@@ -2,6 +2,7 @@ package com.gwakkili.devbe.reply.controller;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.reply.dto.request.ReplySaveDto;
 import com.gwakkili.devbe.reply.dto.request.ReplyUpdateDto;
 import com.gwakkili.devbe.reply.dto.response.MyReplyDto;
@@ -61,8 +62,9 @@ public class ReplyController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "나의 댓글 목록 조회")
     public SliceResponseDto<MyReplyDto, Reply> getMyReplyList(@AuthenticationPrincipal MemberDetails memberDetails,
-                                                              @ParameterObject SliceRequestDto sliceRequestDto) {
-        return replyService.getMyReplyList(memberDetails.getMemberId(), sliceRequestDto);
+                                                              @ParameterObject SliceRequestDto sliceRequestDto,
+                                                              @Parameter(description = "게시글 종류") Post.BoardType boardType) {
+        return replyService.getMyReplyList(memberDetails.getMemberId(), sliceRequestDto, boardType);
     }
 
     @GetMapping("/replies/report")
