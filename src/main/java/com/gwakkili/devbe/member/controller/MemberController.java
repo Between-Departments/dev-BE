@@ -113,7 +113,7 @@ public class MemberController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "회원 탈퇴")
-    public void deleteMember(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody PasswordDto passwordDto) {
+    public void deleteMember(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody @Validated PasswordDto passwordDto) {
         memberService.deleteMember(memberDetails.getMemberId(), passwordDto.getPassword());
     }
 
