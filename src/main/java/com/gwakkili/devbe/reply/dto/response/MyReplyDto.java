@@ -29,7 +29,7 @@ public class MyReplyDto extends ReplyDto {
                 .title(reply.getPost().getTitle())
                 .createAt(reply.getCreateAt())
                 .updateAt(reply.getUpdateAt())
-                .content(reply.getContent())
+                .content(reply.getContent().length() > 40 ? reply.getContent().substring(0, 40) + "..." : reply.getContent())
                 .build();
     }
 }

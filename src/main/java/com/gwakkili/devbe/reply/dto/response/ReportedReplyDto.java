@@ -25,7 +25,7 @@ public class ReportedReplyDto extends ReplyDto {
         return ReportedReplyDto.builder()
                 .replyId(reply.getReplyId())
                 .postId(reply.getPost().getPostId())
-                .content(reply.getContent())
+                .content(reply.getContent().length() > 40 ? reply.getContent().substring(0, 40) + "..." : reply.getContent())
                 .reportCount((int) reportCount)
                 .writer(new SimpleMemberDto(reply.getMember(), false))
                 .build();
