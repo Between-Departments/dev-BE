@@ -13,6 +13,10 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(
+        name = "chat_room",
+        uniqueConstraints = @UniqueConstraint(name = "unique_master_and_member", columnNames = {"master_id", "member_id"})
+)
 public class ChatRoom extends BaseEntity {
 
     @Id
