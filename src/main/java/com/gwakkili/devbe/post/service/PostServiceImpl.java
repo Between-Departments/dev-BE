@@ -6,7 +6,6 @@ import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
 import com.gwakkili.devbe.event.DeletePostImageEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
-import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.image.entity.PostImage;
 import com.gwakkili.devbe.image.repository.PostImageRepository;
@@ -30,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +58,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public PostDetailDto saveNewFreePost(FreePostSaveDto postSaveDto, long memberId) {
+    public PostDetailDto saveNewFreePost(FreePostSaveDto postSaveDto, Long memberId) {
         Member writer = memberRepository.findWithImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         Post newPost = Post.builder()
@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public PostDetailDto saveNewNeedHelpPost(NeedHelpPostSaveDto postSaveDto, long memberId) {
+    public PostDetailDto saveNewNeedHelpPost(NeedHelpPostSaveDto postSaveDto, Long memberId) {
         Member writer = memberRepository.findWithImageByMemberId(memberId).orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
         Post newPost = Post.builder()
@@ -100,13 +100,13 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public void updatePost(PostUpdateDto postUpdateDto, Long postId, long memberId) {
+    public void updatePost(PostUpdateDto postUpdateDto, Long postId, Long memberId) {
         Post findPost = postRepository.findWithImagesByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
         // ! 게시글을 수정하려는 사용자가 글 작성자 본인이 아닐 경우
         if (findPost.getWriter().getMemberId() != memberId){
-            throw new CustomException(ExceptionCode.ACCESS_DENIED);
+            throw new AccessDeniedException("접근 거부");
         }
 
         List<PostImage> images = findPost.getImages();
@@ -117,14 +117,14 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public void deletePost(Long postId, long memberId, Set<Member.Role> roles) {
+    public void deletePost(Long postId, Long memberId, Set<Member.Role> roles) {
         Post findPost = postRepository.findWithImagesByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
         if (roles.contains(Member.Role.ROLE_MANAGER)) {
             publisher.publishEvent(new DeleteByManagerEvent(findPost.getWriter().getMemberId()));
         } else if (findPost.getWriter().getMemberId() != memberId) {
-            throw new CustomException(ExceptionCode.ACCESS_DENIED);
+            throw new AccessDeniedException("접근 거부");
         }
 
         List<PostImage> images = findPost.getImages();
@@ -140,7 +140,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public void bookmarkPost(Long postId, long memberId) {
+    public void bookmarkPost(Long postId, Long memberId) {
         Member findMember = memberRepository.getReferenceById(memberId);
         Post findPost = postRepository.getReferenceById(postId);
 
@@ -159,7 +159,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public void recommendPost(Long postId, long memberId) {
+    public void recommendPost(Long postId, Long memberId) {
         Member findMember = memberRepository.getReferenceById(memberId);
         Post findPost = postRepository.getReferenceById(postId);
 
@@ -176,9 +176,10 @@ public class PostServiceImpl implements PostService{
                 });
     }
 
+    // TODO 단순 조회와 조회수 증가 트랜잭션을 분리시키는 것에 대해 고민해볼 필요가 있을듯.
     @Override
     @Transactional
-    public PostDetailDto findPostDto(Long postId, Long memberId, boolean doCountUp) {
+    public PostDetailDto findPostDto(Long postId, Long memberId, Boolean doCountUp) {
         Post findPost = postRepository.findWithDetailByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
@@ -211,21 +212,21 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition) {
+    public SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, Long memberId, Post.BoardType boardType) {
         Pageable pageable = sliceRequestDto.getPageable();
         Member findMember = memberRepository.getReferenceById(memberId);
 
-        Slice<Post> slice = postRepository.findByWriterAndBoardType(pageable, findMember, postSearchCondition.getBoardType());
+        Slice<Post> slice = postRepository.findByWriterAndBoardType(pageable, findMember, boardType);
         Function<Post, MyPostListDto> fn = MyPostListDto::of;
         return new SliceResponseDto<>(slice, fn);
     }
 
     @Override
-    public SliceResponseDto<BookmarkPostListDto, Post> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition) {
+    public SliceResponseDto<BookmarkPostListDto, Post> findBookmarkedPostList(SliceRequestDto sliceRequestDto, Long memberId, Post.BoardType boardType) {
         Pageable pageable = sliceRequestDto.getPageable();
         Member findMember = memberRepository.getReferenceById(memberId);
 
-        Slice<Post> slice = postRepository.findBookmarked(pageable, findMember, postSearchCondition.getBoardType());
+        Slice<Post> slice = postRepository.findBookmarked(pageable, findMember, boardType);
         Function<Post, BookmarkPostListDto> fn = BookmarkPostListDto::of;
         return new SliceResponseDto<>(slice, fn);
     }
@@ -236,7 +237,7 @@ public class PostServiceImpl implements PostService{
         Pageable pageable = sliceRequestDto.getPageable();
 
         Slice<Object[]> postList= postRepository.findReported(pageable);
-        Function<Object[], ReportPostListDto> fn = (object -> ReportPostListDto.of((Post) object[0],(long) object[1]));
+        Function<Object[], ReportPostListDto> fn = (object -> ReportPostListDto.of((Post) object[0],(Long) object[1]));
         return new SliceResponseDto<>(postList, fn);
     }
     @Override

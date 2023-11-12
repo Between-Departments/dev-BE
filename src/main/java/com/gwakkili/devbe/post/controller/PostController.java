@@ -21,6 +21,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -37,16 +39,18 @@ import java.time.LocalTime;
 
 @Tag(name = "게시글", description = "게시글 API")
 @RequiredArgsConstructor
+@Validated
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
 
     private final PostService postService;
 
-    @Operation(method = "GET", summary = "주간 인기 게시글 목록 조회")
+    @Operation(method = "GET", summary = "주간 인기 게시글 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "주간 인기 게시글 목록 조회 성공", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", description = "주간 인기 게시글 조회 성공", useReturnTypeSchema = true)
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/weeklyhot")
     public ListResponseDto<BasicPostListDto, Post> getWeeklyHotPostList(){
         return postService.findWeeklyHotPostList();
@@ -56,6 +60,7 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "금일 계열별 인기 게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/dailyhot")
     public ListResponseDto<BasicPostListDto, Object[]> getDailyHotNeedHelpPostList(){
         return postService.findDailyHotPostList();
@@ -128,8 +133,10 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public SliceResponseDto<BasicPostListDto, Post> getPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ParameterObject PostSearchCondition postSearchCondition){
+    public SliceResponseDto<BasicPostListDto, Post> getPostList(@ParameterObject SliceRequestDto sliceRequestDto,
+                                                                @ParameterObject PostSearchCondition postSearchCondition){
         return postService.findPostList(sliceRequestDto, postSearchCondition);
     }
 
@@ -137,8 +144,9 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "신고된 게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
-    @GetMapping("/report")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/report")
     public SliceResponseDto<ReportPostListDto, Object[]> getReportedPostList(@ParameterObject SliceRequestDto sliceRequestDto){
         return postService.findReportedPostList(sliceRequestDto);
     }
@@ -147,29 +155,35 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "내가 작성한 게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
-    @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
-    public SliceResponseDto<MyPostListDto, Post> getMyPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ParameterObject PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
-        return postService.findMyPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/my")
+    public SliceResponseDto<MyPostListDto, Post> getMyPostList(@ParameterObject SliceRequestDto sliceRequestDto,
+                                                               @NotNull Post.BoardType boardType, // TODO BoardType 만 따로 받기?
+                                                               @AuthenticationPrincipal MemberDetails memberDetails){
+        return postService.findMyPostList(sliceRequestDto, memberDetails.getMemberId(), boardType);
     }
 
     @Operation(method = "GET", summary = "북마크한 게시글 목록 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "북마크한 게시글 목록 조회 성공", useReturnTypeSchema = true)
     })
-    @GetMapping("/bookmark")
     @PreAuthorize("isAuthenticated()")
-    public SliceResponseDto<BookmarkPostListDto, Post> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto, @ParameterObject PostSearchCondition postSearchCondition, @AuthenticationPrincipal MemberDetails memberDetails){
-        return postService.findBookmarkedPostList(sliceRequestDto, memberDetails.getMemberId(), postSearchCondition);
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/bookmark")
+    public SliceResponseDto<BookmarkPostListDto, Post> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto,
+                                                                             @Valid @NotNull Post.BoardType boardType, // TODO BoardType 만 따로 받기?
+                                                                             @AuthenticationPrincipal MemberDetails memberDetails){
+        return postService.findBookmarkedPostList(sliceRequestDto, memberDetails.getMemberId(), boardType);
     }
 
     @Operation(method = "POST", summary = "자유게시판 글 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "게시글 생성 성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostDetailDto.class)))
     })
-    @PostMapping("/free")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/free")
     public PostDetailDto create(@RequestBody @Valid FreePostSaveDto postSaveDto,
                                 @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.saveNewFreePost(postSaveDto,memberDetails.getMemberId());
@@ -179,9 +193,9 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "게시글 생성 성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PostDetailDto.class)))
     })
-    @PostMapping("/needhelp")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/needhelp")
     public PostDetailDto create(@RequestBody @Valid NeedHelpPostSaveDto postSaveDto,
                                 @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.saveNewNeedHelpPost(postSaveDto,memberDetails.getMemberId());
@@ -191,9 +205,9 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 게시글 수정 성공")
     })
-    @PatchMapping("/{postId}")
     @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK) // TODO 200 VS 204
+    @PatchMapping("/{postId}")
     public void update(@RequestBody @Valid PostUpdateDto postUpdateDto,
                        @PathVariable Long postId,
                        @AuthenticationPrincipal MemberDetails memberDetails) {
@@ -204,10 +218,11 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 게시글 삭제 성공")
     })
-    @DeleteMapping("/{postId}")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
+    @DeleteMapping("/{postId}")
+    public void delete(@PathVariable Long postId,
+                       @AuthenticationPrincipal MemberDetails memberDetails){
         postService.deletePost(postId,memberDetails.getMemberId(), memberDetails.getRoles());
     }
 
@@ -215,10 +230,11 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 게시글 북마크 성공")
     })
-    @PatchMapping("/{postId}/bookmark")
     @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public void bookmark(@PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
+    @ResponseStatus(HttpStatus.OK) // TODO 200 VS 204
+    @PatchMapping("/{postId}/bookmark")
+    public void bookmark(@PathVariable Long postId,
+                         @AuthenticationPrincipal MemberDetails memberDetails){
         postService.bookmarkPost(postId,memberDetails.getMemberId());
     }
 
@@ -226,10 +242,11 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 게시글 추천 성공")
     })
-    @PatchMapping("/{postId}/recommend")
     @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK)
-    public void recommend(@PathVariable Long postId, @AuthenticationPrincipal MemberDetails memberDetails){
+    @ResponseStatus(HttpStatus.OK) // TODO 200 VS 204
+    @PatchMapping("/{postId}/recommend")
+    public void recommend(@PathVariable Long postId,
+                          @AuthenticationPrincipal MemberDetails memberDetails){
         postService.recommendPost(postId,memberDetails.getMemberId());
     }
 

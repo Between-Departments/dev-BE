@@ -21,7 +21,7 @@ public class BasicPostListDto extends AbstractPostListDto {
 
     private SimpleMemberDto writer;
 
-    private boolean isAnonymous;
+    private Boolean isAnonymous;
 
     public static BasicPostListDto of(Post post){
         List<String> thumbnailImages = post.getImages().stream().map(PostImage::getThumbnailUrl).collect(Collectors.toList());

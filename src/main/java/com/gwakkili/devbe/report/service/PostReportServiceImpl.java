@@ -2,12 +2,12 @@ package com.gwakkili.devbe.report.service;
 
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
+import com.gwakkili.devbe.event.NewPostReportEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
-import com.gwakkili.devbe.exception.customExcption.CustomException;
+import com.gwakkili.devbe.exception.customExcption.DuplicateException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
-import com.gwakkili.devbe.event.NewPostReportEvent;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.repository.PostRepository;
 import com.gwakkili.devbe.report.dto.request.PostReportSaveDto;
@@ -34,7 +34,7 @@ public class PostReportServiceImpl implements PostReportService{
     private final ApplicationEventPublisher publisher;
 
     @Override
-    public SliceResponseDto<PostReportDto, PostReport> findPostReportList(long postId, SliceRequestDto sliceRequestDto) {
+    public SliceResponseDto<PostReportDto, PostReport> findPostReportList(Long postId, SliceRequestDto sliceRequestDto) {
         Post findPost = postRepository.getReferenceById(postId);
 
         Slice<PostReport> postReportList = postReportRepository.findByPost(findPost, sliceRequestDto.getPageable());
@@ -44,7 +44,7 @@ public class PostReportServiceImpl implements PostReportService{
 
     @Override
     @Transactional
-    public void saveNewPostReport(PostReportSaveDto postReportSaveDto, Long postId, long memberId) {
+    public void saveNewPostReport(PostReportSaveDto postReportSaveDto, Long postId, Long memberId) {
         Member reporter = memberRepository.getReferenceById(memberId);
         Post findPost = postRepository.findWithWriterByPostId(postId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
@@ -52,7 +52,7 @@ public class PostReportServiceImpl implements PostReportService{
         Optional<PostReport> findPostReport = postReportRepository.findByReporterAndPost(reporter, findPost);
 
         // ! HTTP 409 -> 중복 데이터 존재하는 경우 응답 상태 코드
-        findPostReport.ifPresentOrElse(report -> { throw new CustomException(ExceptionCode.DUPLICATE_REPORT); },
+        findPostReport.ifPresentOrElse(report -> { throw new DuplicateException(ExceptionCode.DUPLICATE_REPORT); },
                 () ->{
                     PostReport newPostReport = PostReport.builder()
                             .reporter(reporter)
@@ -69,7 +69,7 @@ public class PostReportServiceImpl implements PostReportService{
 
     @Override
     @Transactional
-    public void deletePostReport(long reportId) {
+    public void deletePostReport(Long reportId) {
         postReportRepository.deleteById(reportId);
     }
 }

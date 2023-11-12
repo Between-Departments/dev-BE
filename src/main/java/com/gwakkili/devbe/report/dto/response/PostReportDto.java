@@ -9,9 +9,9 @@ import lombok.Getter;
 @Builder
 public class PostReportDto {
 
-    private long postReportId;
+    private Long postReportId;
 
-    private long postId;
+    private Long postId;
 
     private String reporter;
 

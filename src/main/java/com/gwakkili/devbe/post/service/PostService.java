@@ -15,27 +15,27 @@ import java.util.Set;
 
 public interface PostService {
 
-    PostDetailDto saveNewFreePost(FreePostSaveDto postSaveDto, long memberId);
+    PostDetailDto saveNewFreePost(FreePostSaveDto postSaveDto, Long memberId);
 
-    PostDetailDto saveNewNeedHelpPost(NeedHelpPostSaveDto postSaveDto, long memberId);
+    PostDetailDto saveNewNeedHelpPost(NeedHelpPostSaveDto postSaveDto, Long memberId);
 
-    void bookmarkPost(Long postId, long memberId);
+    void bookmarkPost(Long postId, Long memberId);
 
-    void recommendPost(Long postId, long memberId);
+    void recommendPost(Long postId, Long memberId);
 
-    void deletePost(Long postId, long memberId, Set<Member.Role> roles);
+    void deletePost(Long postId, Long memberId, Set<Member.Role> roles);
 
-    void updatePost(PostUpdateDto postUpdateDto, Long postId, long memberId);
+    void updatePost(PostUpdateDto postUpdateDto, Long postId, Long memberId);
 
-    PostDetailDto findPostDto(Long postId, Long memberId, boolean doCountUp);
+    PostDetailDto findPostDto(Long postId, Long memberId, Boolean doCountUp);
 
     SliceResponseDto<ReportPostListDto, Object[]> findReportedPostList(SliceRequestDto sliceRequestDto);
 
     SliceResponseDto<BasicPostListDto, Post> findPostList(SliceRequestDto sliceRequestDto, PostSearchCondition postSearchCondition);
 
-    SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition);
+    SliceResponseDto<MyPostListDto, Post> findMyPostList(SliceRequestDto sliceRequestDto, Long memberId, Post.BoardType boardType);
 
-    SliceResponseDto<BookmarkPostListDto, Post> findBookmarkedPostList(SliceRequestDto sliceRequestDto, long memberId, PostSearchCondition postSearchCondition);
+    SliceResponseDto<BookmarkPostListDto, Post> findBookmarkedPostList(SliceRequestDto sliceRequestDto, Long memberId, Post.BoardType boardType);
 
     ListResponseDto<BasicPostListDto, Post> findWeeklyHotPostList();
 

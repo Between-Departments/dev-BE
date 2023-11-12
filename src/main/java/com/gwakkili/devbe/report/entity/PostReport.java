@@ -17,7 +17,7 @@ public class PostReport extends Report{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postReportId;
+    private Long postReportId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)

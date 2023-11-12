@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class DeleteByManagerEvent {
 
-    private long memberId;
+    private Long memberId;
 }

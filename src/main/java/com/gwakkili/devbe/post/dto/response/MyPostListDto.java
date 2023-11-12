@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class MyPostListDto extends AbstractPostListDto{
 
     @JsonIgnore // ! 테스트 확인용 작성자 본인 아이디
-    private long writerId;
+    private Long writerId;
 
     public static MyPostListDto of(Post post){
         List<String> thumbnailImages = post.getImages().stream().map(PostImage::getThumbnailUrl).collect(Collectors.toList());

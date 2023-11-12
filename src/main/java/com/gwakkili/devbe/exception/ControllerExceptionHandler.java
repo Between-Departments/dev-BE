@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mail.MailException;
@@ -126,7 +127,7 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
     }
 
-    //타입 불일치로 바인딩 에러시에 발생
+    // 타입 불일치로 바인딩 에러시에 발생 -> @RequestParam, @PathVariable, @ModelAttribute
     @ExceptionHandler
     protected ResponseEntity<ExceptionDto> methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException exception) {
         ExceptionCode code = ExceptionCode.INVALID_INPUT_VALUE;
@@ -134,7 +135,14 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDTO);
     }
 
-    //입력이 잘못된 형식일떄 발생
+//    @ExceptionHandler
+//    protected ResponseEntity<ExceptionDto> missingServletRequestParameterException(MissingServletRequestParameterException exception) {
+//        ExceptionCode code = ExceptionCode.INVALID_INPUT_VALUE; // TODO Illegal_Format VS INVALID_INPUT_VALUE
+//        ExceptionDto exceptionDTO = new ExceptionDto(code);
+//        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDTO);
+//    }
+
+    //입력이 잘못된 형식일떄 발생 -> @RequestBody
     @ExceptionHandler
     protected ResponseEntity<ExceptionDto> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException exception) {
         ExceptionCode code = ExceptionCode.ILLEGAL_FORMAT;
@@ -149,6 +157,15 @@ public class ControllerExceptionHandler {
         ExceptionDto exceptionDto = new ExceptionDto(ExceptionCode.FAIL_SEND_MAIL);
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
     }
+
+    // DB단에서 발생하는 예외
+    @ExceptionHandler
+    public ResponseEntity<ExceptionDto> dataAccessExceptionHandler(DataAccessException exception) {
+        ExceptionCode code = ExceptionCode.SERVER_ERROR;
+        ExceptionDto exceptionDto = new ExceptionDto(ExceptionCode.SERVER_ERROR);
+        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDto);
+    }
+
 
     //errors.properties 에서 값을 읽어오는 함수
     private String getErrorMessage(FieldError error) {

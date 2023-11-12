@@ -15,10 +15,10 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = {"writer"})
-    Optional<Post> findWithWriterByPostId(long postId);
+    Optional<Post> findWithWriterByPostId(Long postId);
 
     @EntityGraph(attributePaths = {"images"})
-    Optional<Post> findWithImagesByPostId(long postId);
+    Optional<Post> findWithImagesByPostId(Long postId);
 
     // * 단건 게시물 조회
     @EntityGraph(attributePaths = {"images", "recommendCount", "replyCount"})
@@ -53,7 +53,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "from (select *, (select count(1) from post_recommend pr where pr.post_id = p.post_id) as recommendCount from post p where p.board_type = 'NEED_HELP' and p.create_at >= ? and p.create_at <= ?) as tmp1) as tmp2 " +
             "where tmp2.rnk = 1", nativeQuery = true)
     List<Object[]> findDailyHot(LocalDateTime start, LocalDateTime end);
-
-    List<Post> findByWriter(Member writer);
-
 }

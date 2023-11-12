@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PostDetailDto {
 
-    private long postId;
+    private Long postId;
 
     private PostSimpleMemberDto writer;
 
@@ -33,11 +33,11 @@ public class PostDetailDto {
 
     private String content;
 
-    private long viewCount;
+    private Long viewCount;
 
-    private long recommendCount;
+    private Long recommendCount;
 
-    private long replyCount;
+    private Long replyCount;
 
     private List<String> images;
 

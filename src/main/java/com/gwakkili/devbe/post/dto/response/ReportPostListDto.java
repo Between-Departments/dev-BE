@@ -9,15 +9,15 @@ import lombok.Getter;
 @Builder
 public class ReportPostListDto {
 
-    private long postId;
+    private Long postId;
 
     private SimpleMemberDto writer;
 
-    private long totalReportCount;
+    private Long totalReportCount;
 
     private String title;
 
-    public static ReportPostListDto of(Post post, long totalReportCount) {
+    public static ReportPostListDto of(Post post, Long totalReportCount) {
         return ReportPostListDto.builder()
                 .postId(post.getPostId())
                 .writer(new SimpleMemberDto(post.getWriter(), false))
