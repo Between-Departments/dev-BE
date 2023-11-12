@@ -59,7 +59,6 @@ public class WebSocketHandler implements ChannelInterceptor {
         String accessToken = (authorization == null || !authorization.startsWith("Bearer")) ?
                 null : authorization.replace("Bearer ", "");
 
-
         try {
             // STOMP 헤더에 회원 정보 추가
             Authentication authentication = jwtService.getAuthenticationByAccessToken(accessToken);

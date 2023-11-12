@@ -30,7 +30,6 @@ public class ChatMessage extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChatRoom chatRoom;
 
-
     private String content;
 
     private boolean isRead;

@@ -16,7 +16,7 @@ public interface ChatService {
 
     void deleteChatRoom(long roomId, long memberId);
 
-    Object[] saveChatMessage(SaveChatMessageDto saveChatMessageDto, int MemberNumInRoom);
+    ChatMessageDto saveChatMessage(SaveChatMessageDto saveChatMessageDto, int MemberNumInRoom);
 
     void enterChatRoom(long roomId, long memberId);
 
