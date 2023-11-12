@@ -3,11 +3,11 @@ package com.gwakkili.devbe.reply.service;
 import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.DeleteByManagerEvent;
+import com.gwakkili.devbe.event.NewReplyEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
-import com.gwakkili.devbe.event.NewReplyEvent;
 import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.post.repository.PostRepository;
 import com.gwakkili.devbe.reply.dto.request.ReplySaveDto;
@@ -117,7 +117,7 @@ public class ReplyServiceImpl implements ReplyService {
         Reply reply = replyRepository.findWithMemberAndMemberImageById(replyId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_REPLY));
 
-        boolean isRecommend = replyRecommendRepository.existsByReplyAndMember(reply, member);
+        boolean isRecommend = replyRecommendRepository.existsByMemberAndReply(member, reply);
         // 현재 요청한 사용자가 글쓴이가 아닐경우
         if (reply.getMember().getMemberId() != replyUpdateDto.getMemberId())
             throw new AccessDeniedException("접근 거부");
