@@ -13,19 +13,23 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        name = "reply_recommend",
+        uniqueConstraints = @UniqueConstraint(name = "unique_member_and_reply", columnNames = {"member_id", "reply_id"})
+)
 public class ReplyRecommend {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ReplyRecommendId;
+    private long replyRecommendId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reply_id", nullable = false)
+    @JoinColumn(name = "reply_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Reply reply;
 
@@ -35,3 +39,4 @@ public class ReplyRecommend {
         this.reply = reply;
     }
 }
+

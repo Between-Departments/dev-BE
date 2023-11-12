@@ -13,6 +13,10 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        name = "post_report",
+        uniqueConstraints = @UniqueConstraint(name = "unique_member_and_post", columnNames = {"member_id", "post_id"})
+)
 public class PostReport extends Report{
 
     @Id
