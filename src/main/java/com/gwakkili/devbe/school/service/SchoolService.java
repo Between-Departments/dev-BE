@@ -9,4 +9,6 @@ public interface SchoolService {
     ListResponseDto<SchoolDto, School> getSchoolList(String keyword);
 
     String getSchoolMail(String school);
+
+    boolean checkSupportedSchool(String school);
 }

@@ -27,7 +27,7 @@ public class MajorServiceImpl implements MajorService {
     }
 
     @Override
-    public boolean exist(String major) {
+    public boolean checkSupportedMajor(String major) {
         return majorRepository.existsByName(major);
     }
 }

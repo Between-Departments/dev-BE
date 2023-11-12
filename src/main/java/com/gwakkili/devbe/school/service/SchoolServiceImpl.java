@@ -32,4 +32,9 @@ public class SchoolServiceImpl implements SchoolService {
     public String getSchoolMail(String school) {
         return schoolRepository.findByName(school).map(School::getMail).orElse(null);
     }
+
+    @Override
+    public boolean checkSupportedSchool(String school) {
+        return schoolRepository.existsByName(school);
+    }
 }

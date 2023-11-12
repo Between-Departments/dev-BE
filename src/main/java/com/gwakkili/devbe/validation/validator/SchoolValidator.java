@@ -1,6 +1,6 @@
 package com.gwakkili.devbe.validation.validator;
 
-import com.gwakkili.devbe.school.repository.SchoolRepository;
+import com.gwakkili.devbe.school.service.SchoolService;
 import com.gwakkili.devbe.validation.annotation.School;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SchoolValidator implements ConstraintValidator<School, String> {
 
-    private final SchoolRepository schoolRepository;
+    private final SchoolService schoolService;
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return schoolRepository.existsByName(value);
+        return schoolService.checkSupportedSchool(value);
     }
 }

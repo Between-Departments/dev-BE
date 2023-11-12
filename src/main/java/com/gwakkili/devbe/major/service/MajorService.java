@@ -8,6 +8,6 @@ public interface MajorService {
 
     ListResponseDto<MajorDto, Major> getMajorList(String keyword);
 
-    boolean exist(String major);
+    boolean checkSupportedMajor(String major);
 
 }
