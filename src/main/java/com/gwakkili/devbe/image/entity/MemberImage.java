@@ -13,7 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberImage {
 
-    private static final String DEFAULT_MEMBERIMAGE_URL = "https://gwaggiri-bucket.s3.ap-northeast-2.amazonaws.com/images/default_profile.jpg";
+    private static final String DEFAULT_IMAGE_URL = "https://gwaggiri-bucket.s3.ap-northeast-2.amazonaws.com/images/default_profile.jpg";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +38,11 @@ public class MemberImage {
         this.member = member;
     }
 
-    public static String getDefaultImageUrl(){
-        return DEFAULT_MEMBERIMAGE_URL;
+    public static String getDefaultImageUrl() {
+        return DEFAULT_IMAGE_URL;
+    }
+
+    public static String getDefaultThumbnailUrl() {
+        return DEFAULT_IMAGE_URL.replace("/images/", "/thumbnails/");
     }
 }
