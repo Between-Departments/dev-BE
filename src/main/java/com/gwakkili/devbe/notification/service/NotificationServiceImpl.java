@@ -1,6 +1,9 @@
 package com.gwakkili.devbe.notification.service;
 
+import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.dto.ListResponseDto;
+import com.gwakkili.devbe.event.NewChatMessageEvent;
+import com.gwakkili.devbe.notification.dto.response.ChatNotificationDto;
 import com.gwakkili.devbe.notification.dto.response.NotificationDto;
 import com.gwakkili.devbe.notification.entity.Notification;
 import com.gwakkili.devbe.event.NewPostReportEvent;
@@ -20,7 +23,7 @@ import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationServiceImpl implements NotificationService{
+public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final SimpMessageSendingOperations messagingTemplate;
@@ -28,8 +31,18 @@ public class NotificationServiceImpl implements NotificationService{
     private void sendNotification(Notification notification) {
         NotificationDto notificationDto = NotificationDto.of(notification);
         String mail = notification.getMember().getMail();
-        messagingTemplate.convertAndSendToUser(mail, "/sub/notifications",notificationDto);
+        messagingTemplate.convertAndSendToUser(mail, "/sub/notifications", notificationDto);
     }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendChatNotification(NewChatMessageEvent newChatMessageEvent) {
+
+        String mail = newChatMessageEvent.getMail();
+        ChatMessage chatMessage = newChatMessageEvent.getChatMessage();
+        messagingTemplate.convertAndSendToUser(mail, "/sub/notifications", ChatNotificationDto.of(chatMessage));
+    }
+
 
     // TODO ? 이벤트리스너용 함수를 Interface로 빼는게 괜찮은가?
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
