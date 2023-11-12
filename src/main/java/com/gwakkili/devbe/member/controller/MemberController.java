@@ -49,7 +49,7 @@ public class MemberController {
     @GetMapping("/mail/duplicate")
     @Operation(summary = "메일 중복 획안")
     public void mailDuplicateCheck(@Parameter(name = "mail", description = "메일") String mail) {
-        if (memberService.mailDuplicateCheck(mail))
+        if (memberService.checkMailDuplicate(mail))
             throw new CustomException(ExceptionCode.DUPLICATE_MAIL);
 
     }
@@ -57,7 +57,7 @@ public class MemberController {
     @GetMapping("/nickname/duplicate")
     @Operation(summary = "닉네임 중복 확인")
     public void nicknameDuplicateCheck(@Parameter(name = "nickname", description = "닉네임") String nickname) {
-        if (memberService.nicknameDuplicateCheck(nickname))
+        if (memberService.checkNicknameDuplicate(nickname))
             throw new CustomException(ExceptionCode.DUPLICATE_NICKNAME);
 
     }
@@ -66,7 +66,7 @@ public class MemberController {
     @Operation(summary = "비밀번호 확인")
     @PreAuthorize("isAuthenticated()")
     public void passwordConfirm(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody PasswordDto passwordDto) {
-        if (memberService.passwordConfirm(memberDetails.getMail(), passwordDto.getPassword()))
+        if (memberService.confirmPassword(memberDetails.getMail(), passwordDto.getPassword()))
             throw new CustomException(ExceptionCode.INVALID_PASSWORD);
     }
 

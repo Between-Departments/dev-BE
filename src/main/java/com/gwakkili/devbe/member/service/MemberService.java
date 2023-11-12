@@ -28,10 +28,10 @@ public interface MemberService {
 
     SliceResponseDto<MemberDto, Member> getMemberList(SliceRequestDto sliceRequestDto, String keyword);
 
-    boolean mailDuplicateCheck(String mail);
+    boolean checkMailDuplicate(String mail);
 
-    boolean nicknameDuplicateCheck(String nickname);
+    boolean checkNicknameDuplicate(String nickname);
 
-    boolean passwordConfirm(String mail, String password);
+    boolean confirmPassword(String mail, String password);
 
 }

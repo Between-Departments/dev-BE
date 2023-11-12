@@ -15,6 +15,6 @@ public class MailDuplicateValidator implements ConstraintValidator<MailDuplicate
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return !memberService.mailDuplicateCheck(value);
+        return !memberService.checkMailDuplicate(value);
     }
 }

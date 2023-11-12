@@ -15,6 +15,6 @@ public class NicknameDuplicateValidator implements ConstraintValidator<NicknameD
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return !memberService.nicknameDuplicateCheck(value);
+        return !memberService.checkNicknameDuplicate(value);
     }
 }
