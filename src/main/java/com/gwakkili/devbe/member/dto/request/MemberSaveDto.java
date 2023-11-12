@@ -36,6 +36,7 @@ public class MemberSaveDto {
 
     @NotBlank
     @NicknameDuplicate
+    @Pattern(regexp = "^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$")
     @Schema(description = "닉네임", example = "하이디")
     private String nickname;
 
