@@ -21,7 +21,6 @@ import com.gwakkili.devbe.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -113,6 +112,7 @@ public class MemberServiceImpl implements MemberService {
     public void deleteMember(long memberId, String password) {
         Member member = memberRepository.findWithImageAndPostsByMemberId(memberId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
+
         if (password != null && !passwordEncoder.matches(password, member.getPassword()))
             throw new CustomException(ExceptionCode.INVALID_PASSWORD);
 
@@ -138,7 +138,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void lock(DeleteByManagerEvent deleteByManagerEvent) {
+    public void lockMember(DeleteByManagerEvent deleteByManagerEvent) {
         long memberId = deleteByManagerEvent.getMemberId();
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
@@ -148,15 +148,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(readOnly = true)
-    public SliceResponseDto<MemberDto, Member> getMemberList(SliceRequestDto sliceRequestDto) {
-        MemberSliceRequestDto memberSliceRequestDto = (MemberSliceRequestDto) sliceRequestDto;
-        String keyword = memberSliceRequestDto.getKeyword();
-        Pageable pageable = memberSliceRequestDto.getPageable();
+    public SliceResponseDto<MemberDto, Member> getMemberList(SliceRequestDto sliceRequestDto, String keyword) {
         Slice<Member> slice;
 
-        if (StringUtils.hasText(memberSliceRequestDto.getKeyword())) {
-            slice = memberRepository.findAllByKeyword(keyword, pageable);
-        } else slice = memberRepository.findAllWithImage(pageable);
+        if (StringUtils.hasText(keyword))
+            slice = memberRepository.findAllByKeyword(keyword, sliceRequestDto.getPageable());
+        else slice = memberRepository.findAllWithImage(sliceRequestDto.getPageable());
 
         Function<Member, MemberDto> fn = (MemberDto::of);
         return new SliceResponseDto<>(slice, fn);

@@ -5,6 +5,8 @@ import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.member.dto.request.*;
 import com.gwakkili.devbe.member.dto.response.MemberDetailDto;
+import com.gwakkili.devbe.member.dto.response.MemberDto;
+import com.gwakkili.devbe.member.entity.Member;
 
 public interface MemberService {
 
@@ -24,7 +26,7 @@ public interface MemberService {
 
     void lockMember(Long id);
 
-    SliceResponseDto getMemberList(SliceRequestDto sliceRequestDto);
+    SliceResponseDto<MemberDto, Member> getMemberList(SliceRequestDto sliceRequestDto, String keyword);
 
     boolean mailDuplicateCheck(String mail);
 

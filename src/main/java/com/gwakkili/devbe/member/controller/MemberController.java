@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.member.controller;
 
+import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
@@ -127,8 +128,8 @@ public class MemberController {
     @GetMapping
     @Operation(summary = "회원 목록 조회(어드민 전용)")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public SliceResponseDto<MemberDto, Member> getMemberList(@ParameterObject MemberSliceRequestDto sliceRequestDto) {
-        return memberService.getMemberList(sliceRequestDto);
+    public SliceResponseDto<MemberDto, Member> getMemberList(@ParameterObject SliceRequestDto sliceRequestDto, String keyword) {
+        return memberService.getMemberList(sliceRequestDto, keyword);
     }
 
     @DeleteMapping("/{memberId}")
