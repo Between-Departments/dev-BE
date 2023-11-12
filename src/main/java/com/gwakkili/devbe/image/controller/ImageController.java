@@ -29,7 +29,6 @@ public class ImageController {
     @Operation(summary = "이미지 업로드")
     @ApiResponse(responseCode = "201", description = "이미지 url 리스트", useReturnTypeSchema = true)
     public List<String> uploadImage(@RequestParam(value = "images", required = false) List<MultipartFile> multipartFiles) throws IOException {
-        log.info("이미지 업로드 요청");
         return imageService.uploadImage(multipartFiles);
     }
 
@@ -39,5 +38,4 @@ public class ImageController {
     public void deleteImage(@Parameter(description = "이미지 url") @RequestParam("imageUrl") String imageUrl) {
         imageService.deleteImage(imageUrl);
     }
-
 }
