@@ -6,6 +6,7 @@ import jakarta.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 
 public interface MailService {
+
     void sendMail(String mail) throws MessagingException, UnsupportedEncodingException;
 
     boolean checkAuthCode(MailAuthCodeDto mailAuthCodeDto);

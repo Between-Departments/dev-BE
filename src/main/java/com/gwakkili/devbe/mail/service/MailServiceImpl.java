@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -39,13 +38,6 @@ public class MailServiceImpl implements MailService {
     @Value("${AdminMail.id}")
     private String sender;
 
-    /**
-     * 인증 링크 메일을 보내는 메서드
-     *
-     * @param mail: 인증 링크를 보낼 메일
-     * @throws MessagingException
-     * @throws UnsupportedEncodingException
-     */
     @Override
     public void sendMail(String mail) throws MessagingException {
         if (!schoolRepository.existsByMail(mail.split("@")[1]))
@@ -73,6 +65,7 @@ public class MailServiceImpl implements MailService {
     }
 
     private String setContext(String code) { // 타임리프 설정하는 코드
+
         Context context = new Context();
         context.setVariable("code", code); // Template에 전달할 데이터 설정
         return templateEngine.process("mail", context); // mail.html
@@ -86,13 +79,16 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public boolean checkAuthCode(MailAuthCodeDto mailAuthCodeDto) {
-        Optional<MailAuthCode> result = mailAuthCodeRepository.findById(mailAuthCodeDto.getMail());
-        MailAuthCode mailAuthCode = result.orElseThrow(() -> new NotFoundException(ExceptionCode.MAIL_AUTH_CODE_EXPIRE));
+
+        MailAuthCode mailAuthCode = mailAuthCodeRepository.findById(mailAuthCodeDto.getMail())
+                .orElseThrow(() -> new NotFoundException(ExceptionCode.MAIL_AUTH_CODE_EXPIRE));
+
         if (mailAuthCode.getAuthCode().equals(mailAuthCodeDto.getCode())) {
             mailAuthCode.setAuth(true);
             mailAuthCodeRepository.save(mailAuthCode);
             return true;
         }
+
         return false;
     }
 
