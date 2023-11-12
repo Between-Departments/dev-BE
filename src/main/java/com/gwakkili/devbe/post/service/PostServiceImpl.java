@@ -122,6 +122,7 @@ public class PostServiceImpl implements PostService{
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_POST));
 
         if (roles.contains(Member.Role.ROLE_MANAGER)) {
+            // TODO 동시성 문제 고려해야함
             publisher.publishEvent(new DeleteByManagerEvent(findPost.getWriter().getMemberId()));
         } else if (findPost.getWriter().getMemberId() != memberId) {
             throw new AccessDeniedException("접근 거부");
@@ -138,6 +139,7 @@ public class PostServiceImpl implements PostService{
         postRepository.delete(findPost);
     }
 
+    // TODO 동시성 문제 고려해야함
     @Override
     @Transactional
     public void bookmarkPost(Long postId, Long memberId) {
@@ -157,6 +159,7 @@ public class PostServiceImpl implements PostService{
                 });
     }
 
+    // TODO 동시성 문제 고려해야함
     @Override
     @Transactional
     public void recommendPost(Long postId, Long memberId) {

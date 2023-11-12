@@ -137,6 +137,7 @@ public class MemberServiceImpl implements MemberService {
         member.setLocked(true);
     }
 
+    // TODO 동시성 문제 고려해야함
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void lock(DeleteByManagerEvent deleteByManagerEvent) {
         long memberId = deleteByManagerEvent.getMemberId();
