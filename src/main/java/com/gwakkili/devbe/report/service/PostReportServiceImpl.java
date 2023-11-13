@@ -42,7 +42,6 @@ public class PostReportServiceImpl implements PostReportService{
         return new SliceResponseDto<>(postReportList, fn);
     }
 
-    // TODO 동시성 문제 고려해야함
     @Override
     @Transactional
     public void saveNewPostReport(PostReportSaveDto postReportSaveDto, Long postId, Long memberId) {

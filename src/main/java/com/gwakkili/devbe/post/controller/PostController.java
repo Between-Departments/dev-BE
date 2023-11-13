@@ -21,7 +21,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
@@ -29,7 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -39,7 +37,6 @@ import java.time.LocalTime;
 
 @Tag(name = "게시글", description = "게시글 API")
 @RequiredArgsConstructor
-@Validated
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
@@ -159,7 +156,7 @@ public class PostController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/my")
     public SliceResponseDto<MyPostListDto, Post> getMyPostList(@ParameterObject SliceRequestDto sliceRequestDto,
-                                                               @NotNull Post.BoardType boardType, // TODO BoardType 만 따로 받기?
+                                                               @RequestParam Post.BoardType boardType,
                                                                @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.findMyPostList(sliceRequestDto, memberDetails.getMemberId(), boardType);
     }
@@ -172,7 +169,7 @@ public class PostController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/bookmark")
     public SliceResponseDto<BookmarkPostListDto, Post> getBookmarkedPostList(@ParameterObject SliceRequestDto sliceRequestDto,
-                                                                             @Valid @NotNull Post.BoardType boardType, // TODO BoardType 만 따로 받기?
+                                                                             @RequestParam Post.BoardType boardType,
                                                                              @AuthenticationPrincipal MemberDetails memberDetails){
         return postService.findBookmarkedPostList(sliceRequestDto, memberDetails.getMemberId(), boardType);
     }
@@ -206,7 +203,7 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "특정 게시글 수정 성공")
     })
     @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK) // TODO 200 VS 204
+    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{postId}")
     public void update(@RequestBody @Valid PostUpdateDto postUpdateDto,
                        @PathVariable Long postId,
@@ -231,7 +228,7 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "특정 게시글 북마크 성공")
     })
     @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK) // TODO 200 VS 204
+    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{postId}/bookmark")
     public void bookmark(@PathVariable Long postId,
                          @AuthenticationPrincipal MemberDetails memberDetails){
@@ -243,7 +240,7 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "특정 게시글 추천 성공")
     })
     @PreAuthorize("isAuthenticated()")
-    @ResponseStatus(HttpStatus.OK) // TODO 200 VS 204
+    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{postId}/recommend")
     public void recommend(@PathVariable Long postId,
                           @AuthenticationPrincipal MemberDetails memberDetails){

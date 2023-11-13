@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -135,12 +136,13 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(code.getHttpStatus()).body(exceptionDTO);
     }
 
-//    @ExceptionHandler
-//    protected ResponseEntity<ExceptionDto> missingServletRequestParameterException(MissingServletRequestParameterException exception) {
-//        ExceptionCode code = ExceptionCode.INVALID_INPUT_VALUE; // TODO Illegal_Format VS INVALID_INPUT_VALUE
-//        ExceptionDto exceptionDTO = new ExceptionDto(code);
-//        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDTO);
-//    }
+    @ExceptionHandler
+    protected ResponseEntity<ExceptionDto> missingServletRequestParameterException(MissingServletRequestParameterException exception) {
+        ExceptionCode code = ExceptionCode.ILLEGAL_FORMAT;
+        ExceptionDto exceptionDTO = new ExceptionDto(code);
+        exceptionDTO.setMessage(exception.getParameterName() + " 은(는) 필수 입력값입니다.");
+        return ResponseEntity.status(code.getHttpStatus()).body(exceptionDTO);
+    }
 
     //입력이 잘못된 형식일떄 발생 -> @RequestBody
     @ExceptionHandler
