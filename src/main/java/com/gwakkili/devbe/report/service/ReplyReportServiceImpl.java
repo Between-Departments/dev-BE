@@ -41,7 +41,6 @@ public class ReplyReportServiceImpl implements ReplyReportService {
     public SliceResponseDto<ReplyReportDto, ReplyReport> getReplyReportList(long replyId, SliceRequestDto sliceRequestDto) {
         Reply reply = replyRepository.getReferenceById(replyId);
         Slice<ReplyReport> replyReportList = replyReportRepository.findByReply(reply, sliceRequestDto.getPageable());
-        if (replyReportList.getNumberOfElements() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_REPLY);
         Function<ReplyReport, ReplyReportDto> fn = (ReplyReportDto::of);
         return new SliceResponseDto(replyReportList, fn);
     }

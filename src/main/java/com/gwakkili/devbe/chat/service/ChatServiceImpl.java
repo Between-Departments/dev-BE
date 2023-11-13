@@ -64,9 +64,7 @@ public class ChatServiceImpl implements ChatService {
 
         Member member = memberRepository.getReferenceById(memberId);
         Slice<Object[]> dataSlice = chatRoomRepository.findWithRecentMessageByMember(member, sliceRequestDto.getPageable());
-
-        if (dataSlice.getNumberOfElements() == 0) throw new NotFoundException(ExceptionCode.NOT_FOUND_CHAT_ROOM);
-
+        
         Function<Object[], ChatRoomDto> fn = (objects -> {
             ChatRoom chatRoom = (ChatRoom) objects[0];
             RecentChatMessage recentChatMessage = (RecentChatMessage) objects[1];
