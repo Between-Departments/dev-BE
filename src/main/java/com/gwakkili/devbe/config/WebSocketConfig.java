@@ -35,7 +35,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         //엔드포인트 추가 등록
         registry//exception handler를 위한 것
                 .addEndpoint("/api/ws-endpoint")
-                .setAllowedOriginPatterns("*"); //TODO: 서버 URI로 변경
+                .setAllowedOriginPatterns("*") //TODO: 서버 URI로 변경
+                .withSockJS();
+
         registry.setErrorHandler(webSocketErrorHandler);
     }
 
