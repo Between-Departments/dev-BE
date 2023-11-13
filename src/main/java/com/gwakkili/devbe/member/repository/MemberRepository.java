@@ -1,15 +1,21 @@
 package com.gwakkili.devbe.member.repository;
 
 import com.gwakkili.devbe.member.entity.Member;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select m from Member m where m.memberId = :memberId")
+    Optional<Member> findByIdForUpdate(Long memberId);
 
     @EntityGraph(attributePaths = "roles")
     Optional<Member> findByMail(String mail);

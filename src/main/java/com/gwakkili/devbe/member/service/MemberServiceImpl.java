@@ -140,7 +140,7 @@ public class MemberServiceImpl implements MemberService {
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void lockMember(DeleteByManagerEvent deleteByManagerEvent) {
         long memberId = deleteByManagerEvent.getMemberId();
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdForUpdate(memberId) // 비관적 락
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         member.addReportCount();
         if (member.getReportCount() >= 3) member.setLocked(true);
