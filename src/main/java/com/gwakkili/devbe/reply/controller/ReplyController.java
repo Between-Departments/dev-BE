@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.*;
 public class ReplyController {
 
     private final ReplyService replyService;
-//    private final SseNotificationService sseNotificationService;
-//    private final StompNotificationService stompNotificationService;
 
     @PostMapping("/replies")
     @PreAuthorize("isAuthenticated()")

@@ -17,7 +17,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class AbstractPostListDto {
 
-    private long postId;
+    private Long postId;
 
     private String title;
 
@@ -31,11 +31,11 @@ public abstract class AbstractPostListDto {
 
     private List<String> thumbnailImages;
 
-    private long viewCount;
+    private Long viewCount;
 
-    private long recommendCount;
+    private Long recommendCount;
 
-    private long replyCount;
+    private Long replyCount;
 
     private LocalDateTime createAt;
 }

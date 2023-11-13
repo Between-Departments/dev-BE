@@ -33,7 +33,8 @@ public enum ExceptionCode {
     ILLEGAL_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-011", "잘못된 JWT 토큰입니다."),
     NOT_FOUND_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-012", "JWT 토큰을 찾을 수 없습니다."),
     //이미지 예외 코드
-    FAIL_UPLOAD(HttpStatus.BAD_REQUEST, "IMAGE_002", "이미지 업로드에 실패하였습니다."),
+    S3_UPLOAD_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3_001", "이미지 업로드에 실패하였습니다."),
+    S3_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S3_002", "이미지 삭제에 실패하였습니다."),
 
     // 메일 예외 코드
     UNSUPPORTED_MAIL(HttpStatus.NOT_FOUND, "MAIL_001", "지원하지 않는 학교 메일입니다."),

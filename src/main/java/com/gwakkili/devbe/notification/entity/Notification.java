@@ -12,14 +12,14 @@ public class Notification extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long notificationId;
+    private Long notificationId;
 
     @ManyToOne
     private Member member;
 
-    private long postId;
+    private Long postId;
 
-    private long replyId;
+    private Long replyId;
 
     private String content;
 
@@ -27,7 +27,7 @@ public class Notification extends BaseEntity {
     private Type type;
 
     @Builder
-    public Notification(Member member, long postId, long replyId, String content, Type type) {
+    public Notification(Member member, Long postId, Long replyId, String content, Type type) {
         this.member = member;
         this.postId = postId;
         this.replyId = replyId;

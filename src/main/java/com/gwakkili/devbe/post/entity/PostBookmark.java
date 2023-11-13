@@ -20,7 +20,7 @@ public class PostBookmark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long bookmarkId;
+    private Long bookmarkId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

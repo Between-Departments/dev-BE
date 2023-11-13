@@ -35,6 +35,8 @@ public class NotificationController {
         return notificationService.findAllNotifications(memberDetails.getMemberId());
     }
 
+
+    // TODO 본인의 알림 데이터가 맞는지 확인하는 로직 필요
     @Operation(method = "DELETE", summary = "알림 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "알림 삭제 성공")

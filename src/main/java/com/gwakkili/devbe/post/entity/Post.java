@@ -24,7 +24,7 @@ public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postId;
+    private Long postId;
 
     @Column(nullable = false)
     private String title;
@@ -50,7 +50,7 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<PostImage> images = new ArrayList<>();
 
-    // TODO 어떻게 처리할 것인가에 대한 방법 논의 필요
+    // TODO count 관련 변수 타입 Primitive VS Wrapper Class
     private long viewCount;
 
     @Basic(fetch = FetchType.LAZY)

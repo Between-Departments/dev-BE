@@ -37,7 +37,7 @@ public class ReportController {
     @Operation(summary = "게시물 신고 목록 조회 (ADMIN 전용)")
     @GetMapping("/posts/{postId}/report")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public SliceResponseDto<PostReportDto, PostReport> getPostReportList(@PathVariable long postId,
+    public SliceResponseDto<PostReportDto, PostReport> getPostReportList(@PathVariable Long postId,
                                                                          @ParameterObject SliceRequestDto sliceRequestDto) {
         return postReportService.findPostReportList(postId, sliceRequestDto);
     }
@@ -55,9 +55,10 @@ public class ReportController {
         postReportService.saveNewPostReport(postReportSaveDto, postId, memberDetails.getMemberId());
     }
 
+    // TODO postId는 사용되지 않는다는 점
     @DeleteMapping("/posts/{postId}/report/{reportId}")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public void deletePostReport(@PathVariable long postId, @PathVariable long reportId) {
+    public void deletePostReport(@PathVariable Long postId, @PathVariable Long reportId) {
         postReportService.deletePostReport(reportId);
     }
 

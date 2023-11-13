@@ -13,7 +13,7 @@ public interface NotificationService {
 
     void deleteNotification(List<Long> notificationIds);
 
-    ListResponseDto<NotificationDto, Notification> findAllNotifications(long memberId);
+    ListResponseDto<NotificationDto, Notification> findAllNotifications(Long memberId);
 
     void saveNewNotification(NewReplyEvent newReplyEvent);
 

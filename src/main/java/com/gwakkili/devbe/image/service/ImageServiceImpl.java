@@ -1,5 +1,6 @@
 package com.gwakkili.devbe.image.service;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
@@ -11,7 +12,6 @@ import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
 import com.gwakkili.devbe.image.entity.MemberImage;
-import com.gwakkili.devbe.image.repository.PostImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
@@ -45,8 +45,6 @@ public class ImageServiceImpl implements ImageService {
     private String bucket;
 
     private final AmazonS3 amazonS3;
-
-    private final PostImageRepository postImageRepository;
 
     @TransactionalEventListener
     public void deleteMemberImage(DeleteMemberImageEvent deleteMemberImageEvent) {
@@ -82,7 +80,7 @@ public class ImageServiceImpl implements ImageService {
                 uploadThumbnailImage(multipartFile, thumbnailUploadPath);
                 imageUrlList.add(imageUrl);
             } catch (IOException e) {
-                throw new CustomException(ExceptionCode.FAIL_UPLOAD);
+                throw new CustomException(ExceptionCode.S3_UPLOAD_FAIL);
             }
 
         }
@@ -129,8 +127,13 @@ public class ImageServiceImpl implements ImageService {
         String decodeUrl = URLDecoder.decode(imgUrl, StandardCharsets.UTF_8);
         String imagePath = decodeUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
         String thumbnailPath = imagePath.replace("images/", "thumbnails/");
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, imagePath));
-        amazonS3.deleteObject(new DeleteObjectRequest(bucket, thumbnailPath));
+
+        try {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, imagePath));
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, thumbnailPath));
+        }catch (SdkClientException exception){
+            throw new CustomException(ExceptionCode.S3_DELETE_FAIL);
+        }
     }
 
     @Override
@@ -144,6 +147,11 @@ public class ImageServiceImpl implements ImageService {
             keyList.add(new DeleteObjectsRequest.KeyVersion(imagePath));
             keyList.add(new DeleteObjectsRequest.KeyVersion(thumbnailPath));
         }
-        amazonS3.deleteObjects(new DeleteObjectsRequest(bucket).withKeys(keyList).withQuiet(false));
+
+        try {
+            amazonS3.deleteObjects(new DeleteObjectsRequest(bucket).withKeys(keyList).withQuiet(false));
+        }catch (SdkClientException exception){
+            throw new CustomException(ExceptionCode.S3_DELETE_FAIL);
+        }
     }
 }

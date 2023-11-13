@@ -101,7 +101,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public ListResponseDto<NotificationDto, Notification> findAllNotifications(long memberId) {
+    public ListResponseDto<NotificationDto, Notification> findAllNotifications(Long memberId) {
         List<Notification> notificationList = notificationRepository.findAllByMemberMemberId(memberId);
 
         Function<Notification, NotificationDto> fn = NotificationDto::of;

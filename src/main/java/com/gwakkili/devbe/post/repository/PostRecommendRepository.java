@@ -11,5 +11,4 @@ public interface PostRecommendRepository extends JpaRepository<PostRecommend, Lo
     Optional<PostRecommend> findByMemberAndPost(Member member, Post post);
 
     Boolean existsByMemberAndPost(Member member, Post post);
-
 }

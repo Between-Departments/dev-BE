@@ -7,9 +7,9 @@ import com.gwakkili.devbe.report.dto.response.PostReportDto;
 import com.gwakkili.devbe.report.entity.PostReport;
 
 public interface PostReportService {
-    void saveNewPostReport(PostReportSaveDto postReportSaveDto, Long postId, long memberId);
+    void saveNewPostReport(PostReportSaveDto postReportSaveDto, Long postId, Long memberId);
 
-    void deletePostReport(long reportId);
+    void deletePostReport(Long reportId);
 
-    SliceResponseDto<PostReportDto, PostReport> findPostReportList(long postId, SliceRequestDto sliceRequestDto);
+    SliceResponseDto<PostReportDto, PostReport> findPostReportList(Long postId, SliceRequestDto sliceRequestDto);
 }

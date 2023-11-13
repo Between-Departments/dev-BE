@@ -17,7 +17,7 @@ public class BookmarkPostListDto extends AbstractPostListDto{
 
     private SimpleMemberDto writer;
 
-    private boolean isAnonymous;
+    private Boolean isAnonymous;
 
 
     public static BookmarkPostListDto of(Post post) {

@@ -15,5 +15,4 @@ public interface PostReportRepository extends JpaRepository<PostReport, Long> {
 
     @EntityGraph(attributePaths = {"reporter"})
     Slice<PostReport> findByPost(Post post, Pageable pageable);
-
 }
