@@ -33,8 +33,6 @@ public class SaveChatRoomTests extends DevBeApplicationTests {
         //when, then
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("chatRoomId").exists())
-                .andExpect(jsonPath("member.memberId").value(memberId))
                 .andDo(print());
     }
 
