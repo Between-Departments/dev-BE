@@ -70,6 +70,16 @@ public class getReplyListTests extends DevBeApplicationTests {
                     .andDo(print());
         }
 
+        @Test
+        @DisplayName("실패: 잘못된 입력 형신")
+        public void failByIllegalFormat() throws Exception {
+
+            mockMvc.perform(get(url))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("code").value(ExceptionCode.ILLEGAL_FORMAT.getCode()))
+                    .andDo(print());
+        }
+
     }
 
     @Nested
