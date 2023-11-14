@@ -20,7 +20,7 @@ public class SchoolServiceImpl implements SchoolService {
     private final SchoolRepository schoolRepository;
 
     @Override
-    public ListResponseDto<SchoolDto, com.gwakkili.devbe.validation.annotation.School> getSchoolList(String keyword) {
+    public ListResponseDto<SchoolDto, School> getSchoolList(String keyword) {
 
         List<School> schoolList = schoolRepository.findAllByNameContaining(keyword, PageRequest.of(0, 100));
         Function<School, SchoolDto> fn = (SchoolDto::of);

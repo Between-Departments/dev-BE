@@ -2,8 +2,8 @@ package com.gwakkili.devbe.school.controller;
 
 import com.gwakkili.devbe.dto.ListResponseDto;
 import com.gwakkili.devbe.school.dto.SchoolDto;
+import com.gwakkili.devbe.school.entity.School;
 import com.gwakkili.devbe.school.service.SchoolService;
-import com.gwakkili.devbe.validation.annotation.School;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
