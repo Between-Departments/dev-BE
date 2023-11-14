@@ -20,7 +20,7 @@ public class loginTests extends DevBeApplicationTests {
     @DisplayName("성공")
     public void success() throws Exception {
         //given
-        LoginDto loginDto = new LoginDto("test@test1.ac.kr", "a12341234!");
+        LoginDto loginDto = new LoginDto("manager@test1.ac.kr", "a12341234!");
         String content = objectMapper.writeValueAsString(loginDto);
         //when, then
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(content))
@@ -34,7 +34,7 @@ public class loginTests extends DevBeApplicationTests {
     @DisplayName("실패: 아이디 및 비밀번호 불일치")
     public void failByBadCredential() throws Exception {
         //given
-        LoginDto loginDto = new LoginDto("test@test1.ac.krr", "a12341234!!");
+        LoginDto loginDto = new LoginDto("manager@test1.ac.krr", "a12341234!!");
         String content = objectMapper.writeValueAsString(loginDto);
 
         //when, then
@@ -49,7 +49,7 @@ public class loginTests extends DevBeApplicationTests {
     @DisplayName("실패: 계정정지")
     public void failByLock() throws Exception {
         //given
-        LoginDto loginDto = new LoginDto("test@test1.ac.kr", "a12341234!");
+        LoginDto loginDto = new LoginDto("lockMember@test2.ac.kr", "a12341234!");
         String content = objectMapper.writeValueAsString(loginDto);
 
         //when, then
