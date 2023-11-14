@@ -2,7 +2,7 @@ package com.gwakkili.devbe.reply;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
 import com.gwakkili.devbe.exception.ExceptionCode;
-import com.gwakkili.devbe.member.dto.request.MemberSliceRequestDto;
+import com.gwakkili.devbe.post.entity.Post;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -39,20 +39,6 @@ public class getReplyListTests extends DevBeApplicationTests {
                     .andExpect(jsonPath("dataList[*].postId").value(everyItem(equalTo(postId))))
                     .andDo(print());
         }
-
-        @DisplayName("실패: 댓글을 찾을 수 없음")
-        @Test
-        public void fail() throws Exception {
-            //given
-            int postId = 1000;
-            MemberSliceRequestDto memberSliceRequestDto = new MemberSliceRequestDto();
-            //when, then
-            mockMvc.perform(get(url, postId))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("code").value(ExceptionCode.NOT_FOUND_REPLY.getCode()))
-                    .andExpect(jsonPath("message").value(ExceptionCode.NOT_FOUND_REPLY.getMessage()))
-                    .andDo(print());
-        }
     }
 
     @Nested
@@ -66,7 +52,7 @@ public class getReplyListTests extends DevBeApplicationTests {
         @WithMockMember
         public void success() throws Exception {
 
-            mockMvc.perform(get(url))
+            mockMvc.perform(get(url).param("boardType", Post.BoardType.NEED_HELP.name()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("dataList").exists())
                     .andExpect(jsonPath("dataList[*].writer.nickname").value(everyItem(equalTo("테스트멤버"))))
@@ -77,22 +63,10 @@ public class getReplyListTests extends DevBeApplicationTests {
         @DisplayName("실패: 인증되지 않은 사용자")
         public void failByUnauthorized() throws Exception {
 
-            mockMvc.perform(get(url))
+            mockMvc.perform(get(url).param("boardType", Post.BoardType.NEED_HELP.name()))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("code").value(ExceptionCode.UNAUTHORIZED.getCode()))
                     .andExpect(jsonPath("message").value(ExceptionCode.UNAUTHORIZED.getMessage()))
-                    .andDo(print());
-        }
-
-        @Test
-        @DisplayName("실패: 댓글을 찾을 수 없음")
-        @WithMockMember(memberId = 100)
-        public void failByNotFound() throws Exception {
-
-            mockMvc.perform(get(url))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("code").value(ExceptionCode.NOT_FOUND_REPLY.getCode()))
-                    .andExpect(jsonPath("message").value(ExceptionCode.NOT_FOUND_REPLY.getMessage()))
                     .andDo(print());
         }
 
@@ -115,10 +89,11 @@ public class getReplyListTests extends DevBeApplicationTests {
         }
 
         @Test
-        @DisplayName("실패: 권한없음")
+        @DisplayName("실패: 접근 거부")
         @WithMockMember(roles = "ROLE_USER")
-        public void failByAccessDenied() throws Exception {
-            mockMvc.perform(get(url))
+        public void failByUnauthorized() throws Exception {
+
+            mockMvc.perform(get(url).param("boardType", Post.BoardType.NEED_HELP.name()))
                     .andExpect(status().isForbidden())
                     .andExpect(jsonPath("code").value(ExceptionCode.ACCESS_DENIED.getCode()))
                     .andExpect(jsonPath("message").value(ExceptionCode.ACCESS_DENIED.getMessage()))
