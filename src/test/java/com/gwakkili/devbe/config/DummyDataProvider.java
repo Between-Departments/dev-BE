@@ -139,38 +139,58 @@ public class DummyDataProvider {
     }
 
 
-    // * 테스트용 사용자 -> 총 101명 (관리자 1명, 일반 사용자 100명)
+    // * 테스트용 사용자 -> 총 102명 (관리자 1명, 정지된 일반 사용자 1명,일반 사용자 100명)
     private void saveMember() {
-        Member member = Member.builder()
-                .mail("test@test1.ac.kr")
+
+        List<Member> members = new ArrayList<>();
+        //매니저 저장
+        Member manager = Member.builder()
+                .mail("manager@test1.ac.kr")
                 .nickname("테스트멤버")
                 .password(passwordEncoder.encode("a12341234!"))
                 .major("테스트학과1")
                 .school("테스트대학1")
                 .build();
-        member.addRole(Member.Role.ROLE_MANAGER);
+        manager.addRole(Member.Role.ROLE_MANAGER);
         amazonS3.putObject(BUCKET_NAME, "images/memberImage.jpg", "memberImage");
         amazonS3.putObject(BUCKET_NAME, "thumbnails/memberImage.jpg", "memberThumbnail");
-        member.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/memberImage.jpg").toString()));
+        manager.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/memberImage.jpg").toString()));
 
-        memberRepository.save(member);
+        members.add(manager);
 
-        List<Member> members = new ArrayList<>();
+        // 일반 회원 저장
         IntStream.rangeClosed(1, 100).forEach(i -> {
-            Member member2 = Member.builder()
+            Member member = Member.builder()
                     .mail("test" + i + "@test" + new Random().nextInt(1, 10) + ".ac.kr")
                     .nickname("테스트멤버" + i)
                     .password(passwordEncoder.encode("a12341234!"))
                     .major("테스트학과" + new Random().nextInt(1, 30))
                     .school("테스트대학" + new Random().nextInt(1, 10))
                     .build();
-            member2.addRole(Member.Role.ROLE_USER);
+            member.addRole(Member.Role.ROLE_USER);
             amazonS3.putObject(BUCKET_NAME, "images/memberImage" + i + ".jpg", "memberImage" + i);
             amazonS3.putObject(BUCKET_NAME, "thumbnails/memberImage" + i + ".jpg", "memberThumbnail" + i);
-            member2.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/memberImage" + i + ".jpg").toString()));
+            member.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/memberImage" + i + ".jpg").toString()));
 
-            members.add(member2);
+            members.add(member);
         });
+
+        // 정지된 회원 저장
+        Member lockMember = Member.builder()
+                .mail("lockMember@test2.ac.kr")
+                .nickname("정지된멤버")
+                .password(passwordEncoder.encode("a12341234!"))
+                .major("테스트학과2")
+                .school("테스트대학2")
+                .build();
+        lockMember.addRole(Member.Role.ROLE_MANAGER);
+        lockMember.setLocked(true);
+        amazonS3.putObject(BUCKET_NAME, "images/lockMemberImage.jpg", "lockMemberImage");
+        amazonS3.putObject(BUCKET_NAME, "thumbnails/lockMemberImage.jpg", "lockMemberThumbnail");
+        lockMember.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/lockMemberImage.jpg").toString()));
+
+        members.add(lockMember);
+
         memberRepository.saveAll(members);
     }
 
