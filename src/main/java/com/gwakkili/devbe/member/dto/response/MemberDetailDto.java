@@ -56,6 +56,7 @@ public class MemberDetailDto {
                 .nickname(member.getNickname())
                 .school(member.getSchool())
                 .major(member.getMajor())
+                .roles(member.getRoles())
                 .imageUrl(member.getImage().getUrl())
                 .bookmarkCount(member.getBookmarkCount())
                 .postCount(member.getPostCount())
