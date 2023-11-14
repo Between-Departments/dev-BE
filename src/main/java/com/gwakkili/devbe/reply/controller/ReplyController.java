@@ -61,7 +61,7 @@ public class ReplyController {
     @Operation(summary = "나의 댓글 목록 조회")
     public SliceResponseDto<MyReplyDto, Reply> getMyReplyList(@AuthenticationPrincipal MemberDetails memberDetails,
                                                               @ParameterObject SliceRequestDto sliceRequestDto,
-                                                              @Parameter(description = "게시글 종류") Post.BoardType boardType) {
+                                                              @RequestParam @Parameter(description = "게시글 종류") Post.BoardType boardType) {
         return replyService.getMyReplyList(memberDetails.getMemberId(), sliceRequestDto, boardType);
     }
 
