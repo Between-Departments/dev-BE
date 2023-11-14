@@ -61,7 +61,7 @@ public class ReplyUpdateTests extends DevBeApplicationTests {
     @WithMockMember
     public void failByInvalid() throws Exception {
         long replyId = 1;
-        String str = IntStream.rangeClosed(1, 100).mapToObj(String::valueOf).collect(Collectors.joining());
+        String str = IntStream.rangeClosed(1, 500).mapToObj(String::valueOf).collect(Collectors.joining());
         ReplyUpdateDto replyUpdateDto = new ReplyUpdateDto(str);
         String content = objectMapper.writeValueAsString(replyUpdateDto);
 
