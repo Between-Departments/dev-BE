@@ -16,7 +16,7 @@ public class findMyMemberTest extends DevBeApplicationTests {
 
     String url = "/api/members/my";
 
-    private final String mail = "test@test1.ac.kr";
+    private final String mail = "manager@test1.ac.kr";
 
     @Test
     @DisplayName("나의 유저정보 조회")
@@ -26,9 +26,9 @@ public class findMyMemberTest extends DevBeApplicationTests {
         //when,then
         mockMvc.perform(get(url))
                 .andExpect(jsonPath("mail").value(mail))
-                .andExpect(jsonPath("bookmarkCount").value(0))
-                .andExpect(jsonPath("postCount").value(1))
-                .andExpect(jsonPath("replyCount").value(100))
+                .andExpect(jsonPath("bookmarkCount").value(20))
+                .andExpect(jsonPath("postCount").value(3))
+                .andExpect(jsonPath("replyCount").value(20))
                 .andDo(print());
     }
 

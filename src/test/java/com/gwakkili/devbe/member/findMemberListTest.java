@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.everyItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -19,7 +21,7 @@ public class findMemberListTest extends DevBeApplicationTests {
 
     @Test
     @DisplayName("유저 목록조회 성공")
-    @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!", roles = "ROLE_MANAGER")
+    @WithMockMember(roles = "ROLE_MANAGER")
     public void findMemberListTest() throws Exception{
 
         //when,then
@@ -33,7 +35,7 @@ public class findMemberListTest extends DevBeApplicationTests {
 
     @Test
     @DisplayName("유저 목록조회 성공: 키워드 검색")
-    @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!", roles = "ROLE_MANAGER")
+    @WithMockMember(roles = "ROLE_MANAGER")
     public void findMemberListByKeywordTest() throws Exception{
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -44,12 +46,13 @@ public class findMemberListTest extends DevBeApplicationTests {
         //when,then
         mockMvc.perform(get(url).params(params))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("dataList[*].mail").value(everyItem(containsString("test1.ac.kr"))))
                 .andDo(print());
     }
 
     @Test
     @DisplayName("유저 목록조회 실패: 권한이 없는 사용자")
-    @WithMockMember(mail = "test@test1.ac.kr", password = "a12341234!", roles = "ROLE_USER")
+    @WithMockMember(roles = "ROLE_USER")
     public void findMemberListByForbidden() throws Exception {
 
         //when,then
