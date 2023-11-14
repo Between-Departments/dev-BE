@@ -19,6 +19,7 @@ public class Notification extends BaseEntity {
 
     private Long postId;
 
+    @Column(nullable = true)
     private Long replyId;
 
     private String content;
