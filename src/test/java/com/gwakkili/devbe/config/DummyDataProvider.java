@@ -348,8 +348,8 @@ public class DummyDataProvider {
     // * 테스트용 댓글 추천 -> 총 400개 (20개의 댓글(댓글 아이디 1~20)에 20개의 추천, 추천자 아이디 1~20)
     private void saveReplyRecommend() {
         List<ReplyRecommend> replyRecommends = new ArrayList<>();
-        LongStream.rangeClosed(1, 100).forEach(i -> {
-            LongStream.rangeClosed(1, 100).forEach(j -> {
+        LongStream.rangeClosed(1, 20).forEach(i -> {
+            LongStream.rangeClosed(1, 20).forEach(j -> {
                 ReplyRecommend replyRecommend = ReplyRecommend.builder()
                         .reply(replyRepository.getReferenceById(i))
                         .member(memberRepository.getReferenceById(j))
@@ -364,8 +364,8 @@ public class DummyDataProvider {
     // * 테스트용 게시물 북마크 -> 총 400개 (20개의 게시물(게시물 아이디 1~20)에 20개의 북마크, 추천자 아이디 1~20)
     private void savePostBookmark() {
         List<PostBookmark> postBookmarks = new ArrayList<>();
-        LongStream.rangeClosed(1, 100).forEach(i -> {
-            LongStream.rangeClosed(1, 100).forEach(j -> {
+        LongStream.rangeClosed(1, 20).forEach(i -> {
+            LongStream.rangeClosed(1, 20).forEach(j -> {
                 PostBookmark postBookmark = PostBookmark.builder()
                         .post(postRepository.getReferenceById(i))
                         .member(memberRepository.getReferenceById(j))
