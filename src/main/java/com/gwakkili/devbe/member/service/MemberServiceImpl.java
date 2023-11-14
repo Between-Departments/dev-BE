@@ -134,7 +134,7 @@ public class MemberServiceImpl implements MemberService {
     public void lockMember(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
-        member.setLocked(true);
+        member.setLocked(!member.isLocked());
     }
 
     // TODO 동시성 문제 고려해야함
