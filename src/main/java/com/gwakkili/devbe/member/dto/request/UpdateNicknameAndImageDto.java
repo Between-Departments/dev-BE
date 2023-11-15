@@ -17,7 +17,7 @@ public class UpdateNicknameAndImageDto {
 
     @NotBlank
     @NicknameDuplicate
-    @Pattern(regexp = "^[A-Za-z0-9가-힣]{1,8}$")
+    @Pattern(regexp = "^[A-Za-z0-9가-힣]{2,8}$")
     @Schema(description = "닉네임", example = "하이디")
     private String nickname;
 
