@@ -174,8 +174,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean confirmPassword(String mail, String password) {
-        Member member = memberRepository.findByMail(mail)
+    public boolean confirmPassword(long memberId, String password) {
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         return passwordEncoder.matches(password, member.getPassword());
     }

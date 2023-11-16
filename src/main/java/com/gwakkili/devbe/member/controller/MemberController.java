@@ -66,7 +66,7 @@ public class MemberController {
     @Operation(summary = "비밀번호 확인")
     @PreAuthorize("isAuthenticated()")
     public void passwordConfirm(@AuthenticationPrincipal MemberDetails memberDetails, @RequestBody PasswordDto passwordDto) {
-        if (memberService.confirmPassword(memberDetails.getMail(), passwordDto.getPassword()))
+        if (memberService.confirmPassword(memberDetails.getMemberId(), passwordDto.getPassword()))
             throw new CustomException(ExceptionCode.INVALID_PASSWORD);
     }
 

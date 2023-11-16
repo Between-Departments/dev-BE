@@ -32,6 +32,6 @@ public interface MemberService {
 
     boolean checkNicknameDuplicate(String nickname);
 
-    boolean confirmPassword(String mail, String password);
+    boolean confirmPassword(long memberId, String password);
 
 }
