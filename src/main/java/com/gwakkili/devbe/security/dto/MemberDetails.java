@@ -19,6 +19,8 @@ public class MemberDetails implements UserDetails {
 
     private String mail;
 
+    private String nickname;
+
     private String password;
 
     private boolean locked;
@@ -35,6 +37,7 @@ public class MemberDetails implements UserDetails {
                 .memberId(member.getMemberId())
                 .password(member.getPassword())
                 .mail(member.getMail())
+                .nickname(member.getNickname())
                 .locked(member.isLocked())
                 .createAt(member.getCreateAt())
                 .updateAt(member.getUpdateAt())

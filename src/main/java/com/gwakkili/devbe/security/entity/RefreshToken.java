@@ -20,6 +20,8 @@ public class RefreshToken {
 
     private String mail;
 
+    private String nickname;
+
     private Set<Member.Role> roles;
 
     private String token;

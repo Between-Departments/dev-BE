@@ -60,6 +60,7 @@ public class JwtServiceImpl implements JwtService {
         String accessToken = Jwts.builder()
                 .claim("memberId", memberDetails.getMemberId())
                 .claim("mail", memberDetails.getMail())
+                .claim("nickname", memberDetails.getNickname())
                 .claim("roles", roles)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -80,6 +81,7 @@ public class JwtServiceImpl implements JwtService {
         RefreshToken redisRefreshToken = RefreshToken.builder()
                 .token(refreshToken)
                 .mail(memberDetails.getMail())
+                .nickname(memberDetails.getNickname())
                 .memberId(memberDetails.getMemberId())
                 .roles(memberDetails.getRoles())
                 .expiredTime(REFRESH_TOKEN_EXPIRE_TIME / 1000)
@@ -98,9 +100,10 @@ public class JwtServiceImpl implements JwtService {
         Claims claims = getClaims(accessToken);
         long memberId = ((Number) claims.get("memberId")).longValue();
         String mail = claims.get("mail").toString();
+        String nickname = claims.get("nickname").toString();
         Set<Member.Role> roles = Arrays.stream(claims.get("roles").toString().split(","))
                 .map(Member.Role::valueOf).collect(Collectors.toSet());
-        UserDetails principal = MemberDetails.builder().memberId(memberId).mail(mail).roles(roles).build();
+        UserDetails principal = MemberDetails.builder().memberId(memberId).mail(mail).nickname(nickname).roles(roles).build();
         return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }
 
@@ -123,6 +126,7 @@ public class JwtServiceImpl implements JwtService {
         UserDetails principal = MemberDetails.builder()
                 .memberId(redisRefreshToken.getMemberId())
                 .mail(redisRefreshToken.getMail())
+                .nickname(redisRefreshToken.getNickname())
                 .roles(redisRefreshToken.getRoles())
                 .build();
         return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
