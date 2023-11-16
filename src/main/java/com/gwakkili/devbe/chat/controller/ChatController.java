@@ -27,6 +27,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -43,10 +45,11 @@ public class ChatController {
     @Operation(summary = "채팅방 생성")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveChatRoom(@AuthenticationPrincipal MemberDetails memberDetails,
-                             @RequestBody SaveChatRoomDto saveChatRoomDto) {
+    public Map<String, Long> saveChatRoom(@AuthenticationPrincipal MemberDetails memberDetails,
+                                          @RequestBody SaveChatRoomDto saveChatRoomDto) {
         saveChatRoomDto.setMasterId(memberDetails.getMemberId());
-        chatService.saveChatRoom(saveChatRoomDto);
+        long chatRoomId = chatService.saveChatRoom(saveChatRoomDto);
+        return Map.of("chatRoomId", chatRoomId);
     }
 
     @GetMapping("/rooms")
@@ -77,10 +80,14 @@ public class ChatController {
 
     @SubscribeMapping("/sub/chat/rooms/{roomId}")
     @SendTo("/sub/chat/rooms/{roomId}")
-    public String enterChatRoom(@DestinationVariable long roomId, Authentication authentication) {
+    public ChatMessageDto enterChatRoom(@DestinationVariable long roomId, Authentication authentication) {
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
         chatService.enterChatRoom(roomId, memberDetails.getMemberId());
-        return memberDetails.getNickname() + "님이 입장하였습니다.";
+        return ChatMessageDto.builder()
+                .type(ChatMessageDto.Type.ENTER)
+                .sender(memberDetails.getNickname())
+                .content(memberDetails.getNickname() + " 님이 입장하였습니다.")
+                .build();
     }
 
     @MessageMapping("/pub/chat/rooms/{roomId}")

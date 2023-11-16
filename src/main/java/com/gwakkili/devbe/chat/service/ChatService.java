@@ -10,7 +10,7 @@ import com.gwakkili.devbe.dto.SliceResponseDto;
 
 public interface ChatService {
 
-    void saveChatRoom(SaveChatRoomDto saveChatRoomDto);
+    long saveChatRoom(SaveChatRoomDto saveChatRoomDto);
 
     SliceResponseDto<ChatRoomDto, Object[]> getChatRoomList(long memberId, SliceRequestDto sliceRequestDto);
 

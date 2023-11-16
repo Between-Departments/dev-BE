@@ -13,7 +13,6 @@ import com.gwakkili.devbe.dto.SliceRequestDto;
 import com.gwakkili.devbe.dto.SliceResponseDto;
 import com.gwakkili.devbe.event.NewChatMessageEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
-import com.gwakkili.devbe.exception.customExcption.DuplicateException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.member.entity.Member;
 import com.gwakkili.devbe.member.repository.MemberRepository;
@@ -24,6 +23,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -41,14 +41,14 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Override
-    public void saveChatRoom(SaveChatRoomDto saveChatRoomDto) {
+    public long saveChatRoom(SaveChatRoomDto saveChatRoomDto) {
 
         Member master = memberRepository.getReferenceById(saveChatRoomDto.getMasterId());
         Member member = memberRepository.findById(saveChatRoomDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
 
-        if (chatRoomRepository.existsByMasterAndMember(master, member))
-            throw new DuplicateException(ExceptionCode.DUPLICATE_CHAT_ROOM);
+        Optional<ChatRoom> optional = chatRoomRepository.findByMasterAndMember(master, member);
+        if (optional.isPresent()) return optional.get().getChatRoomId();
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .master(master)
@@ -56,6 +56,7 @@ public class ChatServiceImpl implements ChatService {
                 .build();
 
         chatRoomRepository.save(chatRoom);
+        return chatRoom.getChatRoomId();
     }
 
     @Override

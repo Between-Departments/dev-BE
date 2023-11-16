@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
-    boolean existsByMasterAndMember(Member master, Member member);
+    Optional<ChatRoom> findByMasterAndMember(Member master, Member member);
 
     @Query("select cr, rcm from ChatRoom cr " +
             "join RecentChatMessage rcm on rcm.chatRoomId = cr.chatRoomId " +

@@ -5,19 +5,22 @@ import com.gwakkili.devbe.chat.entity.ChatMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @Schema
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ChatMessageDto {
 
     @Schema(description = "채팅 메시지 번호")
-    private long chatMessageId;
+    private Long chatMessageId;
+
+    private ChatMessageDto.Type type;
 
     @Schema(description = "발신자", example = "신방과곰돌이")
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String sender;
 
     @Schema(description = "채팅 내용", example = "안녕하세요~")
@@ -27,12 +30,21 @@ public class ChatMessageDto {
     private LocalDateTime createAt;
 
     @Schema(description = "채팅 읽음 여부")
-    private boolean isRead;
+    private Boolean isRead;
+
+    @RequiredArgsConstructor
+    public enum Type {
+        ENTER("입장 메시지"),
+        NORMAL("일반 메시지");
+
+        private final String description;
+    }
 
 
     public static ChatMessageDto of(ChatMessage chatMessage) {
         return ChatMessageDto.builder()
                 .chatMessageId(chatMessage.getChatMessageId())
+                .type(Type.NORMAL)
                 .sender(chatMessage.getSender().getNickname())
                 .content(chatMessage.getContent())
                 .createAt(chatMessage.getCreateAt())
