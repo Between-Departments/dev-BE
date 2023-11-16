@@ -76,9 +76,9 @@ public class ImageServiceImpl implements ImageService {
 
             //이미지와 섬네일 업로드
             try {
-                String imageUrl = uploadImage(multipartFile, imageUploadPath);
-                uploadThumbnailImage(multipartFile, thumbnailUploadPath);
-                imageUrlList.add(imageUrl);
+                uploadImage(multipartFile, imageUploadPath);
+                String thumbnailUrl = uploadThumbnailImage(multipartFile, thumbnailUploadPath);
+                imageUrlList.add(thumbnailUrl);
             } catch (IOException e) {
                 throw new CustomException(ExceptionCode.S3_UPLOAD_FAIL);
             }
@@ -87,7 +87,7 @@ public class ImageServiceImpl implements ImageService {
         return imageUrlList;
     }
 
-    private String uploadImage(MultipartFile multipartFile, String uploadPath) throws IOException {
+    private void uploadImage(MultipartFile multipartFile, String uploadPath) throws IOException {
 
         //메타 데이터 생성
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -97,10 +97,9 @@ public class ImageServiceImpl implements ImageService {
         // S3에 폴더 및 파일 업로드
         InputStream inputStream = multipartFile.getInputStream();
         amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, inputStream, objectMetadata));
-        return amazonS3.getUrl(bucket, uploadPath).toString();
     }
 
-    private void uploadThumbnailImage(MultipartFile multipartFile, String uploadPath) throws IOException {
+    private String uploadThumbnailImage(MultipartFile multipartFile, String uploadPath) throws IOException {
 
         //썸네일 이미지 생성
         BufferedImage image = ImageIO.read(multipartFile.getInputStream());
@@ -118,6 +117,7 @@ public class ImageServiceImpl implements ImageService {
         // s3에 이미지 저장
         InputStream thumbnailInput = new ByteArrayInputStream(bytes);
         amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, thumbnailInput, thumbnailMetadata));
+        return amazonS3.getUrl(bucket, uploadPath).toString();
 
     }
 
