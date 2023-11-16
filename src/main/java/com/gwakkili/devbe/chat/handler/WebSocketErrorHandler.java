@@ -26,9 +26,6 @@ public class WebSocketErrorHandler extends StompSubProtocolErrorHandler {
             case "UNSUPPORTED_TOKEN" -> exceptionResponseBuilder.buildMessage(ExceptionCode.UNSUPPORTED_TOKEN);
             case "ILLEGAL_TOKEN" -> exceptionResponseBuilder.buildMessage(ExceptionCode.ILLEGAL_TOKEN);
             case "NOT_FOUND_TOKEN" -> exceptionResponseBuilder.buildMessage(ExceptionCode.NOT_FOUND_TOKEN);
-            case "NOT_FOUND_CHAT_ROOM" -> exceptionResponseBuilder.buildMessage(ExceptionCode.NOT_FOUND_CHAT_ROOM);
-            case "ACCESS_DENIED" -> exceptionResponseBuilder.buildMessage(ExceptionCode.ACCESS_DENIED);
-            case "UNAUTHORIZED" -> exceptionResponseBuilder.buildMessage(ExceptionCode.UNAUTHORIZED);
             default -> super.handleClientMessageProcessingError(clientMessage, ex);
         };
     }

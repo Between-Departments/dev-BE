@@ -26,6 +26,9 @@ public class ChatMessageDto {
     @Schema(description = "생성 일자")
     private LocalDateTime createAt;
 
+    @Schema(description = "채팅 읽음 여부")
+    private boolean isRead;
+
 
     public static ChatMessageDto of(ChatMessage chatMessage) {
         return ChatMessageDto.builder()
@@ -33,6 +36,7 @@ public class ChatMessageDto {
                 .sender(chatMessage.getSender().getNickname())
                 .content(chatMessage.getContent())
                 .createAt(chatMessage.getCreateAt())
+                .isRead(chatMessage.isRead())
                 .build();
     }
 }

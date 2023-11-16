@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -74,8 +75,15 @@ public class ChatController {
         return chatService.getChatMessageList(roomId, memberDetails.getMemberId(), sliceRequestDto);
     }
 
+    @SubscribeMapping("/sub/chat/rooms/{roomId}")
+    @SendTo("/sub/chat/rooms/{roomId}")
+    public String enterChatRoom(@DestinationVariable long roomId, Authentication authentication) {
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+        chatService.enterChatRoom(roomId, memberDetails.getMemberId());
+        return memberDetails.getNickname() + "님이 입장하였습니다.";
+    }
 
-    @MessageMapping("/chat/rooms/{roomId}/messages")
+    @MessageMapping("/pub/chat/rooms/{roomId}")
     @SendTo("/sub/chat/rooms/{roomId}")
     public ChatMessageDto sendChatMessage(@DestinationVariable long roomId,
                                           Authentication authentication,
