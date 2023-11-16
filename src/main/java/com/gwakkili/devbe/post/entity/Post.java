@@ -50,7 +50,6 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<PostImage> images = new ArrayList<>();
 
-    // TODO count 관련 변수 타입 Primitive VS Wrapper Class
     private long viewCount;
 
     @Basic(fetch = FetchType.LAZY)

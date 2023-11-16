@@ -3,15 +3,18 @@ package com.gwakkili.devbe.notification.service;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.dto.ListResponseDto;
 import com.gwakkili.devbe.event.NewChatMessageEvent;
-import com.gwakkili.devbe.notification.dto.response.ChatNotificationDto;
-import com.gwakkili.devbe.notification.dto.response.NotificationDto;
-import com.gwakkili.devbe.notification.entity.Notification;
 import com.gwakkili.devbe.event.NewPostReportEvent;
 import com.gwakkili.devbe.event.NewReplyEvent;
 import com.gwakkili.devbe.event.NewReplyReportEvent;
+import com.gwakkili.devbe.exception.ExceptionCode;
+import com.gwakkili.devbe.exception.customExcption.NotFoundException;
+import com.gwakkili.devbe.notification.dto.response.ChatNotificationDto;
+import com.gwakkili.devbe.notification.dto.response.NotificationDto;
+import com.gwakkili.devbe.notification.entity.Notification;
 import com.gwakkili.devbe.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +22,7 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -96,8 +100,25 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void deleteNotification(List<Long> notificationIds) {
-        notificationRepository.deleteAllById(notificationIds);
+    public void deleteNotification(Long notificationId, Long memberId) {
+        Notification findNotification = notificationRepository.findById(notificationId).
+                orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_NOTIFICATION));
+
+        if(findNotification.getMember().getMemberId() != memberId) throw new AccessDeniedException("접근 거부");
+
+        notificationRepository.deleteById(notificationId);
+    }
+
+    @Override
+    public void deleteNotifications(List<Long> notificationIds, Long memberId) {
+        List<Notification> notificationList = notificationRepository.findByNotificationIdIn(notificationIds);
+
+        Optional<Notification> wrongNotification = notificationList.stream()
+                .filter(notification -> notification.getMember().getMemberId() != memberId)
+                .findAny();
+
+        if (wrongNotification.isPresent()) throw new AccessDeniedException("접근 거부");
+        notificationRepository.deleteAllByIdInBatch(notificationIds);
     }
 
     @Override

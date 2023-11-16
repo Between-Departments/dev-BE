@@ -35,16 +35,27 @@ public class NotificationController {
         return notificationService.findAllNotifications(memberDetails.getMemberId());
     }
 
-
-    // TODO 본인의 알림 데이터가 맞는지 확인하는 로직 필요
     @Operation(method = "DELETE", summary = "알림 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "알림 삭제 성공")
+    })
+    @DeleteMapping("/{notificationId}")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable Long notificationId, @AuthenticationPrincipal MemberDetails memberDetails){
+        notificationService.deleteNotification(notificationId, memberDetails.getMemberId());
+    }
+
+
+    // TODO 본인의 알림 데이터가 맞는지 확인하는 로직 필요
+    @Operation(method = "DELETE", summary = "알림 여러 개 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "알림 여러 개 삭제 성공")
     })
     @DeleteMapping
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@RequestBody NotificationDeleteRequest notificationDeleteRequest, @AuthenticationPrincipal MemberDetails memberDetails){
-        notificationService.deleteNotification(notificationDeleteRequest.getNotificationIds());
+        notificationService.deleteNotifications(notificationDeleteRequest.getNotificationIds(), memberDetails.getMemberId());
     }
 }

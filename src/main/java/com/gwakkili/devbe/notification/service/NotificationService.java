@@ -10,9 +10,6 @@ import com.gwakkili.devbe.event.NewReplyReportEvent;
 import java.util.List;
 
 public interface NotificationService {
-
-    void deleteNotification(List<Long> notificationIds);
-
     ListResponseDto<NotificationDto, Notification> findAllNotifications(Long memberId);
 
     void saveNewNotification(NewReplyEvent newReplyEvent);
@@ -20,5 +17,9 @@ public interface NotificationService {
     void saveNewNotification(NewPostReportEvent newPostReportEvent);
 
     void saveNewNotification(NewReplyReportEvent newReplyReportEvent);
+
+    void deleteNotification(Long notificationId, Long memberId);
+
+    void deleteNotifications(List<Long> notificationIds, Long memberId);
 }
 

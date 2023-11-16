@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.PESSIMISTIC_WRITE) // TODO 비관적 락에 의해 성능이 많이 떨어질수도 있겠다는 생각이 듦
     @Query("select m from Member m where m.memberId = :memberId")
     Optional<Member> findByIdForUpdate(Long memberId);
 

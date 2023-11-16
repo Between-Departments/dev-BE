@@ -237,7 +237,7 @@ public class DummyDataProvider {
             for(int j=1; j<4; j++) {
                 amazonS3.putObject(BUCKET_NAME, "images/postImage" + j + "_NeedHelpPost" + i + ".jpg", "postImage" + j + "_FreePost" + i);
                 amazonS3.putObject(BUCKET_NAME, "thumbnails/postImage" + j + "_NeedHelpPost" + i + ".jpg", "postImage" + j + "_FreePost" + i);
-                imageUrls.add(amazonS3.getUrl(BUCKET_NAME, "images/postImage" + j + "_NeedHelpPost" + i + ".jpg").toString());
+                imageUrls1.add(amazonS3.getUrl(BUCKET_NAME, "images/postImage" + j + "_NeedHelpPost" + i + ".jpg").toString());
             }
             needHelpPost.addImages(imageUrls1);
 
