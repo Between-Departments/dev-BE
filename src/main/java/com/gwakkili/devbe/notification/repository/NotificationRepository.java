@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     List<Notification> findAllByMemberMemberId(Long memberId);
+
+    List<Notification> findByNotificationIdIn(List<Long> notificationIds);
 }
