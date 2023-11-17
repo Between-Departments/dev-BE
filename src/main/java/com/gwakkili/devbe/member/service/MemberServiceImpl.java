@@ -7,6 +7,7 @@ import com.gwakkili.devbe.event.DeleteMemberImageEvent;
 import com.gwakkili.devbe.event.DeletePostImageEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
+import com.gwakkili.devbe.exception.customExcption.DuplicateException;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.image.entity.MemberImage;
 import com.gwakkili.devbe.image.entity.PostImage;
@@ -90,6 +91,11 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(updateNicknameAndImageDto.getMemberId())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.NOT_FOUND_MEMBER));
         memberImageRepository.deleteByMember(member);
+
+        if (!updateNicknameAndImageDto.getNickname().equals(member.getNickname())
+                && memberRepository.existsByNickname(updateNicknameAndImageDto.getNickname()))
+            throw new DuplicateException(ExceptionCode.DUPLICATE_NICKNAME);
+
         member.setNickname(updateNicknameAndImageDto.getNickname());
         member.setImage(new MemberImage(updateNicknameAndImageDto.getImageUrl()));
     }
