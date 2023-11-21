@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gwakkili.devbe.chat.entity.ChatRoom;
 import com.gwakkili.devbe.chat.entity.RecentChatMessage;
 import com.gwakkili.devbe.dto.SimpleMemberDto;
-import com.gwakkili.devbe.member.entity.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
@@ -27,12 +26,11 @@ public class ChatRoomDto {
     @Schema(description = "않읽은 메시지 존재 여부")
     private boolean existNotRead;
 
-    public static ChatRoomDto of(ChatRoom chatRoom, RecentChatMessage recentChatMessage, boolean isMaster) {
+    public static ChatRoomDto of(ChatRoom chatRoom, RecentChatMessage recentChatMessage, long memberId) {
 
-        Member member = (isMaster) ? chatRoom.getMember() : chatRoom.getMaster();
         return ChatRoomDto.builder()
                 .chatRoomId(chatRoom.getChatRoomId())
-                .member(new SimpleMemberDto(member, false))
+                .member(new SimpleMemberDto(memberId == chatRoom.getMaster().getMemberId() ? chatRoom.getMember() : chatRoom.getMaster(), false))
                 .recentChatMessage(
                         ChatMessageDto.builder()
                                 .chatMessageId(recentChatMessage.getChatMessageId())
@@ -44,7 +42,7 @@ public class ChatRoomDto {
                                 .createAt(recentChatMessage.getCreateAt())
                                 .build()
                 )
-                .existNotRead(!recentChatMessage.isRead())
+                .existNotRead(recentChatMessage.getSenderId() != memberId && !recentChatMessage.isRead())
                 .build();
     }
 }

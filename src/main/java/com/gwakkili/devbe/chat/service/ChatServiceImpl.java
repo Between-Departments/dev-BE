@@ -69,8 +69,7 @@ public class ChatServiceImpl implements ChatService {
         Function<Object[], ChatRoomDto> fn = (objects -> {
             ChatRoom chatRoom = (ChatRoom) objects[0];
             RecentChatMessage recentChatMessage = (RecentChatMessage) objects[1];
-            boolean isMaster = chatRoom.getMaster().getMemberId() == memberId;
-            return ChatRoomDto.of(chatRoom, recentChatMessage, isMaster);
+            return ChatRoomDto.of(chatRoom, recentChatMessage, memberId);
         });
 
         return new SliceResponseDto(dataSlice, fn);
