@@ -35,7 +35,7 @@ public class MailServiceImpl implements MailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${AdminMail.id}")
+    @Value("${spring.mail.username}")
     private String sender;
 
     @Override
@@ -65,7 +65,6 @@ public class MailServiceImpl implements MailService {
     }
 
     private String setContext(String code) { // 타임리프 설정하는 코드
-
         Context context = new Context();
         context.setVariable("code", code); // Template에 전달할 데이터 설정
         return templateEngine.process("mail", context); // mail.html
@@ -79,7 +78,6 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public boolean checkAuthCode(MailAuthCodeDto mailAuthCodeDto) {
-
         MailAuthCode mailAuthCode = mailAuthCodeRepository.findById(mailAuthCodeDto.getMail())
                 .orElseThrow(() -> new NotFoundException(ExceptionCode.MAIL_AUTH_CODE_EXPIRE));
 

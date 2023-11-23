@@ -1,10 +1,8 @@
 package com.gwakkili.devbe.image;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.gwakkili.devbe.DevBeApplicationTests;
-import io.findify.s3mock.S3Mock;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
@@ -19,17 +17,17 @@ public class ImageTests extends DevBeApplicationTests {
 
     private static final String BUCKET_NAME = "test-bucket";
 
-    @BeforeAll
-    static void setUp(@Autowired S3Mock s3Mock, @Autowired AmazonS3 amazonS3) {
-        s3Mock.start();
-        amazonS3.createBucket(BUCKET_NAME);
-    }
-
-    @AfterAll
-    static void tearDown(@Autowired S3Mock s3Mock, @Autowired AmazonS3 amazonS3) {
-        amazonS3.shutdown();
-        s3Mock.stop();
-    }
+//    @BeforeAll
+//    static void setUp(@Autowired S3Mock s3Mock, @Autowired AmazonS3 amazonS3) {
+//        s3Mock.start();
+//        amazonS3.createBucket(BUCKET_NAME);
+//    }
+//
+//    @AfterAll
+//    static void tearDown(@Autowired S3Mock s3Mock, @Autowired AmazonS3 amazonS3) {
+//        amazonS3.shutdown();
+//        s3Mock.stop();
+//    }
 
     private MockMultipartFile getMultipartFile(String name, String originalName) throws IOException {
         return new MockMultipartFile(name,

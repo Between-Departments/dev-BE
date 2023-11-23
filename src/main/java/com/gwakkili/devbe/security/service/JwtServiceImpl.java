@@ -14,7 +14,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
+@EnableConfigurationProperties(JwtProperties.class)
 @Service
 public class JwtServiceImpl implements JwtService {
 
@@ -39,15 +40,13 @@ public class JwtServiceImpl implements JwtService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtServiceImpl(@Value("${jwt.secret}") String secretKey,
-                          @Value("${jwt.access_token_expire_time}") long accessTokenExpireTime,
-                          @Value("${jwt.refresh_token_expire_time}") long refreshTokenExpireTime,
+    public JwtServiceImpl(JwtProperties jwtProperties,
                           RefreshTokenRepository refreshTokenRepository) {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.refreshTokenRepository = refreshTokenRepository;
-        this.ACCESS_TOKEN_EXPIRE_TIME = accessTokenExpireTime * 1000;
-        this.REFRESH_TOKEN_EXPIRE_TIME = refreshTokenExpireTime * 1000;
+        this.ACCESS_TOKEN_EXPIRE_TIME = jwtProperties.getAccessTokenExpireTime() * 1000;
+        this.REFRESH_TOKEN_EXPIRE_TIME = jwtProperties.getRefreshTokenExpireTime() * 1000;
     }
 
 
