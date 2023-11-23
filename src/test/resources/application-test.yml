@@ -29,30 +29,26 @@ spring:
       host: localhost
       port: 6379
 
-logging:
-  level:
-    #org.hibernate.SQL: debug
-    org.hibernate.type: trace
-mail:
-  smtp:
-    port: 465
-    auth: true
-    starttls:
-      required: true
-      enable: true
-    socketFactory:
-      class: javax.net.ssl.SSLSocketFactory
-      fallback: false
-      port: 465
-
-AdminMail:
-  id: t3231@naver.com
-  password: 12341234
+#  mail:
+#    host: smtp.naver.com
+#    port: 465
+#    username: t3231@naver.com
+#    password: 12341234
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          ssl:
+#            enable: true
+#            trust: smtp.naver.com
+#          starttls:
+#            enable: true
+#            required: true
 
 jwt:
-  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
-  access_token_expire_time: 1800
-  refresh_token_expire_time: 604800
+  secret-key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+  access-token-expire-time: 1800
+  refresh-token-expire-time: 604800
 
 cloud:
   aws:
@@ -63,3 +59,9 @@ cloud:
       auto: false
     stack:
       auto: false
+
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: debug

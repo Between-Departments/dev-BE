@@ -1,18 +1,14 @@
 package com.gwakkili.devbe.image.service;
 
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gwakkili.devbe.event.DeleteMemberImageEvent;
 import com.gwakkili.devbe.event.DeletePostImageEvent;
 import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.exception.customExcption.CustomException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
 import com.gwakkili.devbe.image.entity.MemberImage;
-import lombok.RequiredArgsConstructor;
+import io.awspring.cloud.s3.ObjectMetadata;
+import io.awspring.cloud.s3.S3Resource;
+import io.awspring.cloud.s3.S3Template;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.Delete;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -37,14 +38,19 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 @Transactional
 public class ImageServiceImpl implements ImageService {
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+    private final String bucket;
+    private final S3Client amazonS3;
+    private final S3Template s3Template;
 
-    private final AmazonS3 amazonS3;
+
+    public ImageServiceImpl(@Value("${aws.s3.bucket}") String bucket, S3Client amazonS3, S3Template s3Template) {
+        this.bucket = bucket;
+        this.amazonS3 = amazonS3;
+        this.s3Template = s3Template;
+    }
 
     @TransactionalEventListener
     public void deleteMemberImage(DeleteMemberImageEvent deleteMemberImageEvent) {
@@ -90,14 +96,14 @@ public class ImageServiceImpl implements ImageService {
     private String uploadImage(MultipartFile multipartFile, String uploadPath) throws IOException {
 
         //메타 데이터 생성
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(multipartFile.getSize());
-        objectMetadata.setContentType(multipartFile.getContentType());
+        ObjectMetadata objectMetadata = ObjectMetadata.builder()
+                .contentType(multipartFile.getContentType())
+                .build();
 
         // S3에 폴더 및 파일 업로드
         InputStream inputStream = multipartFile.getInputStream();
-        amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, inputStream, objectMetadata));
-        return amazonS3.getUrl(bucket, uploadPath).toString();
+        S3Resource uploaded = s3Template.upload(bucket, uploadPath, inputStream, objectMetadata);
+        return uploaded.getURL().toString();
     }
 
     private void uploadThumbnailImage(MultipartFile multipartFile, String uploadPath) throws IOException {
@@ -110,16 +116,14 @@ public class ImageServiceImpl implements ImageService {
         ImageIO.write(thumbnailImage, imageType.substring(imageType.indexOf("/") + 1), thumbnailOutStream);
 
         // 메타 데이터 생성
-        ObjectMetadata thumbnailMetadata = new ObjectMetadata();
         byte[] bytes = thumbnailOutStream.toByteArray();
-        thumbnailMetadata.setContentLength(bytes.length);
-        thumbnailMetadata.setContentType(multipartFile.getContentType());
+        ObjectMetadata objectMetadata = ObjectMetadata.builder()
+                .contentType(multipartFile.getContentType())
+                .build();
 
         // s3에 이미지 저장
         InputStream thumbnailInput = new ByteArrayInputStream(bytes);
-        amazonS3.putObject(new PutObjectRequest(bucket, uploadPath, thumbnailInput, thumbnailMetadata));
-        //return amazonS3.getUrl(bucket, uploadPath).toString();
-
+        s3Template.upload(bucket, uploadPath, thumbnailInput, objectMetadata);
     }
 
     @Override
@@ -130,28 +134,40 @@ public class ImageServiceImpl implements ImageService {
         String thumbnailPath = imagePath.replace("images/", "thumbnails/");
 
         try {
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, imagePath));
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, thumbnailPath));
-        }catch (SdkClientException exception){
+            s3Template.deleteObject(bucket,imagePath);
+            s3Template.deleteObject(bucket,thumbnailPath);
+        }catch (SdkException exception){
             throw new CustomException(ExceptionCode.S3_DELETE_FAIL);
         }
     }
 
     @Override
     public void deleteImageList(List<String> imgUrlList) {
-        List<DeleteObjectsRequest.KeyVersion> keyList = new ArrayList<>();
-        for (String imgUrl : imgUrlList) {
+        List<ObjectIdentifier> objectIdentifierList = new ArrayList<>();
+
+        imgUrlList.forEach(imgUrl -> {
             String splitStr = ".com/";
             String decodeUrl = URLDecoder.decode(imgUrl, StandardCharsets.UTF_8);
             String imagePath = decodeUrl.substring(imgUrl.lastIndexOf(splitStr) + splitStr.length());
             String thumbnailPath = imagePath.replace("images/", "thumbnails/");
-            keyList.add(new DeleteObjectsRequest.KeyVersion(imagePath));
-            keyList.add(new DeleteObjectsRequest.KeyVersion(thumbnailPath));
-        }
+
+            objectIdentifierList.add(ObjectIdentifier.builder().key(imagePath).build());
+            objectIdentifierList.add(ObjectIdentifier.builder().key(thumbnailPath).build());
+        });
+
+        Delete delete = Delete.builder()
+                .objects(objectIdentifierList)
+                .quiet(false)
+                .build();
+
+        DeleteObjectsRequest deleteObjectsRequest = DeleteObjectsRequest.builder()
+                .bucket(bucket)
+                .delete(delete)
+                .build();
 
         try {
-            amazonS3.deleteObjects(new DeleteObjectsRequest(bucket).withKeys(keyList).withQuiet(false));
-        }catch (SdkClientException exception){
+            amazonS3.deleteObjects(deleteObjectsRequest);
+        }catch (SdkException exception){
             throw new CustomException(ExceptionCode.S3_DELETE_FAIL);
         }
     }

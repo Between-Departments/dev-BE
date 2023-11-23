@@ -92,7 +92,7 @@ public class PostQueryRepository {
     }
 
     private BooleanExpression keywordContains(String keyword) {
-        return !hasText(keyword) ? null : post.content.contains(keyword);
+        return !hasText(keyword) ? null : post.content.contains(keyword).or(post.title.contains(keyword));
     }
 
     private List<OrderSpecifier> getOrderSpecifier(Sort sort){

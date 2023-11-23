@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Authentication", description = "인증 API")
 public class AuthenticationController {
 
-    @Value("${jwt.refresh_token_expire_time}")
+    @Value("${jwt.refresh-token-expire-time}")
     private long refreshTokenExpireTime;
 
     private final AuthenticationService authenticationService;
