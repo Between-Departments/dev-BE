@@ -46,7 +46,7 @@ public class ImageServiceImpl implements ImageService {
     private final S3Template s3Template;
 
 
-    public ImageServiceImpl(@Value("${aws.s3.bucket}") String bucket, S3Client amazonS3, S3Template s3Template) {
+    public ImageServiceImpl(@Value("${spring.cloud.aws.s3.bucket}") String bucket, S3Client amazonS3, S3Template s3Template) {
         this.bucket = bucket;
         this.amazonS3 = amazonS3;
         this.s3Template = s3Template;
