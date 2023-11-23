@@ -1,6 +1,5 @@
 package com.gwakkili.devbe.config;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.gwakkili.devbe.chat.entity.ChatMessage;
 import com.gwakkili.devbe.chat.entity.ChatRoom;
 import com.gwakkili.devbe.chat.repository.ChatMessageRepository;
@@ -27,6 +26,8 @@ import com.gwakkili.devbe.report.repository.PostReportRepository;
 import com.gwakkili.devbe.report.repository.ReplyReportRepository;
 import com.gwakkili.devbe.school.entity.School;
 import com.gwakkili.devbe.school.repository.SchoolRepository;
+import io.awspring.cloud.s3.S3Resource;
+import io.awspring.cloud.s3.S3Template;
 import io.findify.s3mock.S3Mock;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -36,6 +37,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -73,7 +76,7 @@ public class DummyDataProvider {
 
     private S3Mock s3Mock;
 
-    private AmazonS3 amazonS3;
+    private S3Template s3Template;
 
     private static final String BUCKET_NAME = "test-bucket";
 
@@ -94,7 +97,7 @@ public class DummyDataProvider {
                              ChatRoomRepository chatRoomRepository,
                              ChatMessageRepository chatMessageRepository,
                              S3Mock s3Mock,
-                             AmazonS3 amazonS3) {
+                             S3Template s3Template) {
         this.schoolRepository = schoolRepository;
         this.majorRepository = majorRepository;
         this.memberRepository = memberRepository;
@@ -108,7 +111,7 @@ public class DummyDataProvider {
         this.chatRoomRepository = chatRoomRepository;
         this.chatMessageRepository = chatMessageRepository;
         this.s3Mock = s3Mock;
-        this.amazonS3 = amazonS3;
+        this.s3Template = s3Template;
     }
 
 
@@ -140,7 +143,7 @@ public class DummyDataProvider {
 
 
     // * 테스트용 사용자 -> 총 102명 (관리자 1명, 정지된 일반 사용자 1명,일반 사용자 100명)
-    private void saveMember() {
+    private void saveMember() throws IOException {
 
         List<Member> members = new ArrayList<>();
         //매니저 저장
@@ -151,10 +154,11 @@ public class DummyDataProvider {
                 .major("테스트학과1")
                 .school("테스트대학1")
                 .build();
+
         manager.addRole(Member.Role.ROLE_MANAGER);
-        amazonS3.putObject(BUCKET_NAME, "images/memberImage.jpg", "memberImage");
-        amazonS3.putObject(BUCKET_NAME, "thumbnails/memberImage.jpg", "memberThumbnail");
-        manager.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/memberImage.jpg").toString()));
+        S3Resource upload1 = s3Template.upload(BUCKET_NAME, "images/managerImage.jpg", new ByteArrayInputStream("managerImage".getBytes()));
+        s3Template.upload(BUCKET_NAME, "thumbnails/managerImage.jpg", new ByteArrayInputStream("managerThumbnail".getBytes()));
+        manager.setImage(new MemberImage(upload1.getURL().toString()));
 
         members.add(manager);
 
@@ -167,10 +171,15 @@ public class DummyDataProvider {
                     .major("테스트학과" + new Random().nextInt(1, 30))
                     .school("테스트대학" + new Random().nextInt(1, 10))
                     .build();
+
             member.addRole(Member.Role.ROLE_USER);
-            amazonS3.putObject(BUCKET_NAME, "images/memberImage" + i + ".jpg", "memberImage" + i);
-            amazonS3.putObject(BUCKET_NAME, "thumbnails/memberImage" + i + ".jpg", "memberThumbnail" + i);
-            member.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/memberImage" + i + ".jpg").toString()));
+            S3Resource upload2 = s3Template.upload(BUCKET_NAME, "images/memberImage" + i + ".jpg", new ByteArrayInputStream(("memberImage" + i).getBytes()));
+            s3Template.upload(BUCKET_NAME, "thumbnails/memberImage" + i + ".jpg", new ByteArrayInputStream(("memberThumbnail" + i).getBytes()));
+            try {
+                member.setImage(new MemberImage(upload2.getURL().toString()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             members.add(member);
         });
@@ -185,9 +194,9 @@ public class DummyDataProvider {
                 .build();
         lockMember.addRole(Member.Role.ROLE_MANAGER);
         lockMember.setLocked(true);
-        amazonS3.putObject(BUCKET_NAME, "images/lockMemberImage.jpg", "lockMemberImage");
-        amazonS3.putObject(BUCKET_NAME, "thumbnails/lockMemberImage.jpg", "lockMemberThumbnail");
-        lockMember.setImage(new MemberImage(amazonS3.getUrl(BUCKET_NAME, "images/lockMemberImage.jpg").toString()));
+        S3Resource upload3 = s3Template.upload(BUCKET_NAME, "images/lockMemberImage.jpg", new ByteArrayInputStream("lockMemberImage".getBytes()));
+        s3Template.upload(BUCKET_NAME, "thumbnails/lockMemberImage.jpg", new ByteArrayInputStream("lockMemberThumbnail".getBytes()));
+        lockMember.setImage(new MemberImage(upload3.getURL().toString()));
 
         members.add(lockMember);
 
@@ -215,9 +224,13 @@ public class DummyDataProvider {
             List<String> imageUrls = new ArrayList<>();
 
             for(int j=1; j<4; j++) {
-                amazonS3.putObject(BUCKET_NAME, "images/postImage" + j + "_FreePost" + i + ".jpg", "postImage" + j + "_FreePost" + i + "image");
-                amazonS3.putObject(BUCKET_NAME, "thumbnails/postImage" + j + "_FreePost" + i + ".jpg", "postImage" + j + "_FreePost" + i + "thumbnail");
-                imageUrls.add(amazonS3.getUrl(BUCKET_NAME, "images/postImage" + j + "_FreePost" + i + ".jpg").toString());
+                S3Resource upload = s3Template.upload(BUCKET_NAME, "images/postImage" + j + "_FreePost" + i + ".jpg", new ByteArrayInputStream(("postImage" + j + "_FreePost" + i + "image").getBytes()));
+                s3Template.upload(BUCKET_NAME, "thumbnails/postImage" + j + "_FreePost" + i + ".jpg", new ByteArrayInputStream(("postImage" + j + "_FreePost" + i + "thumbnail").getBytes()));
+                try {
+                    imageUrls.add(upload.getURL().toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             freePost.addImages(imageUrls);
 
@@ -235,9 +248,13 @@ public class DummyDataProvider {
             List<String> imageUrls1 = new ArrayList<>();
 
             for(int j=1; j<4; j++) {
-                amazonS3.putObject(BUCKET_NAME, "images/postImage" + j + "_NeedHelpPost" + i + ".jpg", "postImage" + j + "_FreePost" + i);
-                amazonS3.putObject(BUCKET_NAME, "thumbnails/postImage" + j + "_NeedHelpPost" + i + ".jpg", "postImage" + j + "_FreePost" + i);
-                imageUrls1.add(amazonS3.getUrl(BUCKET_NAME, "images/postImage" + j + "_NeedHelpPost" + i + ".jpg").toString());
+                S3Resource upload = s3Template.upload(BUCKET_NAME, "images/postImage" + j + "_NeedHelpPost" + i + ".jpg", new ByteArrayInputStream(("postImage" + j + "_FreePost" + i).getBytes()));
+                s3Template.upload(BUCKET_NAME, "thumbnails/postImage" + j + "_NeedHelpPost" + i + ".jpg", new ByteArrayInputStream(("postImage" + j + "_FreePost" + i).getBytes()));
+                try {
+                    imageUrls1.add(upload.getURL().toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             needHelpPost.addImages(imageUrls1);
 
@@ -420,7 +437,7 @@ public class DummyDataProvider {
     @Transactional
     public void initialize() throws Exception {
         s3Mock.start();
-        amazonS3.createBucket(BUCKET_NAME);
+        s3Template.createBucket(BUCKET_NAME);
         saveSchool();
         saveMajor();
         saveMember();
@@ -437,7 +454,7 @@ public class DummyDataProvider {
 
     @PreDestroy
     public void close() {
-        amazonS3.shutdown();
+        s3Template.deleteBucket(BUCKET_NAME);
         s3Mock.stop();
     }
 }
