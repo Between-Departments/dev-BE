@@ -8,6 +8,16 @@ server:
       force: true
 
 spring:
+  cloud:
+    aws:
+      s3:
+        bucket: test-bucket
+        endpoint: http://127.0.0.1:8001
+      region:
+        static: ap-northeast-2
+      credentials:
+        access-key: fu
+        secret-key: ba
   sql:
     init:
       mode: never
@@ -29,36 +39,27 @@ spring:
       host: localhost
       port: 6379
 
-#  mail:
-#    host: smtp.naver.com
-#    port: 465
-#    username: t3231@naver.com
-#    password: 12341234
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          ssl:
-#            enable: true
-#            trust: smtp.naver.com
-#          starttls:
-#            enable: true
-#            required: true
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: t3231@naver.com
+    password: 12341234
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            trust: smtp.naver.com
+          starttls:
+            enable: true
+            required: true
 
 jwt:
   secret-key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
   access-token-expire-time: 1800
   refresh-token-expire-time: 604800
 
-cloud:
-  aws:
-    s3:
-      bucket: test-bucket
-    region:
-      static: ap-northeast-2
-      auto: false
-    stack:
-      auto: false
 
 
 logging:
