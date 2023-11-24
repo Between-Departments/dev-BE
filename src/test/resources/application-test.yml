@@ -80,7 +80,7 @@ spring:
 
 # JWT 설정 -> 노출 x
 jwt:
-  secret-key: test-secret
+  secret-key: testsecrettestsecrettestsecrettestsecrettestsecret
   access-token-expire-time: 1800
   refresh-token-expire-time: 604800
 
