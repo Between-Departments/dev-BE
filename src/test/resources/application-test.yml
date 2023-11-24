@@ -1,31 +1,14 @@
-server:
-  port: 8080
-  servlet:
-    context-path: /
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
-
 spring:
-  cloud:
-    aws:
-      s3:
-        bucket: test-bucket
-        endpoint: http://127.0.0.1:8001
-      region:
-        static: ap-northeast-2
-      credentials:
-        access-key: fu
-        secret-key: ba
-  sql:
-    init:
-      mode: never
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:testdb;MODE=MySQL
     username: sa
     password:
+
+  sql:
+    init:
+      mode: never
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -34,10 +17,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         #format_sql: true
     open-in-view: false
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
   mail:
     host: smtp.naver.com
@@ -55,14 +34,13 @@ spring:
             enable: true
             required: true
 
-jwt:
-  secret-key: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
-  access-token-expire-time: 1800
-  refresh-token-expire-time: 604800
-
-
-
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type: debug
+  cloud:
+    aws:
+      s3:
+        bucket: test-bucket
+        endpoint: http://127.0.0.1:8001
+      region:
+        static: ap-northeast-2
+      credentials:
+        access-key: fu
+        secret-key: ba

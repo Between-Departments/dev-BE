@@ -42,13 +42,13 @@ import java.util.UUID;
 public class ImageServiceImpl implements ImageService {
 
     private final String bucket;
-    private final S3Client amazonS3;
+    private final S3Client s3Client;
     private final S3Template s3Template;
 
 
-    public ImageServiceImpl(@Value("${spring.cloud.aws.s3.bucket}") String bucket, S3Client amazonS3, S3Template s3Template) {
+    public ImageServiceImpl(@Value("${spring.cloud.aws.s3.bucket}") String bucket, S3Client s3Client, S3Template s3Template) {
         this.bucket = bucket;
-        this.amazonS3 = amazonS3;
+        this.s3Client = s3Client;
         this.s3Template = s3Template;
     }
 
@@ -166,7 +166,7 @@ public class ImageServiceImpl implements ImageService {
                 .build();
 
         try {
-            amazonS3.deleteObjects(deleteObjectsRequest);
+            s3Client.deleteObjects(deleteObjectsRequest);
         }catch (SdkException exception){
             throw new CustomException(ExceptionCode.S3_DELETE_FAIL);
         }
