@@ -1,14 +1,34 @@
+# Tomcat 웹서버 설정
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
 spring:
+  # 멀티파트 관련 설정
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 30MB
+      max-file-size: 10MB
+
+  # 테스트 용으로 In-Memory DB 사용
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:testdb;MODE=MySQL
     username: sa
     password:
 
+  # data.sql 실행 X
   sql:
     init:
       mode: never
 
+  # JPA 설정
   jpa:
     hibernate:
       ddl-auto: create
@@ -18,6 +38,7 @@ spring:
         #format_sql: true
     open-in-view: false
 
+  # 메일 설정
   mail:
     host: smtp.naver.com
     port: 465
@@ -34,6 +55,7 @@ spring:
             enable: true
             required: true
 
+  # MockS3 서버 접근용 AWS S3 Client 설정
   cloud:
     aws:
       s3:
@@ -44,3 +66,26 @@ spring:
       credentials:
         access-key: fu
         secret-key: ba
+
+  # Redis 설정
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      client-type: lettuce
+
+  # Thymeleaf 설정
+  thymeleaf:
+    cache: false
+
+# JWT 설정 -> 노출 x
+jwt:
+  secret-key: test-secret
+  access-token-expire-time: 1800
+  refresh-token-expire-time: 604800
+
+# 로깅 설정
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: debug
