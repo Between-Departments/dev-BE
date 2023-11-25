@@ -5,7 +5,6 @@ import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -22,7 +21,7 @@ public class PostDeleteTests extends DevBeApplicationTests {
     @Test
     @DisplayName("성공")
     @WithMockMember
-    @Commit
+    //@Commit
     public void success() throws Exception {
         Long postId = 1L;
 
@@ -36,7 +35,7 @@ public class PostDeleteTests extends DevBeApplicationTests {
     @Test
     @DisplayName("관리자 삭제 성공")
     @WithMockMember(roles = {"ROLE_MANAGER"})
-    @Commit
+    //@Commit
     public void successByManager() throws Exception {
         Long postId = 2L;
 
