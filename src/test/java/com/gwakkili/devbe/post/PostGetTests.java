@@ -253,7 +253,7 @@ public class PostGetTests extends DevBeApplicationTests {
         @DisplayName("실패: 인증되지 않은 사용자")
         public void failByUnauthorized() throws Exception {
 
-            mockMvc.perform(get(url))
+            mockMvc.perform(get(url).param("boardType", Post.BoardType.FREE.name()))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("code").value(ExceptionCode.UNAUTHORIZED.getCode()))
                     .andExpect(jsonPath("message").value(ExceptionCode.UNAUTHORIZED.getMessage()))
@@ -329,7 +329,7 @@ public class PostGetTests extends DevBeApplicationTests {
         @DisplayName("실패: 인증되지 않은 사용자")
         public void failByUnauthorized() throws Exception {
 
-            mockMvc.perform(get(url))
+            mockMvc.perform(get(url).param("boardType", Post.BoardType.FREE.name()))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("code").value(ExceptionCode.UNAUTHORIZED.getCode()))
                     .andExpect(jsonPath("message").value(ExceptionCode.UNAUTHORIZED.getMessage()))
