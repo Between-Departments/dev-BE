@@ -1,11 +1,11 @@
 package com.gwakkili.devbe.mail;
 
-import com.gwakkili.devbe.mail.dto.MailAuthCodeDto;
-import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.exception.customExcption.NotFoundException;
 import com.gwakkili.devbe.exception.customExcption.UnsupportedException;
-import com.gwakkili.devbe.mail.service.MailServiceImpl;
+import com.gwakkili.devbe.mail.dto.MailAuthCodeDto;
+import com.gwakkili.devbe.mail.entity.MailAuthCode;
 import com.gwakkili.devbe.mail.repository.MailAuthCodeRepository;
+import com.gwakkili.devbe.mail.service.MailServiceImpl;
 import com.gwakkili.devbe.school.repository.SchoolRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
@@ -19,10 +19,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.Optional;
 
-import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("메일 서비스 테스트")
@@ -37,12 +42,15 @@ public class SchoolMailServiceTests {
     @Mock
     private MailAuthCodeRepository mailAuthCodeRepository;
 
+    @Mock
+    private SpringTemplateEngine templateEngine;
+
     @InjectMocks
     private MailServiceImpl mailService;
 
     @DisplayName("메일 전송 테스트")
     @Nested
-    class sendTest{
+    class sendTest {
         @Test
         @DisplayName("메일 전송 성공")
         public void sendSuccessTest() throws MessagingException {
@@ -51,14 +59,16 @@ public class SchoolMailServiceTests {
             MimeMessage mimeMessage = new MimeMessage((Session) null);
             given(javaMailSender.createMimeMessage()).willReturn(mimeMessage);
             given(schoolRepository.existsByMail(anyString())).willReturn(true);
-
-            //when, then
+            given(templateEngine.process(anyString(), any(Context.class))).willReturn(anyString());
+            //when
             mailService.sendMail(mail);
+            //then
+            verify(javaMailSender, times(1)).send(mimeMessage);
         }
 
         @Test
         @DisplayName("메일 전송 실패 : 지원하지 않는 메일")
-        public void sendFailUnsupportMailTest() {
+        public void FailByUnsupportMailTest() {
             //given
             String mail = "test@test.com";
             given(schoolRepository.existsByMail(anyString())).willReturn(false);
