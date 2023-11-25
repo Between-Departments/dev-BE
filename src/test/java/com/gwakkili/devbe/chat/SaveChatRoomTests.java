@@ -33,11 +33,12 @@ public class SaveChatRoomTests extends DevBeApplicationTests {
         //when, then
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("chatRoomId").value(11))
                 .andDo(print());
     }
 
     @Test
-    @DisplayName("실패: 채팅방이 이미 존재")
+    @DisplayName("성공: 존재하는 채팅방 생성")
     @WithMockMember(memberId = 1)
     public void failByDuplicateChatRoom() throws Exception {
         //given
@@ -48,9 +49,8 @@ public class SaveChatRoomTests extends DevBeApplicationTests {
 
         //when, then
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(content))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("code").value(ExceptionCode.DUPLICATE_CHAT_ROOM.getCode()))
-                .andExpect(jsonPath("message").value(ExceptionCode.DUPLICATE_CHAT_ROOM.getMessage()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("chatRoomId").value(1))
                 .andDo(print());
     }
 
@@ -61,7 +61,6 @@ public class SaveChatRoomTests extends DevBeApplicationTests {
         //given
         long memberId = 1000;
         SaveChatRoomDto saveChatRoomDto = new SaveChatRoomDto(memberId);
-
         String content = objectMapper.writeValueAsString(saveChatRoomDto);
 
         //when, then

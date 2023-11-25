@@ -1,10 +1,11 @@
 package com.gwakkili.devbe.chat;
 
 import com.gwakkili.devbe.DevBeApplicationTests;
-import com.gwakkili.devbe.exception.ExceptionCode;
 import com.gwakkili.devbe.util.WithMockMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.not;
@@ -33,15 +34,25 @@ public class GetChatRoomListTests extends DevBeApplicationTests {
     }
 
     @Test
-    @DisplayName("실패: 채팅방을 찾을 수 없음")
-    @WithMockMember(memberId = 11)
-    public void failByNotFoundChatRoom() throws Exception {
-        mockMvc.perform(get(url))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("code").value(ExceptionCode.NOT_FOUND_CHAT_ROOM.getCode()))
-                .andExpect(jsonPath("message").value(ExceptionCode.NOT_FOUND_CHAT_ROOM.getMessage()))
-                .andDo(print());
-    }
+    @DisplayName("성공: 정렬된 채팅방 조회")
+    @WithMockMember
+    public void successWithParams() throws Exception {
 
+        //given
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("page", "1");
+        params.add("size", "10");
+        params.add("sortBy", "rcm.createAt");
+        params.add("direction", "DESC");
+
+        //when, then
+        mockMvc.perform(get(url).params(params))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("size").value(9))
+                .andExpect(jsonPath("dataList[*].chatRoomId").exists())
+                .andExpect(jsonPath("dataList[*].member.memberId").value(not(contains(1))))
+                .andDo(print());
+
+    }
 
 }
