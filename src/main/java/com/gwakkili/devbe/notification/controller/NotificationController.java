@@ -25,6 +25,16 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
+    @Operation(method = "GET", summary = "새로운 알림 여부 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "새로운 알림 여부 조회 성공", useReturnTypeSchema = true)
+    })
+    @GetMapping("/new")
+    @PreAuthorize("isAuthenticated()")
+    public Boolean getNewNotification(@AuthenticationPrincipal MemberDetails memberDetails){
+        return notificationService.findAnyNotification(memberDetails.getMemberId());
+    }
+
     @Operation(method = "GET", summary = "알림 목록 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "알림 목록 조회 성공", useReturnTypeSchema = true)

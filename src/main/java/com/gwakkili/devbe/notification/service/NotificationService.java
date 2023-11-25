@@ -10,6 +10,8 @@ import com.gwakkili.devbe.event.NewReplyReportEvent;
 import java.util.List;
 
 public interface NotificationService {
+    Boolean findAnyNotification(Long memberId);
+
     ListResponseDto<NotificationDto, Notification> findAllNotifications(Long memberId);
 
     void saveNewNotification(NewReplyEvent newReplyEvent);

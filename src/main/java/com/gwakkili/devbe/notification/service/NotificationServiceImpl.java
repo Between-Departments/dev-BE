@@ -122,6 +122,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public Boolean findAnyNotification(Long memberId) {
+        return Boolean.valueOf(notificationRepository.existsByMemberMemberId(memberId));
+    }
+
+    @Override
     public ListResponseDto<NotificationDto, Notification> findAllNotifications(Long memberId) {
         List<Notification> notificationList = notificationRepository.findAllByMemberMemberId(memberId);
 
