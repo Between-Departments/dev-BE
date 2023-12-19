@@ -57,7 +57,8 @@
 
 <br/>
 
-### 기술 스택 구조도
+### 기술 스택 구조
+<img width="6079" alt="하이디 기술스택 구조" src="https://github.com/Between-Departments/dev-BE/assets/38908184/35688ed4-b27a-4b61-b384-8267c7cd7b06">
 
 
 <br />
